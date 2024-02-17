@@ -46,8 +46,8 @@ const addTeacher = async (req, res) => {
 
 
 const addStudent = async (req, res) => {
-    const { username , password ,fullname } = req.body; // Example fields
-    if(!username || !password || !fullname){
+    const { username , password , fullname ,clas } = req.body; // Example fields
+    if(!username || !password || !fullname || !clas){
         res.status(500).send("missing data !");
     }
     try {
@@ -56,7 +56,9 @@ const addStudent = async (req, res) => {
         await studentRef.set({
             username,
             password,
-            fullname
+            fullname,
+            clas,
+            assignment:[]
         });
         res.status(200).send('Student added successfully');
     } catch (error) {
