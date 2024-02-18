@@ -24,7 +24,7 @@ const addAssignmentToClass = async (req,res) => {
 
     const {title, description, classId , lastdate} = req.body;
 
-    if (!classId || !title || !description , lastdate) {
+    if (!classId || !title || !description || !lastdate) {
         return res.status(400).send("Missing data!");
     }
 
@@ -36,7 +36,6 @@ const addAssignmentToClass = async (req,res) => {
         assignments: admin.firestore.FieldValue.arrayUnion({
             title,
             description,
-            dueDate: admin.firestore.Timestamp.fromDate(new Date(dueDate)),
             lastdate
         })
     });
@@ -163,4 +162,4 @@ const addgradestoteacher = async (req, res) => {
     }
 };
 
- module.exports = { addStudent ,addTeacher , addAdmin, addClass};
+ module.exports = { addStudent ,addTeacher , addAdmin, addClass,addAssignmentToClass};
