@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 490 490" xml:space="preserve">
+<g>
+	<g>
+		<g>
+			<path d="M480,110h-25V80c0-5.523-4.478-10-10-10H240V10c0-5.523-4.478-10-10-10H10C4.478,0,0,4.477,0,10v110v360
+				c0,5.523,4.478,10,10,10h470c5.522,0,10-4.477,10-10V120C490,114.477,485.522,110,480,110z M240,90h195v20H240V90z M20,20h200v90
+				H20V20z M370,470H120V210h170v70c0,5.523,4.478,10,10,10h70V470z M310,270v-45.858L355.857,270H310z M470,470h-80V280h-0.024
+				c-0.001-2.601-0.993-5.159-2.905-7.071l-80-80c-1.912-1.912-4.469-2.904-7.071-2.904V190H110c-5.522,0-10,4.477-10,10v270H20V130
+				h450V470z"/>
+			<rect x="145" y="335" width="200" height="20"/>
+			<rect x="145" y="375" width="200" height="20"/>
+			<rect x="145" y="415" width="200" height="20"/>
+			<rect x="145" y="235" width="40" height="20"/>
+			<rect x="145" y="265" width="70" height="20"/>
+		</g>
+	</g>
+</g>
+</svg>
