@@ -1,7 +1,6 @@
 class AssignmentData {
   final String subjectName;
   final String description;
-
   final String lastData;
 
   AssignmentData({
