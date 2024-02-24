@@ -1,5 +1,8 @@
 const admin = require('firebase-admin');
 const db = admin.firestore();
+
+
+
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -25,13 +28,13 @@ const loginUser = async (req, res) => {
 
         if (!userData) {
             return res.status(404).send('User not found');
+           
         }
-
+        console.log("Stored password for", username, ":", userData.password ,password);
         // Here you should compare the hashed password
         if (userData.password !== password) {
             return res.status(401).send('Invalid password');
         }
-
         // If authentication is successful, generate a custom token using the document ID
         const token = await admin.auth().createCustomToken(userId);
         res.status(200).json({ token, role: userRole });
