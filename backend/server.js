@@ -15,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/', adminRoutes);
 app.use('/auth', authRoutes);
+app.use('/students', studentRoutes);
 // app.use('/', studentRoutes);
 // app.use('/', teacherRoutes);
 // app.use('/', parentRoutes);

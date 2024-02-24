@@ -62,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
         var responseData = json.decode(response.body);
         var token = responseData['token'];
         var role = responseData['role'];
+        var userId = responseData['userId'];
 
         if (role == 'admin') {
           Navigator.push(
@@ -75,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    HomeScreen()), // Replace with your admin dashboard screen widget
+                    HomeScreen(userId: userId)), // Replace with your admin dashboard screen widget
           );
         } else if (role == 'teacher') {
           Navigator.push(
