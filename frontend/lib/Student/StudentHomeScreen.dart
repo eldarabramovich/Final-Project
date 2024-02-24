@@ -12,8 +12,9 @@ import 'StudentMessages.dart';
 import 'StudentPresence.dart';
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
-
+  // HomeScreen({super.key});
+  final String userId;
+  const HomeScreen({Key? key, required this.userId}) : super(key: key);
   //final user = FirebaseAuth.instance.currentUser!;
 
   void UserLogOut() {
@@ -96,7 +97,8 @@ class HomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => StudentAssignment()),
+                                  builder: (context) =>
+                                      StudentAssignment(userId: userId)),
                             );
                           },
                           icon: 'asset/icons/assignment.svg',

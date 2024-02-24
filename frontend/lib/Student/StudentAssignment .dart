@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/DataJustForExample/AssignmentData.dart';
 
 class StudentAssignment extends StatelessWidget {
-  const StudentAssignment({super.key});
-
+  final String userId;
+  // const StudentAssignment({super.key});
+   const StudentAssignment({super.key, required this.userId});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
