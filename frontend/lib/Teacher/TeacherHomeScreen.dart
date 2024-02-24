@@ -12,7 +12,7 @@ import 'package:frontend/Teacher/TeacherMessages.dart';
 import 'package:frontend/Teacher/TeacherCalendar.dart';
 
 class TeacherHomeScreen extends StatelessWidget {
-  TeacherHomeScreen({super.key});
+  const TeacherHomeScreen({super.key});
 
   //final user = FirebaseAuth.instance.currentUser!;
 
