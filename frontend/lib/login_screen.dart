@@ -3,9 +3,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // For JSON encoding and decoding
+import 'package:frontend/admin_dashboard.dart';
+import 'package:frontend/Student/StudentHomeScreen.dart';
+import 'package:frontend/Teacher/TeacherHomeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({super.key});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -13,35 +18,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
-
-  final passeordController = TextEditingController();
-
-  void logUserIn() async {
-    //adding a loading circle
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-    //check the user's data if is correct
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passeordController.text,
-      );
-      Navigator.pop(context); // Remove the loading dialog
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context); // Remove the loading dialog
-      if (e.code == 'user-not-found') {
-        showErrorSnackBar(context, 'No user found with this email.');
-      } else if (e.code == 'wrong-password') {
-        showErrorSnackBar(context, 'Wrong password provided.');
-      }
-    }
-  }
+  final passwordController = TextEditingController();
 
   void showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -50,6 +27,75 @@ class _LoginScreenState extends State<LoginScreen> {
         duration: Duration(seconds: 5),
       ),
     );
+  }
+
+  void logUserIn() async {
+    // Show a loading dialog
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    // Prepare the request body
+    var requestBody = json.encode({
+      'username': emailController.text,
+      'password': passwordController.text,
+    });
+
+    // Make the HTTP POST request
+    try {
+      var response = await http.post(
+        Uri.parse('http://10.100.102.3:3000/auth/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: requestBody,
+      );
+
+      // Remove the loading dialog
+      Navigator.pop(context);
+
+      // Check the response status and handle accordingly
+      if (response.statusCode == 200) {
+        var responseData = json.decode(response.body);
+        var token = responseData['token'];
+        var role = responseData['role'];
+
+        if (role == 'admin') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    AdminDashboardScreen()), // Replace with your admin dashboard screen widget
+          );
+        } else if (role == 'students') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    HomeScreen()), // Replace with your admin dashboard screen widget
+          );
+        } else if (role == 'teacher') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    TeacherHomeScreen()), // Replace with your admin dashboard screen widget
+          );
+        }
+      } else {
+        showErrorSnackBar(
+            context, 'Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      // Remove the loading dialog
+      Navigator.pop(context);
+      print('Error logging in: $error');
+      // Handle network error
+      showErrorSnackBar(context, 'Network error. Please try again later.');
+    }
   }
 
   @override
@@ -127,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
                   obscureText: true,
-                  controller: passeordController,
+                  controller: passwordController,
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
