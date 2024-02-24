@@ -1,181 +1,272 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'dart:js_util';
+
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:frontend/Admin/AdminHomeScreen.dart';
+
+late bool _passwordVisible;
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({super.key});
+  static String routeName = 'LoginScreen';
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final emailController = TextEditingController();
-
-  final passeordController = TextEditingController();
-
-  void logUserIn() async {
-    //adding a loading circle
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-    //check the user's data if is correct
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passeordController.text,
-      );
-      Navigator.pop(context); // Remove the loading dialog
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context); // Remove the loading dialog
-      if (e.code == 'user-not-found') {
-        showErrorSnackBar(context, 'No user found with this email.');
-      } else if (e.code == 'wrong-password') {
-        showErrorSnackBar(context, 'Wrong password provided.');
-      }
-    }
+  final _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _passwordVisible = true;
   }
 
-  void showErrorSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 5),
-      ),
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      //when the user tap at the screen at place that not at input text the keyboart disapper
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+          body: ListView(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 2.8,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'asset/imgs/logo.jpg',
+                  height: 150.0,
+                  width: 150.0,
+                ),
+                SizedBox(
+                  height: 20.0 / 2,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Welcome',
+                        style: Theme.of(context).textTheme.bodyLarge),
+                  ],
+                ),
+                SizedBox(
+                  height: 20.0 / 6,
+                ),
+                Text('ברוכים הבאים')
+              ],
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0 * 3),
+                topRight: Radius.circular(20 * 3),
+              ),
+              color: Color.fromARGB(255, 207, 229, 243),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        TextFormField(
+                          textAlign: TextAlign.start,
+                          keyboardType: TextInputType.name,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.w300,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'שם משתמש',
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            isDense: true,
+                            labelStyle: TextStyle(
+                              fontSize: 15.0,
+                              color: Colors.black,
+                              height: 0.5,
+                            ),
+                            //hintStyle
+                            hintStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                              height: 0.5,
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black26, width: 0.7),
+                            ),
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black12),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black26, width: 0.7),
+                            ),
+
+                            //when the user enter a wrong information the color change
+                            errorBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.red, width: 1.2),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        TextFormField(
+                          obscureText: _passwordVisible,
+                          textAlign: TextAlign.start,
+                          keyboardType: TextInputType.visiblePassword,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.w300,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'סיסמה',
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            isDense: true,
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                              icon: Icon(
+                                _passwordVisible
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_off_outlined,
+                              ),
+                              iconSize: 20.0,
+                            ),
+                            labelStyle: TextStyle(
+                              fontSize: 15.0,
+                              color: Colors.black,
+                              height: 0.5,
+                            ),
+                            //hintStyle
+                            hintStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                              height: 0.5,
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black26, width: 0.7),
+                            ),
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black12),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black26, width: 0.7),
+                            ),
+
+                            //when the user enter a wrong information the color change
+                            errorBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.red, width: 1.2),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        DefaultButton(
+                          onPress: () {
+                            if (_formKey.currentState!.validate()) {
+                              Navigator.pushNamedAndRemoveUntil(context,
+                                  AdminHomeScreen.routeName, (route) => false);
+                            }
+                          },
+                          title: 'כניסה',
+                          iconData: Icons.arrow_forward_ios_outlined,
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
+      )),
     );
   }
+}
 
+class DefaultButton extends StatelessWidget {
+  final VoidCallback onPress;
+  final String title;
+  final IconData iconData;
+
+  const DefaultButton(
+      {super.key,
+      required this.onPress,
+      required this.title,
+      required this.iconData});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-          child: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 50),
-
-              Center(
-                  child: Image(
-                image: AssetImage('asset/imgs/logo.jpg'),
-                width: 120,
-                height: 120,
-              )),
-
-              const SizedBox(height: 50),
-
-              Text(
-                "TeachTouch",
-                style: GoogleFonts.oswald(
-                  fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(255, 53, 162, 212),
-                  fontSize: 28,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              Text(
-                "Learn. Connect. Thrive.",
-                style: GoogleFonts.lora(
-                  fontWeight: FontWeight.normal,
-                  color: const Color.fromARGB(255, 53, 162, 212),
-                  fontSize: 24,
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              //The Username/Email textfield
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: TextField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    hintText: "מייל",
-                    fillColor: Colors.grey.shade100,
-                    filled: true,
-                  ),
-                ),
-              ),
-
-              const SizedBox(
-                height: 10,
-              ),
-
-              //The Password textfield
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: TextField(
-                  obscureText: true,
-                  controller: passeordController,
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    hintText: "סיסמה",
-                    fillColor: Colors.grey.shade100,
-                    filled: true,
-                  ),
-                ),
-              ),
-
-              const SizedBox(
-                height: 25,
-              ),
-
-              //the login button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: GestureDetector(
-                  onTap: logUserIn,
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 53, 162, 212),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "כניסה",
-                        style: GoogleFonts.notoSerifHebrew(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        margin: EdgeInsets.only(
+          left: 20.0,
+          right: 20.0,
         ),
-      )),
+        padding: EdgeInsets.only(right: 20.0),
+        width: double.infinity,
+        height: 60.0,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF6789CA), Color(0xFF345FB4)],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(0.5, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+            borderRadius: BorderRadius.circular(20.0)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Spacer(),
+            Text(
+              'כניסה',
+              style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16.0,
+                    color: Colors.white,
+                  ),
+            ),
+            Spacer(),
+            Icon(
+              Icons.arrow_forward_outlined,
+              size: 30.0,
+              color: Colors.white,
+            )
+          ],
+        ),
+      ),
     );
   }
 }
