@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AdminAddClassroom extends StatefulWidget {
   @override
@@ -71,14 +73,29 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
     );
   }
 
-  void _saveClassroom() {
-    // Save the classroom details
+  Future<void> _saveClassroom() async {
     String className = _classNameController.text;
     List<String> subjects = _subjects;
 
-    // You can now use these values to save the classroom
-    // For example, you can call an API or save to a database
-    // Don't forget to validate the data before saving
+    var url = Uri.parse(
+        'http://10.100.102.3:3000/admin/addclasubj'); // Replace with your actual endpoint
+    var response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'classname': className, 'subjects': subjects}),
+    );
+
+    if (response.statusCode == 200) {
+      // Successfully added the class
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Class added successfully')));
+    } else {
+      // Error adding the class
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error adding class')));
+    }
   }
 
   @override
