@@ -44,6 +44,7 @@ class _NewAssignmentScreenState extends State<TeacherAddNewAssi> {
         // Assignment added successfully
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Assignment added successfully')));
+        Navigator.pop(context);
       } else {
         // Error adding assignment
         ScaffoldMessenger.of(context)
