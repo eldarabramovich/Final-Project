@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // For JSON encoding and decoding
-import 'package:frontend/admin_dashboard.dart';
+import 'package:frontend/Admin/AdminHomeScreen.dart';
 import 'package:frontend/Student/StudentHomeScreen.dart';
 import 'package:frontend/Teacher/TeacherHomeScreen.dart';
 
@@ -69,14 +69,15 @@ class _LoginScreenState extends State<LoginScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    AdminDashboardScreen()), // Replace with your admin dashboard screen widget
+                    AdminHomeScreen()), // Replace with your admin dashboard screen widget
           );
         } else if (role == 'students') {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    HomeScreen(userId: userId)), // Replace with your admin dashboard screen widget
+                builder: (context) => HomeScreen(
+                    userId:
+                        userId)), // Replace with your admin dashboard screen widget
           );
         } else if (role == 'teacher') {
           Navigator.push(

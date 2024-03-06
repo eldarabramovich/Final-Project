@@ -28,7 +28,6 @@ const addClasswithsubject = async (req, res) => {
                 studentassign:[],
                 assignments:[],
                 attendance:[],
-                teacher:"avi"
             });
             subjectRefs.push(subjectRef);
         }
@@ -189,5 +188,7 @@ const addStudent = async (req, res) => {
         res.status(500).send("Error adding student");
     }
 };
+
+
  module.exports = { addStudent ,addTeacher , addAdmin,addAssignmentToSubject,addClasswithsubject};
 
