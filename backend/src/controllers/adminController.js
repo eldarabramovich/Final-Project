@@ -106,10 +106,16 @@ const addAdmin = async (req, res) => {
 
 
 const addTeacher = async (req, res) => {
-    const { username , password , fullname, subject, email , classname  } = req.body; 
+    const { username , password , fullname, email , classes  } = req.body; 
 
-    if(!username || !subject || !email || !password || !fullname || !classname){
+    if(!username || !email || !password || !fullname || !classes){
         res.status(500).send("missing data !");
+    }
+
+    for (const cls of classes) {
+        if (!cls.classname || !cls.subject) {
+            return res.status(400).send("Missing classname or subject in classes array");
+        }
     }
     
     try {
@@ -123,10 +129,12 @@ const addTeacher = async (req, res) => {
             fullname,
             username,
             password,
-            subject,
-            classname,
             email,
             role:"teacher",
+            classes: classes.map((cls) => ({
+                classname: cls.classname,
+                subject: cls.subject
+            }))
         });
 
         await batch.commit();
@@ -163,6 +171,41 @@ const addStudent = async (req, res) => {
     }
 };
 
-
  module.exports = { addStudent ,addTeacher , addAdmin,addAssignmentToSubject,addClasswithsubject};
+
+ //_______________________old add teacher___
+ 
+// const addTeacher = async (req, res) => {
+//     const { username , password , fullname, subject, email , classname  } = req.body; 
+
+//     if(!username || !subject || !email || !password || !fullname || !classname){
+//         res.status(500).send("missing data !");
+//     }
+    
+//     try {
+//         const db = admin.firestore();
+//         const batch = db.batch();
+//         const teacherRef = db.collection('teachers').doc(); 
+
+
+//         await teacherRef.set({
+//             teacaherID : teacherRef.id,
+//             fullname,
+//             username,
+//             password,
+//             subject,
+//             classname,
+//             email,
+//             role:"teacher",
+//         });
+
+//         await batch.commit();
+
+//         res.status(200).send('Teacher added successfully');
+
+//     } catch (error) {
+//         console.error("Error adding teacher: ", error);
+//         res.status(500).send("Error adding teacher");
+//     }
+// };
 
