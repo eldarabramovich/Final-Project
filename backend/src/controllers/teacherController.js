@@ -21,4 +21,22 @@ const AddAssigment = async (req,res) =>{
 
 }
 
-module.exports = {AddAssigment};
+const getTeacherData = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const teacherRef = admin.firestore().collection('teachers').doc(userId);
+    const doc = await teacherRef.get();
+
+    if (doc.exists) {
+      res.status(200).json(doc.data());
+    } else {
+      res.status(404).send('Teacher not found');
+    }
+  } catch (error) {
+    console.error('Error fetching teacher data:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+module.exports = {AddAssigment,getTeacherData };

@@ -10,12 +10,13 @@ import 'TeacherGrade.dart';
 import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/TeacherMessages.dart';
 import 'package:frontend/Teacher/TeacherCalendar.dart';
+import 'package:frontend/models/teachermodel.dart';
 
 class TeacherHomeScreen extends StatelessWidget {
-  const TeacherHomeScreen({super.key});
-
+  // const TeacherHomeScreen({super.key});
+  const TeacherHomeScreen({Key? key, required this.teacher}) : super(key: key);
   //final user = FirebaseAuth.instance.currentUser!;
-
+  final Teacher teacher;
   void UserLogOut() {
     FirebaseAuth.instance.signOut();
   }

@@ -8,6 +8,9 @@ import 'dart:convert'; // For JSON encoding and decoding
 import 'package:frontend/Admin/AdminHomeScreen.dart';
 import 'package:frontend/Student/StudentHomeScreen.dart';
 import 'package:frontend/Teacher/TeacherHomeScreen.dart';
+import 'package:frontend/models/teachermodel.dart';
+import 'package:frontend/Teacher/TeacherHomeScreen.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,17 +20,25 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void showErrorSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 5),
-      ),
-    );
+
+  Future<Teacher?> fetchTeacherData(String userId) async {
+    var url = Uri.parse('http://10.100.102.3:3000/teacher/$userId'); // Replace with your actual endpoint
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return Teacher.fromFirestore(data);
+    } else {
+      print('Failed to fetch teacher data');
+      return null;
+    }
   }
+
+
 
   void logUserIn() async {
     // Show a loading dialog
@@ -80,11 +91,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         userId)), // Replace with your admin dashboard screen widget
           );
         } else if (role == 'teachers') {
+          Teacher? teacher = await fetchTeacherData(userId);
+         if (teacher != null) {
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    TeacherHomeScreen()), // Replace with your admin dashboard screen widget
+                    TeacherHomeScreen(teacher: teacher)), // Replace with your admin dashboard screen widget
           );
         }
       } else {
@@ -98,6 +111,35 @@ class _LoginScreenState extends State<LoginScreen> {
       // Handle network error
       showErrorSnackBar(context, 'Network error. Please try again later.');
     }
+  }
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  void showErrorSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 5),
+      ),
+    );
   }
 
   @override
@@ -226,4 +268,8 @@ class _LoginScreenState extends State<LoginScreen> {
       )),
     );
   }
+
+
+
+  
 }

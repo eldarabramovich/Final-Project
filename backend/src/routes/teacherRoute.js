@@ -1,5 +1,7 @@
 const express = require('express');
-const { AddAssigment} = require('../controllers/teacherController.js');
+const { AddAssigment ,getTeacherData } = require('../controllers/teacherController.js');
 const router = express.Router();
 router.post('/addassi',AddAssigment);
+router.get('/:userId', getTeacherData);
+
 module.exports = router;
