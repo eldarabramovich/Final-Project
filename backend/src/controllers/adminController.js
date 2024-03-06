@@ -116,41 +116,15 @@ const addTeacher = async (req, res) => {
         const db = admin.firestore();
         const batch = db.batch();
         const teacherRef = db.collection('teachers').doc(); 
-        const subjectsQuerySnapshot = await db.collection('subjects')
-            .where('className', '==', classname)
-            .where('subject', '==', subject)
-            .get();
 
-        
-        
-        if (subjectsQuerySnapshot.empty) {
-            return res.status(404).send('Subject not found for the provided class');
-        }
-
-
-
-        
-        const objectdata = {
-            subjectname:subject,
-            subjectid:subjectsQuerySnapshot.id// instad of username it need to be the suject.id 
-        }
-
-        const teacherdata = {
-            teacaherID : teacherRef.id,
-            fullname
-        };
-
-        subjectsQuerySnapshot.docs.forEach(doc => {
-            batch.update(doc.ref, {
-                teacher: teacherdata
-            });
-        });
 
         await teacherRef.set({
+            teacaherID : teacherRef.id,
+            fullname,
             username,
             password,
-            subjects:objectdata,
-            fullname,
+            subject,
+            classname,
             email,
             role:"teacher",
         });

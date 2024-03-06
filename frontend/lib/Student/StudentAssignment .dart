@@ -1,12 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:frontend/DataJustForExample/AssignmentData.dart';
+import 'package:frontend/models/assigmentmodel.dart';
 
 class StudentAssignment extends StatelessWidget {
   final String userId;
   // const StudentAssignment({super.key});
-   const StudentAssignment({super.key, required this.userId});
+  const StudentAssignment({super.key, required this.userId});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +62,7 @@ class StudentAssignment extends StatelessWidget {
                                         //here we will shows the data of the assignmrnt detalis
                                         child: Center(
                                           child: Text(
-                                            assignment[Index].subjectName,
+                                            assignment[Index].subjectname,
                                             style: TextStyle(
                                               fontSize: 13.0,
                                               fontWeight: FontWeight.w400,
@@ -86,7 +86,7 @@ class StudentAssignment extends StatelessWidget {
                                         height: 20.0 / 2,
                                       ),
                                       AssignmentDetailRow(
-                                        statusValue: assignment[Index].lastData,
+                                        statusValue: assignment[Index].lastDate,
                                         title: 'מועד אחרון להגשת המטלה:',
                                       ),
                                       SizedBox(

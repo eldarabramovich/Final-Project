@@ -76,7 +76,7 @@ class _NewAssignmentScreenState extends State<TeacherAddNewAssi> {
                 TextFormField(
                   controller: _subjectController,
                   decoration: const InputDecoration(
-                    labelText: 'נושא',
+                    labelText: 'מקצוע',
                     enabledBorder: OutlineInputBorder(),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(),
@@ -98,7 +98,7 @@ class _NewAssignmentScreenState extends State<TeacherAddNewAssi> {
                 TextFormField(
                   controller: _descriptionController,
                   decoration: const InputDecoration(
-                    labelText: 'הבסר על המטלה',
+                    labelText: 'הסבר על המטלה',
                     enabledBorder: OutlineInputBorder(),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Color(0xFF345FB4)),

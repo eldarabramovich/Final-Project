@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     userId:
                         userId)), // Replace with your admin dashboard screen widget
           );
-        } else if (role == 'teacher') {
+        } else if (role == 'teachers') {
           Navigator.push(
             context,
             MaterialPageRoute(
