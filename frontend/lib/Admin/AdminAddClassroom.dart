@@ -16,22 +16,22 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Classroom'),
+        title: const Text('Add Classroom'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _classNameController,
-              decoration: InputDecoration(labelText: 'Classroom Name'),
+              decoration: const InputDecoration(labelText: 'Classroom Name'),
             ),
-            SizedBox(height: 16.0),
-            Text('Subjects:'),
+            const SizedBox(height: 16.0),
+            const Text('Subjects:'),
             TextField(
               controller: _subjectController,
-              decoration: InputDecoration(labelText: 'Subject'),
+              decoration: const InputDecoration(labelText: 'Subject'),
               onSubmitted: (value) {
                 setState(() {
                   _subjects.add(value);
@@ -39,7 +39,7 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
                 });
               },
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Expanded(
               child: ListView.builder(
                 itemCount: _subjects.length,
@@ -47,7 +47,7 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
                   return ListTile(
                     title: Text(_subjects[index]),
                     trailing: IconButton(
-                      icon: Icon(Icons.delete),
+                      icon: const Icon(Icons.delete),
                       onPressed: () {
                         setState(() {
                           _subjects.removeAt(index);
@@ -65,7 +65,7 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
                 // Navigate back to previous screen
                 Navigator.pop(context);
               },
-              child: Text('Save Classroom'),
+              child: const Text('Save Classroom'),
             ),
           ],
         ),
@@ -88,13 +88,13 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
     if (response.statusCode == 200) {
       // Successfully added the class
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Class added successfully')));
+          .showSnackBar(const SnackBar(content: Text('Class added successfully')));
     } else {
       // Error adding the class
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error adding class')));
+          .showSnackBar(const SnackBar(content: Text('Error adding class')));
     }
   }
 
