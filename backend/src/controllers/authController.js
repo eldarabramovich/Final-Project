@@ -38,7 +38,7 @@ const loginUser = async (req, res) => {
 
         // If authentication is successful, generate a custom token using the document ID
         const token = await admin.auth().createCustomToken(userId);
-        res.status(200).json({ token, role: userRole });
+        res.status(200).json({ userId ,token, role: userRole });
     } catch (error) {
         console.error("Error logging in: ", error);
         res.status(500).send("Error logging in");

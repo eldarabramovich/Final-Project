@@ -3,10 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/models/assigmentmodel.dart';
+import 'package:frontend/models/teachermodel.dart';
 
 class TeacherAddNewAssi extends StatefulWidget {
-  const TeacherAddNewAssi({Key? key}) : super(key: key);
-
+  final List<ClassSubject> classes;
+  // const TeacherAddNewAssi({Key? key}) : super(key: key);
+  const TeacherAddNewAssi({Key? key, required this.classes}) : super(key: key);
   @override
   State<TeacherAddNewAssi> createState() => _NewAssignmentScreenState();
 }
@@ -17,6 +19,8 @@ class _NewAssignmentScreenState extends State<TeacherAddNewAssi> {
   final _subjectnameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _lastDateController = TextEditingController();
+  String? _selectedClassname;
+  String? _selectedSubject;
 
   Future<void> _submitAssignment() async {
     if (_formKey.currentState!.validate()) {
@@ -28,7 +32,7 @@ class _NewAssignmentScreenState extends State<TeacherAddNewAssi> {
       );
 
       var url = Uri.parse(
-          'http://10.100.102.3:3000/teacher/addassi'); // Replace with your actual endpoint
+          'http://192.168.40.1:3000/teacher/addassi'); // Replace with your actual endpoint
       var response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},

@@ -2,7 +2,7 @@ class Teacher {
   final String fullname;
   final String email;
   final List<ClassSubject> classes;
-
+  
   Teacher({required this.fullname, required this.email, required this.classes});
   factory Teacher.fromFirestore(Map<String, dynamic> data) {
     return Teacher(
