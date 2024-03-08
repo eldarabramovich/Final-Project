@@ -1,56 +1,22 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'TeacherAssignment.dart';
 import 'TeacherGrade.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/TeacherMessages.dart';
 import 'package:frontend/Teacher/TeacherCalendar.dart';
 import 'package:frontend/models/teachermodel.dart';
 
-class TeacherHomeScreen extends StatefulWidget {
-  final String userId;
+class TeacherHomeScreen extends StatelessWidget {
+  // const TeacherHomeScreen({super.key});
   const TeacherHomeScreen({Key? key, required this.userId}) : super(key: key);
   //final user = FirebaseAuth.instance.currentUser!;
-
-  @override
-  State<TeacherHomeScreen> createState() => _TeacherHomeScreenState();
-}
-
-class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
-  Teacher? _teacherData;
-  bool _isLoading = true;
-
-  void initState() {
-    super.initState();
-    fetchTeacherData(widget.userId);
-  }
-
-  Future<void> fetchTeacherData(String userId) async {
-    var url = Uri.parse(
-        'http://192.168.40.1:3000/teacher/$userId'); // Replace with your actual endpoint
-    try {
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        setState(() {
-          _teacherData = Teacher.fromFirestore(data);
-          _isLoading = false;
-        });
-      } else {
-        // Handle the error
-        setState(() => _isLoading = false);
-        print('Failed to fetch teacher data');
-      }
-    } catch (e) {
-      // Handle any exceptions
-      setState(() => _isLoading = false);
-      print('An error occurred while fetching teacher data: $e');
-    }
-  }
+  final String userId;
 
   void UserLogOut() {
     FirebaseAuth.instance.signOut();
@@ -58,163 +24,145 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    } else if (_teacherData == null) {
-      return Scaffold(
-        body: Center(
-          child: Text('Failed to load teacher data'),
-        ),
-      );
-    } else {
-      return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              onPressed: UserLogOut,
-              icon: Icon(Icons.logout),
-            )
-          ],
-          backgroundColor: Colors.blue.shade800,
-        ),
-        body: Column(
-          children: [
-            //divide the screen into two parts
-            //The part 1, basic information about the student:
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: UserLogOut,
+            icon: Icon(Icons.logout),
+          )
+        ],
+        backgroundColor: Colors.blue.shade800,
+      ),
+      body: Column(
+        children: [
+          //divide the screen into two parts
+          //The part 1, basic information about the student:
 
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 10.0,
-              padding: EdgeInsets.all(20),
-              color: Colors.blue.shade800,
-              child: Column(
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            " Welcome Teacher ",
-                            style:
-                                Theme.of(context).textTheme.subtitle1!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                          ),
-                          Text(
-                            "שלום",
-                            style:
-                                Theme.of(context).textTheme.subtitle1!.copyWith(
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white,
-                                    ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-
-            Expanded(
-              child: Container(
-                color: Colors.blue.shade800,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFF4F6F7),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(60),
-                      topRight: Radius.circular(60),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 10.0,
+            padding: EdgeInsets.all(20),
+            color: Colors.blue.shade800,
+            child: Column(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          " Welcome Teacher ",
+                          style:
+                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                        ),
+                        Text(
+                          "שלום",
+                          style:
+                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      ],
                     ),
+                  ],
+                )
+              ],
+            ),
+          ),
+
+          Expanded(
+            child: Container(
+              color: Colors.blue.shade800,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: Color(0xFFF4F6F7),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(60),
+                    topRight: Radius.circular(60),
                   ),
-                  child: ListView(
-                    physics: BouncingScrollPhysics(),
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          HomeCard(
-                            onPress: () {
-                              if (_teacherData != null) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => TeacherAddNewAssi(
-                                          classes: _teacherData!.classes)),
-                                );
-                              } else {
-                                // Show an error or a message indicating that teacher data is not available
-                              }
-                            },
-                            icon: 'asset/icons/assignment.svg',
-                            title: "מטלות",
-                          ),
-                          HomeCard(
-                            onPress: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TeacherGrade()),
-                              );
-                            },
-                            icon: 'asset/icons/resume.svg',
-                            title: "ציונים",
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          HomeCard(
-                            onPress: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TeacherMessages()),
-                              );
-                            },
-                            icon: 'asset/icons/chat.svg',
-                            title: "הודעות",
-                          ),
-                          HomeCard(
-                            onPress: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TeacherCalendar()),
-                              );
-                            },
-                            icon: 'asset/icons/timetable.svg',
-                            title: "לוח שנה",
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          HomeCard(
-                            onPress: () {},
-                            icon: 'asset/icons/profile.svg',
-                            title: "Profile",
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                ),
+                child: ListView(
+                  physics: BouncingScrollPhysics(),
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      TeacherAddNewAssi(userId: userId)),
+                            );
+                          },
+                          icon: 'asset/icons/assignment.svg',
+                          title: "מטלות",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherGrade()),
+                            );
+                          },
+                          icon: 'asset/icons/resume.svg',
+                          title: "ציונים",
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherMessages()),
+                            );
+                          },
+                          icon: 'asset/icons/chat.svg',
+                          title: "הודעות",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherCalendar()),
+                            );
+                          },
+                          icon: 'asset/icons/timetable.svg',
+                          title: "לוח שנה",
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {},
+                          icon: 'asset/icons/profile.svg',
+                          title: "Profile",
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
-      );
-    }
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -236,7 +184,7 @@ class HomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: onPress,
       child: Container(
         margin: EdgeInsets.only(top: 40.0),
         width: MediaQuery.of(context).size.width / 2.5,
