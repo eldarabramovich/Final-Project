@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+
 const AddAssigment = async (req,res) =>{
     const { classname, subjectname, description, lastDate } = req.body;
     const db = admin.firestore();
@@ -21,6 +22,53 @@ const AddAssigment = async (req,res) =>{
 
 }
 
+
+
+ 
+const SendMessageToClass = async (req,res) =>{
+
+  const { classname , description } = req.body;
+
+  const db = admin.firestore();
+  const messagesRef = db.collection('messages').doc();
+  try {
+    const newMessages = {
+      classname,
+      description,
+      date,
+    };
+
+    await db.collection('messages').add(newMessages);
+    res.status(200).send('Message send successfully');
+  } catch (error) {
+    console.error('Error sending message:', error);
+    res.status(500).send('Error adding message');
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const getTeacherData = async (req, res) => {
   const userId = req.params.userId;
 
@@ -39,4 +87,5 @@ const getTeacherData = async (req, res) => {
   }
 };
 
-module.exports = {AddAssigment,getTeacherData };
+
+module.exports = {AddAssigment,getTeacherData,SendMessageToClass };
