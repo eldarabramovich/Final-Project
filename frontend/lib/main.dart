@@ -24,3 +24,29 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+class AssignmentData {
+  final String id;
+  final String classname;
+  final String subjectname;
+  final String description;
+  final String lastDate;
+
+  AssignmentData({
+    required this.id,
+    required this.classname,
+    required this.subjectname,
+    required this.description,
+    required this.lastDate,
+  });
+
+  factory AssignmentData.fromJson(Map<String, dynamic> json) {
+    return AssignmentData(
+      id: json['id'],
+      classname: json['classname'],
+      subjectname: json['subjectname'],
+      description: json['description'],
+      lastDate: json['lastDate'],
+    );
+  }
+}

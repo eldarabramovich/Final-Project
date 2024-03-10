@@ -11,20 +11,26 @@ class AssignmentData {
     required this.lastDate,
   });
 
-  factory AssignmentData.fromFirestore(Map<String, dynamic> data) {
+  factory AssignmentData.fromJson(Map<String, dynamic> data) {
     return AssignmentData(
         classname: data['classname'],
         subjectname: data['subjectname'],
         description: data['description'],
-        lastDate: data['lastdate']);
+        lastDate: data['lastdate'] ?? '');
   }
 }
 
-List<AssignmentData> assignment = [
-  AssignmentData(
-    classname: "א'1",
-    subjectname: "עברית",
-    description: "כתיבת תחביר",
-    lastDate: "10 מאי",
-  ),
-];
+// List<AssignmentData> assignment = [
+//   AssignmentData(
+//     classname: "א'1",
+//     subjectname: "עברית",
+//     description: "כתיבת תחביר",
+//     lastDate: "10 מאי",
+//   ),
+//   AssignmentData(
+//     classname: "א'1",
+//     subjectname: "עברית",
+//     description: "כתיבת תחביר",
+//     lastDate: "10 מאי",
+//   )
+// ];

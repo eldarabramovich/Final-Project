@@ -2,111 +2,109 @@
 
 import 'package:flutter/material.dart';
 import 'package:frontend/models/assigmentmodel.dart';
+import 'package:frontend/costumewigets/AssignmentButton.dart';
+import 'package:frontend/costumewigets/AssignmentDetailRow.dart';
+import 'package:frontend/models/assigmentmodel.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class StudentAssignment extends StatelessWidget {
+class StudentAssignment extends StatefulWidget {
   final String userId;
-  // const StudentAssignment({super.key});
-  const StudentAssignment({super.key, required this.userId});
+
+  const StudentAssignment({Key? key, required this.userId}) : super(key: key);
+
   @override
+  _StudentAssignmentState createState() => _StudentAssignmentState();
+}
+
+class _StudentAssignmentState extends State<StudentAssignment> {
+  late Future<List<AssignmentData>> futureAssignments;
+  @override
+  void initState() {
+    super.initState();
+    futureAssignments = fetchAssignments();
+  }
+
+  Future<List<AssignmentData>> fetchAssignments() async {
+    var url =
+        Uri.parse('http://10.100.102.3:3000/student/getassi/${widget.userId}');
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      List<dynamic> assignmentJson = json.decode(response.body);
+      return assignmentJson
+          .map((json) => AssignmentData.fromJson(json))
+          .toList();
+    } else {
+      throw Exception('Failed to load assignments');
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("מטלות"),
-          backgroundColor: Colors.blue.shade800,
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Color(0xFFF4F6F7),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  ),
-                ),
-                child: ListView.builder(
-                    padding: EdgeInsets.all(20.0),
-                    //we will count also how many assignemt we have to add using th lenght
-                    itemCount: assignment.length,
-                    itemBuilder: (context, int Index) {
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 20.0),
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(20.0),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    color: Color(0xFFF4F6F7),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color(0xFFA5A5A5),
-                                        blurRadius: 2.0,
-                                      )
-                                    ]),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: 100,
-                                        height: 30.0,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFF6789CA)
-                                              .withOpacity(0.4),
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                        ),
-                                        //here we will shows the data of the assignmrnt detalis
-                                        child: Center(
-                                          child: Text(
-                                            assignment[Index].subjectname,
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              fontWeight: FontWeight.w400,
-                                              color: Color(0xFF345FB4),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 20.0 / 2,
-                                      ),
-                                      Text(
-                                        assignment[Index].description,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 20.0 / 2,
-                                      ),
-                                      AssignmentDetailRow(
-                                        statusValue: assignment[Index].lastDate,
-                                        title: 'מועד אחרון להגשת המטלה:',
-                                      ),
-                                      SizedBox(
-                                        height: 30.0 / 2,
-                                      ),
-                                      AssignmentButton(
-                                        onPress: () {
-                                          //here we can open a new screen for more information ir upload a file
-                                        },
-                                        title: 'הגשת העבודה',
-                                      )
-                                    ]),
-                              ),
-                            ]),
-                      );
-                    }),
-              ),
+      appBar: AppBar(
+        title: Text("מטלות"),
+        backgroundColor: Colors.blue.shade800,
+      ),
+      body: FutureBuilder<List<AssignmentData>>(
+        future: futureAssignments,
+        builder: (BuildContext context,
+            AsyncSnapshot<List<AssignmentData>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            List<AssignmentData> assignments = snapshot.data ?? [];
+            return ListView.builder(
+              padding: EdgeInsets.all(20.0),
+              itemCount: assignments.length,
+              itemBuilder: (context, index) {
+                return AssignmentCard(assignment: assignments[index]);
+              },
+            );
+          } else {
+            return Center(child: Text('No assignments found'));
+          }
+        },
+      ),
+    );
+  }
+}
+
+class AssignmentButton extends StatelessWidget {
+  const AssignmentButton(
+      {super.key, required this.title, required this.onPress});
+
+  final String title;
+  final VoidCallback onPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPress,
+      child: Container(
+        width: double.infinity,
+        height: 40.0,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF6789CA), Color(0xFF345FB4)],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(0.5, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
             ),
-          ],
-        ));
+            borderRadius: BorderRadius.circular(20.0)),
+        child: Center(
+            child: Text(
+          title,
+          style: Theme.of(context).textTheme.subtitle1!.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 16.0,
+              color: Color.fromARGB(255, 255, 255, 255)),
+        )),
+      ),
+    );
   }
 }
 
@@ -143,37 +141,47 @@ class AssignmentDetailRow extends StatelessWidget {
   }
 }
 
-class AssignmentButton extends StatelessWidget {
-  const AssignmentButton(
-      {super.key, required this.title, required this.onPress});
+class AssignmentCard extends StatelessWidget {
+  final AssignmentData assignment;
 
-  final String title;
-  final VoidCallback onPress;
+  const AssignmentCard({Key? key, required this.assignment}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPress,
-      child: Container(
-        width: double.infinity,
-        height: 40.0,
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF6789CA), Color(0xFF345FB4)],
-              begin: const FractionalOffset(0.0, 0.0),
-              end: const FractionalOffset(0.5, 0.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp,
+    return Card(
+      margin: EdgeInsets.only(bottom: 20.0),
+      child: Padding(
+        padding: EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              assignment.subjectname,
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF345FB4),
+              ),
             ),
-            borderRadius: BorderRadius.circular(20.0)),
-        child: Center(
-            child: Text(
-          title,
-          style: Theme.of(context).textTheme.subtitle1!.copyWith(
-              fontWeight: FontWeight.w500,
-              fontSize: 16.0,
-              color: Color.fromARGB(255, 255, 255, 255)),
-        )),
+            SizedBox(height: 10),
+            Text(
+              assignment.description,
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 16.0,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Due: ${assignment.lastDate}',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14.0,
+              ),
+            ),
+            // You can add more details or actions for the assignment card here.
+          ],
+        ),
       ),
     );
   }
