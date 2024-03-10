@@ -7,14 +7,16 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'TeacherAssignment.dart';
 import 'TeacherGrade.dart';
-
+import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/TeacherMessages.dart';
 import 'package:frontend/Teacher/TeacherCalendar.dart';
+import 'package:frontend/models/teachermodel.dart';
 
 class TeacherHomeScreen extends StatelessWidget {
-  const TeacherHomeScreen({super.key});
-
+  // const TeacherHomeScreen({super.key});
+  const TeacherHomeScreen({Key? key, required this.userId}) : super(key: key);
   //final user = FirebaseAuth.instance.currentUser!;
+  final String userId;
 
   void UserLogOut() {
     FirebaseAuth.instance.signOut();
@@ -96,7 +98,8 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherAssignment()),
+                                  builder: (context) =>
+                                      TeacherAddNewAssi(userId: userId)),
                             );
                           },
                           icon: 'asset/icons/assignment.svg',
@@ -159,8 +162,6 @@ class TeacherHomeScreen extends StatelessWidget {
           ),
         ],
       ),
-
-      //body: Center(child: Text("Welcome back " + user.email!)),
     );
   }
 }

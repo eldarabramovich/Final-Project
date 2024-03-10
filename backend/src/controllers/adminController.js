@@ -106,53 +106,35 @@ const addAdmin = async (req, res) => {
 
 
 const addTeacher = async (req, res) => {
-    const { username , password , fullname, subject, email , classname  } = req.body; 
+    const { username , password , fullname, email , classes  } = req.body; 
 
-    if(!username || !subject || !email || !password || !fullname || !classname){
+    if(!username || !email || !password || !fullname || !classes){
         res.status(500).send("missing data !");
+    }
+
+    for (const cls of classes) {
+        if (!cls.classname || !cls.subject) {
+            return res.status(400).send("Missing classname or subject in classes array");
+        }
     }
     
     try {
         const db = admin.firestore();
         const batch = db.batch();
         const teacherRef = db.collection('teachers').doc(); 
-        const subjectsQuerySnapshot = await db.collection('subjects')
-            .where('className', '==', classname)
-            .where('subject', '==', subject)
-            .get();
 
-        
-        
-        if (subjectsQuerySnapshot.empty) {
-            return res.status(404).send('Subject not found for the provided class');
-        }
-
-
-
-        
-        const objectdata = {
-            subjectname:subject,
-            subjectid:subjectsQuerySnapshot.id// instad of username it need to be the suject.id 
-        }
-
-        const teacherdata = {
-            teacaherID : teacherRef.id,
-            fullname
-        };
-
-        subjectsQuerySnapshot.docs.forEach(doc => {
-            batch.update(doc.ref, {
-                teacher: teacherdata
-            });
-        });
 
         await teacherRef.set({
+            teacaherID : teacherRef.id,
+            fullname,
             username,
             password,
-            subjects:objectdata,
-            fullname,
             email,
             role:"teacher",
+            classes: classes.map((cls) => ({
+                classname: cls.classname,
+                subject: cls.subject
+            }))
         });
 
         await batch.commit();
@@ -167,20 +149,19 @@ const addTeacher = async (req, res) => {
 
 
 const addStudent = async (req, res) => {
-    const { username , password , fullname ,grade , classname } = req.body; // Example fields
-    if(!username || !password || !fullname || !grade || !classname ){
+    const { username , password , fullname , classname } = req.body; // Example fields
+    if(!username || !password || !fullname || !classname ){
         res.status(500).send("missing data !");
     }
     try {
         const db = admin.firestore();
-        const studentRef = db.collection('users').doc(); // Create a new doc in 'students' collection
+        const studentRef = db.collection('students').doc(); // Create a new doc in 'students' collection
         await studentRef.set({
             username,
             password,
             fullname,
             classname,
             role:"student",
-            assignment:[]
         });
         res.status(200).send('Student added successfully');
     } catch (error) {
@@ -189,6 +170,41 @@ const addStudent = async (req, res) => {
     }
 };
 
-
  module.exports = { addStudent ,addTeacher , addAdmin,addAssignmentToSubject,addClasswithsubject};
+
+ //_______________________old add teacher___
+ 
+// const addTeacher = async (req, res) => {
+//     const { username , password , fullname, subject, email , classname  } = req.body; 
+
+//     if(!username || !subject || !email || !password || !fullname || !classname){
+//         res.status(500).send("missing data !");
+//     }
+    
+//     try {
+//         const db = admin.firestore();
+//         const batch = db.batch();
+//         const teacherRef = db.collection('teachers').doc(); 
+
+
+//         await teacherRef.set({
+//             teacaherID : teacherRef.id,
+//             fullname,
+//             username,
+//             password,
+//             subject,
+//             classname,
+//             email,
+//             role:"teacher",
+//         });
+
+//         await batch.commit();
+
+//         res.status(200).send('Teacher added successfully');
+
+//     } catch (error) {
+//         console.error("Error adding teacher: ", error);
+//         res.status(500).send("Error adding teacher");
+//     }
+// };
 

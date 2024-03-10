@@ -15,9 +15,8 @@ app.use(cors());
 app.use(express.json());
 app.use('/', adminRoutes);
 app.use('/auth', authRoutes);
-app.use('/students', studentRoutes);
-// app.use('/', studentRoutes);
-// app.use('/', teacherRoutes);
+app.use('/student', studentRoutes);
+app.use('/teacher', teacherRoutes);
 // app.use('/', parentRoutes);
 app.use((err, req, res, next) => {
     console.error(err.stack);
