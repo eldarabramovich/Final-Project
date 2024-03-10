@@ -23,31 +23,42 @@ const AddAssigment = async (req,res) =>{
 }
 
 
+const SendMessageToClass = async (req, res) => {
+  const { classname, description } = req.body;
 
- 
-const SendMessageToClass = async (req,res) =>{
+  if (!classname || !description) {
+    return res.status(400).send('Classname and description are required.');
+  }
 
-  const { classname , description } = req.body;
-
-  const db = admin.firestore();
-  const messagesRef = db.collection('messages').doc();
   try {
-    const newMessages = {
-      classname,
+    const db = admin.firestore();
+    // Query for the class document by classname
+    const classQuerySnapshot = await db.collection('classes').where('classname', '==', classname).get();
+
+    if (classQuerySnapshot.empty) {
+      return res.status(404).send('Class not found.');
+    }
+
+    // Assuming there is only one document for each class
+    const classDoc = classQuerySnapshot.docs[0];
+
+    // Create a new message object with a server timestamp
+    const newMessage = {
       description,
-      date,
+      date: new Date(), // Gets the current server time
     };
 
-    await db.collection('messages').add(newMessages);
-    res.status(200).send('Message send successfully');
+    // Update the class document with the new message
+    await db.collection('classes').doc(classDoc.id).update({
+      messages: admin.firestore.FieldValue.arrayUnion(newMessage)
+    });
+
+    res.status(200).send('Message sent successfully');
   } catch (error) {
     console.error('Error sending message:', error);
     res.status(500).send('Error adding message');
   }
-
-}
-
-
+};
 
 
 
