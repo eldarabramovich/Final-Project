@@ -149,20 +149,19 @@ const addTeacher = async (req, res) => {
 
 
 const addStudent = async (req, res) => {
-    const { username , password , fullname ,grade , classname } = req.body; // Example fields
-    if(!username || !password || !fullname || !grade || !classname ){
+    const { username , password , fullname , classname } = req.body; // Example fields
+    if(!username || !password || !fullname || !classname ){
         res.status(500).send("missing data !");
     }
     try {
         const db = admin.firestore();
-        const studentRef = db.collection('users').doc(); // Create a new doc in 'students' collection
+        const studentRef = db.collection('students').doc(); // Create a new doc in 'students' collection
         await studentRef.set({
             username,
             password,
             fullname,
             classname,
             role:"student",
-            assignment:[]
         });
         res.status(200).send('Student added successfully');
     } catch (error) {

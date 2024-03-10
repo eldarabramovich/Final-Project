@@ -123,7 +123,7 @@ class AdminHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AdminAddStudent()),
+                                  builder: (context) => AddStudentPage()),
                             );
                           },
                           icon: '',
