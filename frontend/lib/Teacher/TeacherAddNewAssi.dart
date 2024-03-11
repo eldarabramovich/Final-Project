@@ -27,7 +27,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   }
 
   Future<void> _fetchTeacherData() async {
-    var url = Uri.parse('http://192.168.40.1:3000/teacher/${widget.userId}');
+    var url = Uri.parse('http://10.0.0.14:3000/teacher/${widget.userId}');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
@@ -46,7 +46,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
 
   Future<void> _submitAssignment() async {
     if (_formKey.currentState!.validate()) {
-      var url = Uri.parse('http://192.168.40.1:3000/teacher/addassi');
+      var url = Uri.parse('http://10.0.0.138:3000/teacher/addassi');
       var response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -75,7 +75,14 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Assignment'),
+        title: Text(
+          'הוספת מטלה',
+          style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+        ),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: _teacher == null
           ? Center(child: CircularProgressIndicator())
@@ -85,6 +92,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
+                    SizedBox(height: 25.0),
                     DropdownButtonFormField<String>(
                       value: _selectedClassname,
                       onChanged: (newValue) {
@@ -101,11 +109,36 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                                 child: Text(cls.classname),
                               ))
                           .toList(),
-                      decoration: InputDecoration(labelText: 'Class'),
+                      decoration: InputDecoration(
+                        labelText: 'Class',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blueGrey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.grey.shade100,
+                        filled: true,
+                      ),
                     ),
+                    SizedBox(height: 17.0),
                     TextFormField(
                       controller: _descriptionController,
-                      decoration: InputDecoration(labelText: 'Description'),
+                      decoration: InputDecoration(
+                        labelText: 'Description',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blueGrey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.grey.shade100,
+                        filled: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a description';
@@ -113,9 +146,22 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                         return null;
                       },
                     ),
+                    SizedBox(height: 17.0),
                     TextFormField(
                       controller: _lastDateController,
-                      decoration: InputDecoration(labelText: 'Last Date'),
+                      decoration: InputDecoration(
+                        labelText: 'Last Date',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blueGrey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.grey.shade100,
+                        filled: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a last date';
@@ -123,9 +169,20 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                         return null;
                       },
                     ),
+                    SizedBox(height: 20.0),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue, // Text color
+                      ),
                       onPressed: _submitAssignment,
-                      child: Text('Submit Assignment'),
+                      child: Text(
+                        'שלח משימה',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),

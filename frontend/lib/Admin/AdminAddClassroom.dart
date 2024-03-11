@@ -16,16 +16,28 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Classroom'),
+        title: const Text(
+          'הוספת כיתה חדשה',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            /*
+            
+            */
+            SizedBox(height: 17.0),
             TextField(
               controller: _classNameController,
-              decoration: const InputDecoration(labelText: 'Classroom Name'),
+              decoration: const InputDecoration(
+                labelText: 'Classroom Name',
+              ),
             ),
             const SizedBox(height: 16.0),
             const Text('Subjects:'),
@@ -65,7 +77,11 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
                 // Navigate back to previous screen
                 Navigator.pop(context);
               },
-              child: const Text('Save Classroom'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue, // Text color
+              ),
+              child: const Text('שמור כיתה'),
             ),
           ],
         ),
@@ -78,7 +94,7 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
     List<String> subjects = _subjects;
 
     var url = Uri.parse(
-        'http://10.100.102.3:3000/admin/addclasubj'); // Replace with your actual endpoint
+        'http://10.0.0.14:3000/admin/addclasubj'); // Replace with your actual endpoint
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -87,8 +103,8 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
 
     if (response.statusCode == 200) {
       // Successfully added the class
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Class added successfully')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Class added successfully')));
     } else {
       // Error adding the class
       print('Response status: ${response.statusCode}');

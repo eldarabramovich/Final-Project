@@ -45,3 +45,9 @@ flutter:
     - asset/icons/timetable.svg
     - asset/icons/check.svg
     - asset/icons/profile.svg
+    - asset/icons/checklist.svg
+    - asset/icons/classroom.svg
+    - asset/icons/parent.svg
+    - asset/icons/student.svg
+    - asset/icons/teacher.svg
+    
