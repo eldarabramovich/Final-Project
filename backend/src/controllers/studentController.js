@@ -2,13 +2,27 @@ const admin = require('firebase-admin');
 
 
 
-
-
-
-const GetMessageByClassname = async (req, res) => {
+const getStudentData = async (req, res) => {
+  const userId = req.params.userId;
 
   try {
-    const className = req.query.classname;
+    const teacherRef = admin.firestore().collection('students').doc(userId);
+    const doc = await teacherRef.get();
+
+    if (doc.exists) {
+      res.status(200).json(doc.data());
+    } else {
+      res.status(404).send('student not found');
+    }
+  } catch (error) {
+    console.error('Error student teacher data:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+const GetMessageByClassname = async (req, res) => {
+  try {
+    const classname = req.params.classname; // Changed from req.query.classname to req.params.classname
     const db = admin.firestore();
 
     const classQuerySnapshot = await db.collection('classes')
@@ -20,7 +34,7 @@ const GetMessageByClassname = async (req, res) => {
     }
 
     // Assuming there is only one class with this classname
-    const classRef = classQuerySnapshot.docs[0].ref;
+    const classDoc = classQuerySnapshot.docs[0];
 
     if (!classDoc.exists) {
       return res.status(404).send("Class not found");
@@ -28,13 +42,11 @@ const GetMessageByClassname = async (req, res) => {
     const classData = classDoc.data();
     const messages = classData.messages || []; // Default to an empty array if messages field is missing
     res.status(200).json(messages);
-     } catch (error) {
-    console.error('Error fetching assignments:', error);
-    res.status(500).send('Error fetching assignments');
+  } catch (error) {
+    console.error('Error fetching messages:', error); // Corrected the error message to 'messages' instead of 'assignments'
+    res.status(500).send('Error fetching messages');
   }
 }
-
-
 
 
 
@@ -110,4 +122,4 @@ const GetAssignById = async (req, res) => {
 //   }
 
 
-  module.exports = {GetAssignById,GetMessageByClassname};
+  module.exports = {GetAssignById,GetMessageByClassname,getStudentData};
