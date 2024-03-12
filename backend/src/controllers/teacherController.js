@@ -1,5 +1,42 @@
 const admin = require('firebase-admin');
 
+
+const AddAttendance = async (req, res) => {
+  const { classname, subjectname, students, presdate } = req.body;
+
+  if (!classname || !subjectname || !students || students.length === 0 || !presdate) {
+    return res.status(400).send("Missing data!");
+  }
+
+  try {
+    const db = admin.firestore();
+    const attendanceRef = db.collection('attendance').doc();
+
+    await attendanceRef.set({
+      classname,
+      subjectname,
+      students,
+      presdate,
+    });
+
+    res.status(200).send('Attendance added successfully');
+  } catch (error) {
+    console.error('Error adding attendance:', error);
+    res.status(500).send('Error adding attendance');
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
 const AddAssigment = async (req,res) =>{
     const { classname, subjectname, description, lastDate } = req.body;
     const db = admin.firestore();
@@ -118,4 +155,4 @@ const getTeacherData = async (req, res) => {
 };
 
 
-module.exports = {AddAssigment,getTeacherData,SendMessageToClass ,GetStudentByClass};
+module.exports = {AddAssigment,getTeacherData,SendMessageToClass ,GetStudentByClass,AddAttendance};
