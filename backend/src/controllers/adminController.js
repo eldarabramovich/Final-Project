@@ -35,6 +35,7 @@ const addClasswithsubject = async (req, res) => {
         // Add the class with the references to the subjects
         batch.set(classRef, {
             classname,
+            messages:[],
             subjects: subjectRefs.map(ref => ref.id) // Store only the IDs of the subject documents
         });
 

@@ -126,7 +126,7 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherMessages()),
+                                  builder: (context) => TeacherSendMessage(userId: userId)),
                             );
                           },
                           icon: 'asset/icons/chat.svg',

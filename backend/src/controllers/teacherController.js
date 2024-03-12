@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+
 const AddAssigment = async (req,res) =>{
     const { classname, subjectname, description, lastDate } = req.body;
     const db = admin.firestore();
@@ -21,6 +22,64 @@ const AddAssigment = async (req,res) =>{
 
 }
 
+
+const SendMessageToClass = async (req, res) => {
+  const { classname, description } = req.body;
+
+  if (!classname || !description) {
+    return res.status(400).send('Classname and description are required.');
+  }
+
+  try {
+    const db = admin.firestore();
+    // Query for the class document by classname
+    const classQuerySnapshot = await db.collection('classes').where('classname', '==', classname).get();
+
+    if (classQuerySnapshot.empty) {
+      return res.status(404).send('Class not found.');
+    }
+
+    // Assuming there is only one document for each class
+    const classDoc = classQuerySnapshot.docs[0];
+
+    // Create a new message object with a server timestamp
+    const newMessage = {
+      description,
+      date: new Date(), // Gets the current server time
+    };
+
+    // Update the class document with the new message
+    await db.collection('classes').doc(classDoc.id).update({
+      messages: admin.firestore.FieldValue.arrayUnion(newMessage)
+    });
+
+    res.status(200).send('Message sent successfully');
+  } catch (error) {
+    console.error('Error sending message:', error);
+    res.status(500).send('Error adding message');
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const getTeacherData = async (req, res) => {
   const userId = req.params.userId;
 
@@ -39,4 +98,5 @@ const getTeacherData = async (req, res) => {
   }
 };
 
-module.exports = {AddAssigment,getTeacherData };
+
+module.exports = {AddAssigment,getTeacherData,SendMessageToClass };
