@@ -63,10 +63,29 @@ const SendMessageToClass = async (req, res) => {
 
 
 
+const GetStudentByClass = async (req, res) => {
+  const classname = req.params.classname;
+  const db = admin.firestore();
+  if (!classname) {
+    return res.status(400).send('Classname is required.');
+  }
 
+  try {
+    // Fetch student documents where classname matches the provided value
+    const studentDocs = await db.collection('students').where('classname', '==', classname).get();
 
+    if (studentDocs.empty) {
+      return res.status(404).json({ error: 'No students found for the given class' });
+    }
 
+    const students = studentDocs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
+    res.json(students);
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    res.status(500).json({ error: 'An error occurred while fetching students' });
+  }
+}
 
 
 
@@ -99,4 +118,4 @@ const getTeacherData = async (req, res) => {
 };
 
 
-module.exports = {AddAssigment,getTeacherData,SendMessageToClass };
+module.exports = {AddAssigment,getTeacherData,SendMessageToClass ,GetStudentByClass};
