@@ -25,7 +25,7 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
   }
 
   Future<void> _fetchTeacherData() async {
-    var url = Uri.parse('http://192.168.40.1:3000/teacher/${widget.userId}');
+    var url = Uri.parse('http://10.0.0.14:3000/teacher/${widget.userId}');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
@@ -44,7 +44,7 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
   Future<void> _sendMessage() async {
     if (_formKey.currentState!.validate()) {
       // TODO: Replace with your actual endpoint
-      var url = Uri.parse('http://192.168.40.1:3000/teacher/addmess');
+      var url = Uri.parse('http://10.0.0.14:3000/teacher/addmess');
       var response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -71,7 +71,14 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Send Message to Class'),
+        title: Text(
+          'שליחת הודעה לכיתה',
+          style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+        ),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: _teacher == null
           ? Center(child: CircularProgressIndicator())
@@ -94,12 +101,36 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
                                 child: Text(cls.classname),
                               ))
                           .toList(),
-                      decoration: InputDecoration(labelText: 'Class'),
+                      decoration: InputDecoration(
+                        labelText: 'כיתה',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blueGrey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.grey.shade100,
+                        filled: true,
+                      ),
                     ),
+                    SizedBox(height: 17.0),
                     TextFormField(
                       controller: _descriptionController,
-                      decoration:
-                          InputDecoration(labelText: 'Message Description'),
+                      decoration: InputDecoration(
+                        labelText: 'תיאור הודעה',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blueGrey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.grey.shade100,
+                        filled: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a description for the message';
@@ -110,8 +141,18 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue, // Text color
+                      ),
                       onPressed: _sendMessage,
-                      child: Text('Send Message'),
+                      child: Text(
+                        'שלח הודעה',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),

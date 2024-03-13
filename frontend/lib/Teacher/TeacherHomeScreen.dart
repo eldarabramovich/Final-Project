@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/Teacher/TeacherPresence%20.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'TeacherAssignment.dart';
@@ -126,7 +127,8 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherSendMessage(userId: userId)),
+                                  builder: (context) =>
+                                      TeacherSendMessage(userId: userId)),
                             );
                           },
                           icon: 'asset/icons/chat.svg',
@@ -148,6 +150,17 @@ class TeacherHomeScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherPresence()),
+                            );
+                          },
+                          icon: 'asset/icons/check.svg',
+                          title: "נוחכות",
+                        ),
                         HomeCard(
                           onPress: () {},
                           icon: 'asset/icons/profile.svg',

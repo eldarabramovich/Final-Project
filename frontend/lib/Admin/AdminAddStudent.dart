@@ -15,7 +15,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
   final _classnameController = TextEditingController();
 
   Future<void> _addStudent() async {
-    var url = Uri.parse('http://10.100.102.3:3000/admin/addstudent');
+    var url = Uri.parse('http://10.0.0.14:3000/admin/addstudent');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -44,7 +44,14 @@ class _AddStudentPageState extends State<AddStudentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Student'),
+        title: Text(
+          'הוספת תלמיד',
+          style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+        ),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: Form(
         key: _formKey,
@@ -52,9 +59,22 @@ class _AddStudentPageState extends State<AddStudentPage> {
           padding: const EdgeInsets.all(16.0),
           child: ListView(
             children: [
+              SizedBox(height: 17.0),
               TextFormField(
                 controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
+                decoration: InputDecoration(
+                  labelText: 'Username',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueGrey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  fillColor: Colors.grey.shade100,
+                  filled: true,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a username';
@@ -62,10 +82,23 @@ class _AddStudentPageState extends State<AddStudentPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueGrey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  fillColor: Colors.grey.shade100,
+                  filled: true,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a password';
@@ -73,9 +106,22 @@ class _AddStudentPageState extends State<AddStudentPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _fullnameController,
-                decoration: InputDecoration(labelText: 'Full Name'),
+                decoration: InputDecoration(
+                  labelText: 'Full Name',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueGrey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  fillColor: Colors.grey.shade100,
+                  filled: true,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the full name';
@@ -83,9 +129,22 @@ class _AddStudentPageState extends State<AddStudentPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _classnameController,
-                decoration: InputDecoration(labelText: 'Class'),
+                decoration: InputDecoration(
+                  labelText: 'Class',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueGrey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  fillColor: Colors.grey.shade100,
+                  filled: true,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a class';
@@ -93,14 +152,25 @@ class _AddStudentPageState extends State<AddStudentPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 25.0),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue, // Text color
+                ),
                 onPressed: () {
                   // Only save if the form is valid
                   if (_formKey.currentState!.validate()) {
                     _addStudent();
                   }
                 },
-                child: Text('Add Student'),
+                child: Text(
+                  'שמור תלמיד',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
