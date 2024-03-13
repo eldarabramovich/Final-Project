@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'TeacherAssignment.dart';
 import 'TeacherGrade.dart';
+import 'package:frontend/Teacher/TecherAttendance%20.dart';
 import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/TeacherMessages.dart';
 import 'package:frontend/Teacher/TeacherCalendar.dart';
@@ -126,11 +126,24 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherSendMessage(userId: userId)),
+                                  builder: (context) =>
+                                      TeacherSendMessage(userId: userId)),
                             );
                           },
                           icon: 'asset/icons/chat.svg',
                           title: "הודעות",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      TeacherAttendancePage(userId: userId)),
+                            );
+                          },
+                          icon: 'asset/icons/chat.svg',
+                          title: "נוחכות",
                         ),
                         HomeCard(
                           onPress: () {

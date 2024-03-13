@@ -2,9 +2,9 @@ const admin = require('firebase-admin');
 
 
 const AddAttendance = async (req, res) => {
-  const { classname, subjectname, students, presdate } = req.body;
+  const { classname, subjectname, students } = req.body;
 
-  if (!classname || !subjectname || !students || students.length === 0 || !presdate) {
+  if (!classname || !subjectname || !students || students.length === 0 ) {
     return res.status(400).send("Missing data!");
   }
 
@@ -16,7 +16,7 @@ const AddAttendance = async (req, res) => {
       classname,
       subjectname,
       students,
-      presdate,
+      presdate:"20.4.2024",
     });
 
     res.status(200).send('Attendance added successfully');
