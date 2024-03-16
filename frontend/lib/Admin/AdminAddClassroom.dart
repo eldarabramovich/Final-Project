@@ -3,14 +3,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AdminAddClassroom extends StatefulWidget {
+  const AdminAddClassroom({super.key});
+
   @override
   _AdminAddClassroomState createState() => _AdminAddClassroomState();
 }
 
 class _AdminAddClassroomState extends State<AdminAddClassroom> {
-  TextEditingController _classNameController = TextEditingController();
-  TextEditingController _subjectController = TextEditingController();
-  List<String> _subjects = [];
+  final TextEditingController _classNameController = TextEditingController();
+  final TextEditingController _subjectController = TextEditingController();
+  final List<String> _subjects = [];
 
   @override
   Widget build(BuildContext context) {

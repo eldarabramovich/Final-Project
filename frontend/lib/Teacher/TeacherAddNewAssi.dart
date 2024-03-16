@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:frontend/models/assigmentmodel.dart';
 import 'package:frontend/models/teachermodel.dart';
 
 class TeacherAddNewAssi extends StatefulWidget {
@@ -39,7 +37,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch teacher data')),
+        const SnackBar(content: Text('Failed to fetch teacher data')),
       );
     }
   }
@@ -60,12 +58,12 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Assignment added successfully')),
+          const SnackBar(content: Text('Assignment added successfully')),
         );
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error adding assignment')),
+          const SnackBar(content: Text('Error adding assignment')),
         );
       }
     }
@@ -75,10 +73,10 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Assignment'),
+        title: const Text('Add Assignment'),
       ),
       body: _teacher == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Form(
               key: _formKey,
               child: Padding(
@@ -101,11 +99,11 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                                 child: Text(cls.classname),
                               ))
                           .toList(),
-                      decoration: InputDecoration(labelText: 'Class'),
+                      decoration: const InputDecoration(labelText: 'Class'),
                     ),
                     TextFormField(
                       controller: _descriptionController,
-                      decoration: InputDecoration(labelText: 'Description'),
+                      decoration: const InputDecoration(labelText: 'Description'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a description';
@@ -115,7 +113,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                     ),
                     TextFormField(
                       controller: _lastDateController,
-                      decoration: InputDecoration(labelText: 'Last Date'),
+                      decoration: const InputDecoration(labelText: 'Last Date'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a last date';
@@ -125,7 +123,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                     ),
                     ElevatedButton(
                       onPressed: _submitAssignment,
-                      child: Text('Submit Assignment'),
+                      child: const Text('Submit Assignment'),
                     ),
                   ],
                 ),

@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AddStudentPage extends StatefulWidget {
+  const AddStudentPage({super.key});
+
   @override
   _AddStudentPageState createState() => _AddStudentPageState();
 }
@@ -29,13 +31,13 @@ class _AddStudentPageState extends State<AddStudentPage> {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Student added successfully')),
+        const SnackBar(content: Text('Student added successfully')),
       );
       // Navigate back to the home screen
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add student')),
+        const SnackBar(content: Text('Failed to add student')),
       );
     }
   }
@@ -44,7 +46,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Student'),
+        title: const Text('Add Student'),
       ),
       body: Form(
         key: _formKey,
@@ -54,7 +56,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
             children: [
               TextFormField(
                 controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
+                decoration: const InputDecoration(labelText: 'Username'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a username';
@@ -65,7 +67,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a password';
@@ -75,7 +77,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
               ),
               TextFormField(
                 controller: _fullnameController,
-                decoration: InputDecoration(labelText: 'Full Name'),
+                decoration: const InputDecoration(labelText: 'Full Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the full name';
@@ -85,7 +87,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
               ),
               TextFormField(
                 controller: _classnameController,
-                decoration: InputDecoration(labelText: 'Class'),
+                decoration: const InputDecoration(labelText: 'Class'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a class';
@@ -100,7 +102,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
                     _addStudent();
                   }
                 },
-                child: Text('Add Student'),
+                child: const Text('Add Student'),
               ),
             ],
           ),

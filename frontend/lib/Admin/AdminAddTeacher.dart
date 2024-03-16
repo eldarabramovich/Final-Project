@@ -1,49 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AdminAddTeacher extends StatefulWidget {
+  const AdminAddTeacher({super.key});
+
   @override
   _AdminAddTeacher createState() => _AdminAddTeacher();
 }
 
 class _AdminAddTeacher extends State<AdminAddTeacher> {
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _fullNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  List<Map<String, String>> _selectedClassesSubjects = [];
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final List<Map<String, String>> _selectedClassesSubjects = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Teacher'),
+        title: const Text('Add Teacher'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
+              decoration: const InputDecoration(labelText: 'Username'),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
             TextField(
               controller: _fullNameController,
-              decoration: InputDecoration(labelText: 'Full Name'),
+              decoration: const InputDecoration(labelText: 'Full Name'),
             ),
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            SizedBox(height: 16.0),
-            Text('Select Classes and Subjects:'),
+            const SizedBox(height: 16.0),
+            const Text('Select Classes and Subjects:'),
             Wrap(
               children: List<Widget>.generate(
                 _selectedClassesSubjects.length,
@@ -62,12 +63,12 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
               onPressed: () {
                 _showClassSubjectDialog();
               },
-              child: Text('Add Class and Subject'),
+              child: const Text('Add Class and Subject'),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _saveTeacher,
-              child: Text('Save Teacher'),
+              child: const Text('Save Teacher'),
             ),
           ],
         ),
@@ -83,17 +84,17 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Class and Subject'),
+          title: const Text('Add Class and Subject'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: classController,
-                decoration: InputDecoration(labelText: 'Class Name'),
+                decoration: const InputDecoration(labelText: 'Class Name'),
               ),
               TextField(
                 controller: subjectController,
-                decoration: InputDecoration(labelText: 'Subject'),
+                decoration: const InputDecoration(labelText: 'Subject'),
               ),
             ],
           ),
@@ -108,7 +109,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
                 });
                 Navigator.pop(context);
               },
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
           ],
         );
@@ -139,7 +140,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
     if (response.statusCode == 200) {
       // Teacher added successfully
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Teacher added successfully')));
+          .showSnackBar(const SnackBar(content: Text('Teacher added successfully')));
       Navigator.pop(context); // Navigate back to the previous screen
     } else {
       // Error adding teacher

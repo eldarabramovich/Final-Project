@@ -10,7 +10,6 @@ import 'package:frontend/Teacher/TecherAttendance%20.dart';
 import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/TeacherMessages.dart';
 import 'package:frontend/Teacher/TeacherCalendar.dart';
-import 'package:frontend/models/teachermodel.dart';
 
 class TeacherHomeScreen extends StatelessWidget {
   // const TeacherHomeScreen({super.key});
@@ -54,7 +53,7 @@ class TeacherHomeScreen extends StatelessWidget {
                         Text(
                           " Welcome Teacher ",
                           style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -62,7 +61,7 @@ class TeacherHomeScreen extends StatelessWidget {
                         Text(
                           "שלום",
                           style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
                                     fontWeight: FontWeight.normal,
                                     color: Colors.white,
                                   ),

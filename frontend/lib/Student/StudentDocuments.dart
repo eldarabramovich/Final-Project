@@ -7,10 +7,10 @@ class StudentDocuments extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("מסמכים"),
+        title: const Text("מסמכים"),
         backgroundColor: Colors.blue.shade800,
       ),
-      body: Center(
+      body: const Center(
         child: Text("זה מסך של מסמכים"),
       ),
     );

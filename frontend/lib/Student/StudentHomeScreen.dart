@@ -53,7 +53,7 @@ class HomeScreen extends StatelessWidget {
                         Text(
                           "  Welcome Student ",
                           style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                         Text(
                           "",
                           style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
                                     fontWeight: FontWeight.normal,
                                     color: Colors.white,
                                   ),
