@@ -36,7 +36,7 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch teacher data')),
+        const SnackBar(content: Text('Failed to fetch teacher data')),
       );
     }
   }
@@ -56,12 +56,12 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Message sent successfully')),
+          const SnackBar(content: Text('Message sent successfully')),
         );
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error sending message')),
+          const SnackBar(content: Text('Error sending message')),
         );
       }
     }
@@ -71,10 +71,10 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Send Message to Class'),
+        title: const Text('Send Message to Class'),
       ),
       body: _teacher == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Form(
               key: _formKey,
               child: Padding(
@@ -94,12 +94,12 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
                                 child: Text(cls.classname),
                               ))
                           .toList(),
-                      decoration: InputDecoration(labelText: 'Class'),
+                      decoration: const InputDecoration(labelText: 'Class'),
                     ),
                     TextFormField(
                       controller: _descriptionController,
                       decoration:
-                          InputDecoration(labelText: 'Message Description'),
+                          const InputDecoration(labelText: 'Message Description'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a description for the message';
@@ -108,10 +108,10 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
                       },
                       maxLines: 5, // Allow for multiple lines of input
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _sendMessage,
-                      child: Text('Send Message'),
+                      child: const Text('Send Message'),
                     ),
                   ],
                 ),

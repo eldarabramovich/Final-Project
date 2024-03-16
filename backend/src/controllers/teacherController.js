@@ -18,7 +18,7 @@ const AddAttendance = async (req, res) => {
       students,
       presdate:"20.4.2024",
     });
-
+    console.error(' adding attendance sucseful:');
     res.status(200).send('Attendance added successfully');
   } catch (error) {
     console.error('Error adding attendance:', error);
@@ -144,6 +144,7 @@ const getTeacherData = async (req, res) => {
     const doc = await teacherRef.get();
 
     if (doc.exists) {
+      console.error('Find teacher data !');
       res.status(200).json(doc.data());
     } else {
       res.status(404).send('Teacher not found');

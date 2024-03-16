@@ -137,18 +137,6 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      TeacherAttendancePage(userId: userId)),
-                            );
-                          },
-                          icon: 'asset/icons/chat.svg',
-                          title: "נוחכות",
-                        ),
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
                                   builder: (context) => TeacherCalendar()),
                             );
                           },
@@ -160,6 +148,19 @@ class TeacherHomeScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      TeacherClassSubjectSelectionPage(
+                                          userId: userId)),
+                            );
+                          },
+                          icon: 'asset/icons/chat.svg',
+                          title: "נוחכות",
+                        ),
                         HomeCard(
                           onPress: () {},
                           icon: 'asset/icons/profile.svg',
