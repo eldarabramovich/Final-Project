@@ -8,6 +8,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'TeacherAssignment.dart';
 import 'TeacherGrade.dart';
+
+import 'package:frontend/Teacher/TeacherFiles.dart';
+
 import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/TeacherMessages.dart';
 import 'package:frontend/Teacher/TeacherCalendar.dart';
@@ -57,14 +60,6 @@ class TeacherHomeScreen extends StatelessWidget {
                           style:
                               Theme.of(context).textTheme.subtitle1!.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                        ),
-                        Text(
-                          "שלום",
-                          style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
-                                    fontWeight: FontWeight.normal,
                                     color: Colors.white,
                                   ),
                         ),
@@ -162,9 +157,15 @@ class TeacherHomeScreen extends StatelessWidget {
                           title: "נוחכות",
                         ),
                         HomeCard(
-                          onPress: () {},
-                          icon: 'asset/icons/profile.svg',
-                          title: "Profile",
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherFiles()),
+                            );
+                          },
+                          icon: 'asset/icons/document.svg',
+                          title: "מסמכים",
                         ),
                       ],
                     ),

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:frontend/Teacher/StudentListPage.dart';
 //import 'student_list_page.dart'; // Import the student list page file
@@ -60,7 +62,7 @@ class TeacherPresence extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Class: $className',
+                            'כיתה: $className',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -69,7 +71,7 @@ class TeacherPresence extends StatelessWidget {
                           ),
                           SizedBox(height: 5),
                           Text(
-                            'Subjects:',
+                            'נושא:',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
@@ -79,7 +81,7 @@ class TeacherPresence extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: subjects.map<Widget>((subject) {
                               return Text(
-                                ' - $subject',
+                                ' $subject',
                                 textAlign: TextAlign.right,
                               );
                             }).toList(),
