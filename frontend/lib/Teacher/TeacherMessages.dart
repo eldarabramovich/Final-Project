@@ -25,7 +25,7 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
   }
 
   Future<void> _fetchTeacherData() async {
-    var url = Uri.parse('http://192.168.40.1:3000/teacher/${widget.userId}');
+    var url = Uri.parse('http://10.100.102.3:3000/teacher/${widget.userId}');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
@@ -98,8 +98,8 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
                     ),
                     TextFormField(
                       controller: _descriptionController,
-                      decoration:
-                          const InputDecoration(labelText: 'Message Description'),
+                      decoration: const InputDecoration(
+                          labelText: 'Message Description'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a description for the message';

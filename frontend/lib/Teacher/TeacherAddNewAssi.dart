@@ -25,7 +25,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   }
 
   Future<void> _fetchTeacherData() async {
-    var url = Uri.parse('http://192.168.40.1:3000/teacher/${widget.userId}');
+    var url = Uri.parse('http://10.100.102.3:3000/teacher/${widget.userId}');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
@@ -103,7 +103,8 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                     ),
                     TextFormField(
                       controller: _descriptionController,
-                      decoration: const InputDecoration(labelText: 'Description'),
+                      decoration:
+                          const InputDecoration(labelText: 'Description'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a description';
