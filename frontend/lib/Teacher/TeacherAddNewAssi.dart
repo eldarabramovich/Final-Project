@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// import 'package:file_picker/file_picker.dart';
 import 'package:frontend/models/teachermodel.dart';
 
 class TeacherAddNewAssi extends StatefulWidget {
@@ -25,7 +28,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   }
 
   Future<void> _fetchTeacherData() async {
-    var url = Uri.parse('http://10.100.102.3:3000/teacher/${widget.userId}');
+    var url = Uri.parse('http://192.168.40.1:3000/teacher/${widget.userId}');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {

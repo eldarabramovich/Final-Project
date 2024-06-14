@@ -17,6 +17,7 @@ class TeacherHomeScreen extends StatelessWidget {
   //final user = FirebaseAuth.instance.currentUser!;
   final String userId;
 
+  // ignore: non_constant_identifier_names
   void UserLogOut() {
     FirebaseAuth.instance.signOut();
   }

@@ -108,12 +108,12 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
     );
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Attendance added successfully')),
+        const SnackBar(content: Text('Attendance added successfully')),
       );
       Navigator.pop(context); // Navigate back to the previous page
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error adding attendance')),
+        const SnackBar(content: Text('Error adding attendance')),
       );
     }
   }
@@ -126,7 +126,7 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
             Text('Mark Attendance for ${widget.classname} - ${widget.subject}'),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: const CircularProgressIndicator())
           : ListView.builder(
               itemCount: _students.length,
               itemBuilder: (context, index) {
@@ -145,7 +145,7 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _submitAttendance,
-        child: Icon(Icons.save),
+        child: const Icon(Icons.save),
       ),
     );
   }

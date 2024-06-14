@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:frontend/models/teachermodel.dart';
 import 'package:frontend/Teacher/TeacherAttendancePage.dart';
@@ -64,10 +65,10 @@ class _TeacherClassSubjectSelectionPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Class and Subject'),
+        title: const Text('Select Class and Subject'),
       ),
       body: _teacher == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 DropdownButtonFormField<String>(
@@ -84,13 +85,13 @@ class _TeacherClassSubjectSelectionPageState
                             child: Text(cls.classname),
                           ))
                       .toList(),
-                  decoration: InputDecoration(labelText: 'Class'),
+                  decoration: const InputDecoration(labelText: 'Class'),
                 ),
                 // Display selected subject
                 Text('Subject: $_selectedSubject'),
                 ElevatedButton(
                   onPressed: _navigateToAttendancePage,
-                  child: Text('Continue to Attendance'),
+                  child: const Text('Continue to Attendance'),
                 ),
               ],
             ),

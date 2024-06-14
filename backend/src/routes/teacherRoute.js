@@ -1,6 +1,8 @@
-const express = require('express');
-const { AddAssigment ,getTeacherData ,SendMessageToClass,GetStudentByClass,AddAttendance} = require('../controllers/teacherController.js');
 const router = express.Router();
+const { AddAssigment ,getTeacherData ,SendMessageToClass,GetStudentByClass,AddAttendance} = require('../controllers/teacherController.js');
+
+//הקמת תת כיתה והוספת תלמידים ומקצועות
+//
 router.post('/addassi',AddAssigment);
 router.post('/addatte',AddAttendance);
 router.get('/:userId', getTeacherData);

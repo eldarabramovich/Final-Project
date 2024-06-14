@@ -80,7 +80,7 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
     List<String> subjects = _subjects;
 
     var url = Uri.parse(
-        'http://10.100.102.3:3000/admin/addclasubj'); // Replace with your actual endpoint
+        'http://192.168.40.1:3000/admin/addclasubj'); // Replace with your actual endpoint
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -89,8 +89,8 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
 
     if (response.statusCode == 200) {
       // Successfully added the class
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Class added successfully')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Class added successfully')));
     } else {
       // Error adding the class
       print('Response status: ${response.statusCode}');

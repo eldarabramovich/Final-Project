@@ -29,14 +29,6 @@ const AddAttendance = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
 const AddAssigment = async (req,res) =>{
     const { classname, subjectname, description, lastDate } = req.body;
     const db = admin.firestore();
@@ -123,15 +115,6 @@ const GetStudentByClass = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching students' });
   }
 }
-
-
-
-
-
-
-
-
-
 
 
 

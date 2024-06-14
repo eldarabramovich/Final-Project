@@ -6,4 +6,7 @@ admin.initializeApp({
   databaseURL: "https://TeachTouch.firebaseio.com"
 });
 
-module.exports = admin;
+const db = admin.firestore();
+
+
+module.exports = { db };
