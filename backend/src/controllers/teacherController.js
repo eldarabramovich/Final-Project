@@ -4,15 +4,16 @@ const subClassModel = require('../models/subclassModel.js');
 
 
 const CreateSubClass = async (req, res) => {
-  const { homeroomTeacherName, parentClassLetter, classNumber, students, subjects } = req.body;
 
-  if (!homeroomTeacherName || !parentClassLetter || !classNumber) {
+  const { homeroomTeacher, parentClassLetter, classNumber, students, subjects } = req.body;
+
+  if (!homeroomTeacher || !parentClassLetter || !classNumber) {
       return res.status(400).send("Missing data!");
   }
 
   try {
       const db = admin.firestore();
-      const classesRef = db.collection('Classes');
+      const classesRef = db.collection('classes');
       const classSnapshot = await classesRef.where('classLetter', '==', parentClassLetter).get();
 
       if (classSnapshot.empty) {
@@ -26,18 +27,18 @@ const CreateSubClass = async (req, res) => {
 
       const newSubClass = {
           ...subClassModel,
-          homeroomTeacherName,
+          homeroomTeacher,
           parentClass: parentClassId,
           classNumber,
           students: students || [],
           subjects: subjects || []
       };
 
-      const subClassRef = db.collection('SubClasses').doc();
+      const subClassRef = db.collection('subClasses').doc();
       await subClassRef.set(newSubClass);
 
       // Update the parent class to include this subclass
-      const parentClassRef = db.collection('Classes').doc(parentClassId);
+      const parentClassRef = db.collection('classes').doc(parentClassId);
       await parentClassRef.update({
           subClasses: admin.firestore.FieldValue.arrayUnion(subClassRef.id)
       });
@@ -48,72 +49,50 @@ const CreateSubClass = async (req, res) => {
       res.status(500).send("Error adding subclass");
   }
 };
+
+
 const AddStudentToSubClass = async (req, res) => {
-  const { studentNames, subClassId } = req.body;
+  const { classId, students } = req.body;
 
-  if (!studentNames || !subClassId) {
-      return res.status(400).send("Missing data!");
+  if (!classId || !students || !Array.isArray(students) || students.length === 0) {
+      return res.status(400).send("Missing data or invalid input!");
   }
-
-  // Separate the class letter from the subclass number
-  const classLetter = subClassId.charAt(0);
-  const subClassName = subClassId.slice(1);
 
   try {
       const db = admin.firestore();
 
-      // Find the parent class by class letter
-      const classesRef = db.collection('Classes');
-      const classSnapshot = await classesRef.where('classLetter', '==', classLetter).get();
+      // Find the subclass by class ID
+      const subClassRef = db.collection('subClasses').doc(classId);
+      const subClassDoc = await subClassRef.get();
 
-      if (classSnapshot.empty) {
-          return res.status(404).send(`Class ${classLetter} not found`);
+      if (!subClassDoc.exists) {
+          return res.status(404).send(`SubClass with ID ${classId} not found`);
       }
 
-      let parentClassId;
-      classSnapshot.forEach(doc => {
-          parentClassId = doc.id;
-      });
-
-      // Find the subclass by name and parent class ID
-      const subClassesRef = db.collection('SubClasses');
-      const subClassSnapshot = await subClassesRef
-          .where('classNumber', '==', subClassName)
-          .where('parentClass', '==', parentClassId)
-          .get();
-
-      if (subClassSnapshot.empty) {
-          return res.status(404).send(`SubClass ${subClassId} not found in class ${classLetter}`);
-      }
-
-      let subClassDocId;
-      subClassSnapshot.forEach(doc => {
-          subClassDocId = doc.id;
-      });
-
-      // Search for student IDs and names by student names
-      const studentsRef = db.collection('Students');
+      // Prepare the student entries to be added
       const studentEntries = [];
+      const studentIds = students.map(student => student.id);
 
-      for (const name of studentNames) {
-          const studentSnapshot = await studentsRef.where('fullname', '==', name).get();
+      // Search for student IDs and names by student objects
+      const studentsRef = db.collection('students');
 
-          if (studentSnapshot.empty) {
-              return res.status(404).send(`Student ${name} not found`);
+      for (const student of students) {
+          const studentSnapshot = await studentsRef.doc(student.id).get();
+
+          if (!studentSnapshot.exists) {
+              return res.status(404).send(`Student with ID ${student.id} not found`);
           }
 
-          studentSnapshot.forEach(doc => {
-              studentEntries.push({ id: doc.id, name: doc.data().fullname });
+          studentEntries.push({ id: student.id, name: student.fullname });
 
-              // Update each student's document with the subclass information
-              doc.ref.update({
-                  subClassName: subClassId,
-                  classname: classLetter
-              });
+          // Update each student's document with the subclass information
+          await studentSnapshot.ref.update({
+              subClassName: subClassDoc.id,
+              classname: subClassDoc.data().parentClass
           });
       }
 
-      const subClassRef = db.collection('SubClasses').doc(subClassDocId);
+      // Add the student entries to the subclass document
       await subClassRef.update({
           students: admin.firestore.FieldValue.arrayUnion(...studentEntries)
       });
@@ -124,6 +103,7 @@ const AddStudentToSubClass = async (req, res) => {
       res.status(500).send("Error adding students to subclass");
   }
 };
+
 const AddAttendance = async (req, res) => {
   const { classname, subjectname, students } = req.body;
 
@@ -151,7 +131,7 @@ const AddAttendance = async (req, res) => {
 const AddAssigment = async (req,res) =>{
     const { classname, subjectname, description, lastDate } = req.body;
     const db = admin.firestore();
-    const assigmentRef = db.collection('assigments').doc();
+    
 
   try {
     const newAssignment = {
@@ -248,6 +228,90 @@ const getTeacherData = async (req, res) => {
 };
 
 
+const editTeacher = async (req, res) => {
+  const { teacherId } = req.params;
+  const { username, password, fullname, email, classesHomeroom, classesSubject } = req.body;
+
+  try {
+      const teacherRef = db.collection('teachers').doc(teacherId);
+      const teacherDoc = await teacherRef.get();
+
+      if (!teacherDoc.exists) {
+          return res.status(404).send("Teacher not found");
+      }
+
+      await teacherRef.update({
+          username: username || teacherDoc.data().username,
+          password: password || teacherDoc.data().password,
+          fullname: fullname || teacherDoc.data().fullname,
+          email: email || teacherDoc.data().email,
+          classesHomeroom: classesHomeroom || teacherDoc.data().classesHomeroom,
+          classesSubject: classesSubject || teacherDoc.data().classesSubject
+      });
+
+      res.status(200).send("Teacher updated successfully");
+  } catch (error) {
+      console.error("Error editing teacher: ", error);
+      res.status(500).send("Error editing teacher");
+  }
+};
+
+
+const deleteTeacher = async (req, res) => {
+  const { teacherId } = req.params;
+
+  try {
+      const teacherRef = db.collection('teachers').doc(teacherId);
+      const teacherDoc = await teacherRef.get();
+
+      if (!teacherDoc.exists) {
+          return res.status(404).send("Teacher not found");
+      }
+
+      await teacherRef.delete();
+      res.status(200).send("Teacher deleted successfully");
+  } catch (error) {
+      console.error("Error deleting teacher: ", error);
+      res.status(500).send("Error deleting teacher");
+  }
+};
+
+
+
+const getClassStudents = async (req, res) => {
+  const { classId } = req.params;
+
+  try {
+      // Find the class by class ID
+      const classRef = db.collection('classes').doc(classId);
+      const classDoc = await classRef.get();
+
+      if (!classDoc.exists) {
+          return res.status(404).send("Class not found");
+      }
+
+      // Extract the list of student IDs from the class document
+      const studentIds = classDoc.data().students.map(student => student.id);
+
+      // Query the students collection to get the details of each student
+      const students = [];
+      for (const studentId of studentIds) {
+          const studentRef = db.collection('students').doc(studentId);
+          const studentDoc = await studentRef.get();
+          if (studentDoc.exists) {
+              students.push(studentDoc.data());
+          }
+      }
+
+      res.status(200).json(students);
+  } catch (error) {
+      console.error("Error getting class students: ", error);
+      res.status(500).send("Error getting class students");
+  }
+};
+
+
+
 module.exports = {
   CreateSubClass,
   AddStudentToSubClass,
@@ -255,4 +319,7 @@ module.exports = {
   getTeacherData,
   SendMessageToClass,
   GetStudentByClass,
-  AddAttendance };
+  AddAttendance,
+  editTeacher,
+  deleteTeacher,getClassStudents
+ };

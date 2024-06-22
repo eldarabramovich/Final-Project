@@ -1,6 +1,97 @@
-const admin = require('firebase-admin');
+const { db , admin } = require('../firebase/firebaseAdmin.js');
 
 
+
+
+const getStudent = async (req, res) => {
+  const { studentId } = req.params;
+
+  try {
+      const studentRef = db.collection('students').doc(studentId);
+      const studentDoc = await studentRef.get();
+
+      if (!studentDoc.exists) {
+          return res.status(404).send("Student not found");
+      }
+
+      res.status(200).json(studentDoc.data());
+  } catch (error) {
+      console.error("Error getting student: ", error);
+      res.status(500).send("Error getting student");
+  }
+};
+
+const editStudent = async (req, res) => {
+  const { studentId } = req.params;
+  const { username, password, fullname, classname, subClassName } = req.body;
+
+  try {
+      const studentRef = db.collection('students').doc(studentId);
+      const studentDoc = await studentRef.get();
+
+      if (!studentDoc.exists) {
+          return res.status(404).send("Student not found");
+      }
+
+      await studentRef.update({
+          username: username || studentDoc.data().username,
+          password: password || studentDoc.data().password,
+          fullname: fullname || studentDoc.data().fullname,
+          classname: classname || studentDoc.data().classname,
+          subClassName: subClassName || studentDoc.data().subClassName
+      });
+
+      res.status(200).send("Student updated successfully");
+  } catch (error) {
+      console.error("Error editing student: ", error);
+      res.status(500).send("Error editing student");
+  }
+};
+
+const deleteStudent = async (req, res) => {
+  const { studentId } = req.params;
+
+  try {
+      const studentRef = db.collection('students').doc(studentId);
+      const studentDoc = await studentRef.get();
+
+      if (!studentDoc.exists) {
+          return res.status(404).send("Student not found");
+      }
+
+      const { fullname, classname, subClassName } = studentDoc.data();
+
+      // Remove the student from the class document
+      const classSnapshot = await db.collection('classes').where('classLetter', '==', classname.charAt(0)).get();
+      if (!classSnapshot.empty) {
+          classSnapshot.forEach(async (doc) => {
+              await doc.ref.update({
+                  students: admin.firestore.FieldValue.arrayRemove({ id: studentId, name: fullname })
+              });
+          });
+      }
+
+      // Remove the student from the subclass document if assigned
+      if (subClassName) {
+          const subClassSnapshot = await db.collection('subClasses').where('classNumber', '==', subClassName).get();
+          if (!subClassSnapshot.empty) {
+              subClassSnapshot.forEach(async (doc) => {
+                  await doc.ref.update({
+                      students: admin.firestore.FieldValue.arrayRemove({ id: studentId, name: fullname })
+                  });
+              });
+          }
+      }
+
+      // Delete the student document from the students collection
+      await studentRef.delete();
+
+      res.status(200).send("Student deleted successfully");
+  } catch (error) {
+      console.error("Error deleting student: ", error);
+      res.status(500).send("Error deleting student");
+  }
+};
 
 const getStudentData = async (req, res) => {
   const userId = req.params.userId;
@@ -25,12 +116,12 @@ const GetMessageByClassname = async (req, res) => {
     const classname = req.params.classname; // Changed from req.query.classname to req.params.classname
     const db = admin.firestore();
 
-    const classQuerySnapshot = await db.collection('classes')
+    const classQuerySnapshot = await db.collection('subClasses')
                                       .where('classname', '==', classname)
                                       .get();
     
     if (classQuerySnapshot.empty) {
-      return res.status(404).send('Class not found');
+      return res.status(404).send('SubClass not found');
     }
 
     // Assuming there is only one class with this classname
@@ -46,9 +137,7 @@ const GetMessageByClassname = async (req, res) => {
     console.error('Error fetching messages:', error); // Corrected the error message to 'messages' instead of 'assignments'
     res.status(500).send('Error fetching messages');
   }
-}
-
-
+};
 
 const GetAssignById = async (req, res) => {
   try {
@@ -79,7 +168,7 @@ const GetAssignById = async (req, res) => {
     console.error('Error fetching assignments:', error);
     res.status(500).send('Error fetching assignments');
   }
-}
+};
 
 
 // const GetAssignById = async (req, res) => {
@@ -122,4 +211,4 @@ const GetAssignById = async (req, res) => {
 //   }
 
 
-  module.exports = {GetAssignById,GetMessageByClassname,getStudentData};
+  module.exports = {GetAssignById,GetMessageByClassname,getStudentData,editStudent,deleteStudent};
