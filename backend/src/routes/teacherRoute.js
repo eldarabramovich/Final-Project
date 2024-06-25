@@ -1,7 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const {getClassStudents,editTeacher,deleteTeacher,CreateSubClass , AddStudentToSubClass,AddAssigment ,getTeacherData ,SendMessageToClass,GetStudentByClass,AddAttendance} = require('../controllers/teacherController.js');
+const {downloadFile,uploadFile,getClassStudents,editTeacher,deleteTeacher,CreateSubClass , AddStudentToSubClass,AddAssigment ,getTeacherData ,SendMessageToClass,GetStudentByClass,AddAttendance} = require('../controllers/teacherController.js');
 
 
 router.post('/addassi',AddAssigment);
@@ -21,6 +21,8 @@ router.get('/:classId', getClassStudents);
 router.get('/:userId', getTeacherData);
 router.get('/getstudents/:classname', GetStudentByClass);
 
+router.post('/upload', uploadFile);
+router.get('/download/:fileId', downloadFile);
 
 
 

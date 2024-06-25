@@ -1,6 +1,70 @@
-const admin = require('firebase-admin');
+const {admin,db,bucket} = require('firebase-admin');
 const subClassModel = require('../models/subclassModel.js');
+const multer = require('multer');
 
+const upload = multer({ storage: multer.memoryStorage() }).single('file');
+
+const uploadFile = async (req, res) => {
+  upload(req, res, async (err) => {
+      if (err) {
+          return res.status(500).send("Error uploading file");
+      }
+
+      const file = req.file;
+      const { teacherId, description } = req.body; // Additional metadata if needed
+
+      if (!file || !teacherId) {
+          return res.status(400).send("Missing file or teacher ID");
+      }
+
+      try {
+          const blob = bucket.file(`${teacherId}/${file.originalname}`);
+          const blobStream = blob.createWriteStream({
+              metadata: {
+                  contentType: file.mimetype
+              }
+          });
+
+          blobStream.on('error', (err) => {
+              console.error(err);
+              res.status(500).send("Error uploading file");
+          });
+
+          blobStream.on('finish', async () => {
+              const fileUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+              await db.collection('files').add({
+                  userId: teacherId,
+                  fileName: file.originalname,
+                  fileUrl,
+                  description,
+                  createdAt: admin.firestore.FieldValue.serverTimestamp()
+              });
+              res.status(200).send({ fileUrl });
+          });
+
+          blobStream.end(file.buffer);
+      } catch (error) {
+          console.error("Error uploading file: ", error);
+          res.status(500).send("Error uploading file");
+      }
+  });
+};
+
+const downloadFile = async (req, res) => {
+  const { fileId } = req.params;
+  try {
+      const fileDoc = await db.collection('files').doc(fileId).get();
+      if (!fileDoc.exists) {
+          return res.status(404).send("File not found");
+      }
+      const fileData = fileDoc.data();
+      const fileUrl = fileData.fileUrl;
+      res.redirect(fileUrl);
+  } catch (error) {
+      console.error("Error downloading file: ", error);
+      res.status(500).send("Error downloading file");
+  }
+};
 
 
 const CreateSubClass = async (req, res) => {
@@ -49,8 +113,6 @@ const CreateSubClass = async (req, res) => {
       res.status(500).send("Error adding subclass");
   }
 };
-
-
 const AddStudentToSubClass = async (req, res) => {
   const { classId, students } = req.body;
 
@@ -103,7 +165,6 @@ const AddStudentToSubClass = async (req, res) => {
       res.status(500).send("Error adding students to subclass");
   }
 };
-
 const AddAttendance = async (req, res) => {
   const { classname, subjectname, students } = req.body;
 
@@ -226,8 +287,6 @@ const getTeacherData = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
-
-
 const editTeacher = async (req, res) => {
   const { teacherId } = req.params;
   const { username, password, fullname, email, classesHomeroom, classesSubject } = req.body;
@@ -255,8 +314,6 @@ const editTeacher = async (req, res) => {
       res.status(500).send("Error editing teacher");
   }
 };
-
-
 const deleteTeacher = async (req, res) => {
   const { teacherId } = req.params;
 
@@ -275,9 +332,6 @@ const deleteTeacher = async (req, res) => {
       res.status(500).send("Error deleting teacher");
   }
 };
-
-
-
 const getClassStudents = async (req, res) => {
   const { classId } = req.params;
 
@@ -310,8 +364,6 @@ const getClassStudents = async (req, res) => {
   }
 };
 
-
-
 module.exports = {
   CreateSubClass,
   AddStudentToSubClass,
@@ -321,5 +373,8 @@ module.exports = {
   GetStudentByClass,
   AddAttendance,
   editTeacher,
-  deleteTeacher,getClassStudents
+  deleteTeacher,
+  getClassStudents,
+  uploadFile,
+    downloadFile
  };
