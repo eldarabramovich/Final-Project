@@ -6,10 +6,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'TeacherGrade.dart';
+import 'package:frontend/Teacher/TeacherFileUpload.dart';
 import 'package:frontend/Teacher/TecherAttendance%20.dart';
 import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/TeacherMessages.dart';
-import 'package:frontend/Teacher/TeacherCalendar.dart';
+// import 'package:frontend/Teacher/TeacherCalendar.dart';
 
 class TeacherHomeScreen extends StatelessWidget {
   // const TeacherHomeScreen({super.key});
@@ -138,7 +139,7 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherCalendar()),
+                                  builder: (context) => UploadFilePage()),
                             );
                           },
                           icon: 'asset/icons/timetable.svg',

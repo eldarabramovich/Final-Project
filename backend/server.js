@@ -1,7 +1,7 @@
 
 const express = require('express');
 const cors = require('cors');
-
+const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -15,12 +15,14 @@ const parentRoutes = require('../backend/src/routes/parentRoute.js');
 
 app.use(cors()); 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', adminRoutes);
+app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);
-app.use('/', studentRoutes);
+app.use('/students', studentRoutes);
 app.use('/', teacherRoutes);
-app.use('/', parentRoutes);
+// app.use('/parents', parentRoutes);
 
 
 app.use((err, req, res, next) => {

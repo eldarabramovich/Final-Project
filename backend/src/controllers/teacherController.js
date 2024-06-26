@@ -2,68 +2,71 @@ const {admin,db,bucket} = require('firebase-admin');
 const subClassModel = require('../models/subclassModel.js');
 const multer = require('multer');
 
+const storage = multer.memoryStorage();
 const upload = multer({ storage: multer.memoryStorage() }).single('file');
-
-const uploadFile = async (req, res) => {
-  upload(req, res, async (err) => {
-      if (err) {
-          return res.status(500).send("Error uploading file");
-      }
-
-      const file = req.file;
-      const { teacherId, description } = req.body; // Additional metadata if needed
-
-      if (!file || !teacherId) {
-          return res.status(400).send("Missing file or teacher ID");
-      }
-
-      try {
-          const blob = bucket.file(`${teacherId}/${file.originalname}`);
-          const blobStream = blob.createWriteStream({
-              metadata: {
-                  contentType: file.mimetype
-              }
-          });
-
-          blobStream.on('error', (err) => {
-              console.error(err);
-              res.status(500).send("Error uploading file");
-          });
-
-          blobStream.on('finish', async () => {
-              const fileUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-              await db.collection('files').add({
-                  userId: teacherId,
-                  fileName: file.originalname,
-                  fileUrl,
-                  description,
-                  createdAt: admin.firestore.FieldValue.serverTimestamp()
-              });
-              res.status(200).send({ fileUrl });
-          });
-
-          blobStream.end(file.buffer);
-      } catch (error) {
-          console.error("Error uploading file: ", error);
-          res.status(500).send("Error uploading file");
-      }
-  });
-};
-
-const downloadFile = async (req, res) => {
-  const { fileId } = req.params;
-  try {
-      const fileDoc = await db.collection('files').doc(fileId).get();
-      if (!fileDoc.exists) {
-          return res.status(404).send("File not found");
-      }
-      const fileData = fileDoc.data();
-      const fileUrl = fileData.fileUrl;
-      res.redirect(fileUrl);
-  } catch (error) {
-      console.error("Error downloading file: ", error);
-      res.status(500).send("Error downloading file");
+const uploadFile = (req, res) => {
+  console.log('Received file upload request');
+  
+  // Check if bucket is initialized
+  if (!bucket) {
+    console.error("Bucket not initialized");
+    return res.status(500).send("Bucket not initialized");
   }
+
+  upload(req, res, async (err) => {
+    if (err) {
+      console.error("Error during file upload process: ", err);
+      return res.status(500).send("Error uploading file");
+    }
+
+    const file = req.file;
+    const { teacherId, description } = req.body;
+
+    if (!file || !teacherId) {
+      console.log("Missing file or teacher ID");
+      console.log("File: ", file);
+      console.log("Teacher ID: ", teacherId);
+      return res.status(400).send("Missing file or teacher ID");
+    }
+
+    console.log('File details:', file);
+    console.log('Teacher ID:', teacherId);
+    console.log('Description:', description);
+
+    try {
+      const blob = bucket.file(`${teacherId}/${file.originalname}`);
+      console.log('Blob object:', blob);
+
+      const blobStream = blob.createWriteStream({
+        metadata: {
+          contentType: file.mimetype,
+        },
+      });
+
+      blobStream.on('error', (err) => {
+        console.error("Blob stream error: ", err);
+        res.status(500).send("Error uploading file");
+      });
+
+      blobStream.on('finish', async () => {
+        const fileUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+        console.log('File uploaded to', fileUrl);
+        await db.collection('files').add({
+          userId: teacherId,
+          fileName: file.originalname,
+          fileUrl,
+          description,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        res.status(200).send({ fileUrl });
+      });
+
+      blobStream.end(file.buffer);
+    } catch (error) {
+      console.error("Error during file upload: ", error);
+      res.status(500).send("Error uploading file");
+    }
+  });
 };
 
 
@@ -375,6 +378,5 @@ module.exports = {
   editTeacher,
   deleteTeacher,
   getClassStudents,
-  uploadFile,
-    downloadFile
+  uploadFile
  };

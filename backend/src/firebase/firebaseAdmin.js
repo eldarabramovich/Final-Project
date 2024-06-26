@@ -9,5 +9,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 const bucket = admin.storage().bucket();
-
+console.log('Firebase Admin Initialized');
+console.log('Database URL:', admin.app().options_.databaseURL);
+console.log('Storage Bucket:', admin.app().options_.storageBucket);
 module.exports = {bucket, db ,admin };
