@@ -1,7 +1,7 @@
 const express = require('express');
 const { downloadFile,GetAssignById,GetMessageByClassname,getStudentData ,deleteStudent,editStudent} = require('../controllers/studentController');
 const router = express.Router();
-router.get('/downloadFile',downloadFile );
+router.get('/downloadFile/:fileId',downloadFile );
 router.get('/getassi/:userId',GetAssignById );
 router.post('/student/editStudent',editStudent );
 router.delete('/deletestudents/:studentId', deleteStudent);

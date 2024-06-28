@@ -1,24 +1,30 @@
 const { db , admin , bucket } = require('../firebase/firebaseAdmin.js');
-
 const downloadFile = async (req, res) => {
   const { fileId } = req.params;
 
   try {
+    console.log(`Fetching file with ID: ${fileId}`);
+
     // Fetch file details from Firestore using the fileId
     const fileDoc = await db.collection('files').doc(fileId).get();
 
     if (!fileDoc.exists) {
+      console.log(`File with ID: ${fileId} not found`);
       return res.status(404).send('File not found');
     }
 
     const fileData = fileDoc.data();
     const filePath = `${fileData.userId}/${fileData.fileName}`;
 
+    console.log(`File path: ${filePath}`);
+
     // Create a reference to the file in the bucket
     const fileRef = bucket.file(filePath);
 
     // Get the file metadata
     const [metadata] = await fileRef.getMetadata();
+
+    console.log(`File metadata: ${JSON.stringify(metadata)}`);
 
     // Set response headers for the file download
     res.setHeader('Content-Type', metadata.contentType);
@@ -206,45 +212,4 @@ const GetAssignById = async (req, res) => {
   }
 };
 
-
-// const GetAssignById = async (req, res) => {
-//     const userId = req.params.userId;
-  
-//     try {
-//       // Query Firestore for assignments belonging to the user
-//       const db = admin.firestore();
-//       const assignments = [];
-
-//         // Find the student document to get the classname
-//         const studentDoc = await db.collection('students').doc(userId).get();
-//         if (!studentDoc.exists) {
-//             return res.status(404).send('Student not found');
-//         }
-//         const classname = studentDoc.data().classname;
-//         console.error(classname);
-//         const classDoc = await db.collection('classes').where('className', '==', classname).limit(1).get();
-//         if (classDoc.empty) {
-//             return res.status(404).send('Class not found for the provided student');
-//         }
-
-//         const subjects = classDoc.docs[0].data().subjects;
-
-//         // For each subject ID, fetch the subject document and extract the assignments
-//         for (const subjectId of subjects) {
-//             const subjectDoc = await db.collection('subjects').doc(subjectId).get();
-//             if (subjectDoc.exists) {
-//                 const subjectData = subjectDoc.data();
-//                 assignments.push(...subjectData.assignments);
-//             }
-//         }
-
-//       // Send the assignments as a response
-//       res.status(200).json(assignments);
-//     } catch (error) {
-//       console.error('Error fetching assignments:', error);
-//       res.status(500).send('Error fetching assignments');
-//     }
-//   }
-
-
-  module.exports = {downloadFile,GetAssignById,GetMessageByClassname,getStudentData,editStudent,deleteStudent};
+module.exports = {downloadFile,GetAssignById,GetMessageByClassname,getStudentData,editStudent,deleteStudent};

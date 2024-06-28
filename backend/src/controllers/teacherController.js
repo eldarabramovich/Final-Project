@@ -1,13 +1,52 @@
 const multer = require('multer');
 const { db ,admin} = require('../firebase/firebaseAdmin'); // Import only what you need
-
-
 // Explicitly initialize the bucket here
 const bucket = admin.storage().bucket('teachtouch-20b98.appspot.com');
-console.log('Bucket explicitly initialized:', bucket);
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).single('file');
+
+
+const AddAssignment = async (req, res) => {
+  const { classname, subjectname, description, lastDate } = req.body;
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  try {
+    const blob = bucket.file(`assignments/${file.originalname}`);
+    const blobStream = blob.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
+
+    blobStream.on('error', (err) => {
+      console.error('Error uploading file:', err);
+      res.status(500).send('Error uploading file.');
+    });
+
+    blobStream.on('finish', async () => {
+      const fileUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+      const newAssignment = {
+        classname,
+        subjectname,
+        description,
+        lastDate,
+        fileUrl,
+      };
+
+      await db.collection('assignments').add(newAssignment);
+      res.status(200).send('Assignment added successfully');
+    });
+
+    blobStream.end(file.buffer);
+  } catch (error) {
+    console.error('Error adding assignment:', error);
+    res.status(500).send('Error adding assignment');
+  }
+};
 
 const uploadFile = (req, res) => {
   
@@ -74,7 +113,6 @@ const uploadFile = (req, res) => {
     }
   });
 };
-
 
 const CreateSubClass = async (req, res) => {
 
@@ -198,27 +236,6 @@ const AddAttendance = async (req, res) => {
     res.status(500).send('Error adding attendance');
   }
 };
-const AddAssigment = async (req,res) =>{
-    const { classname, subjectname, description, lastDate } = req.body;
-    const db = admin.firestore();
-    
-
-  try {
-    const newAssignment = {
-      classname,
-      subjectname,
-      description,
-      lastDate,
-    };
-
-    await db.collection('assignments').add(newAssignment);
-    res.status(200).send('Assignment added successfully');
-  } catch (error) {
-    console.error('Error adding assignment:', error);
-    res.status(500).send('Error adding assignment');
-  }
-
-}
 const SendMessageToClass = async (req, res) => {
   const { classname, description } = req.body;
 
@@ -282,20 +299,24 @@ const getTeacherData = async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const teacherRef = admin.firestore().collection('teachers').doc(userId);
-    const doc = await teacherRef.get();
+      const teacherRef = admin.firestore().collection('teachers').doc(userId);
+      const doc = await teacherRef.get();
 
-    if (doc.exists) {
-      console.error('Find teacher data !');
-      res.status(200).json(doc.data());
-    } else {
-      res.status(404).send('Teacher not found');
-    }
+      if (doc.exists) {
+          const data = doc.data();
+          console.log('Find teacher data !');
+          res.status(200).json(data);
+      } else {
+          res.status(404).send('Teacher not found');
+      }
   } catch (error) {
-    console.error('Error fetching teacher data:', error);
-    res.status(500).send('Internal Server Error');
+      console.error('Error fetching teacher data:', error);
+      res.status(500).send('Internal Server Error');
   }
 };
+
+module.exports = { getTeacherData };
+
 const editTeacher = async (req, res) => {
   const { teacherId } = req.params;
   const { username, password, fullname, email, classesHomeroom, classesSubject } = req.body;
@@ -376,7 +397,7 @@ const getClassStudents = async (req, res) => {
 module.exports = {
   CreateSubClass,
   AddStudentToSubClass,
-  AddAssigment,
+  AddAssignment,
   getTeacherData,
   SendMessageToClass,
   GetStudentByClass,

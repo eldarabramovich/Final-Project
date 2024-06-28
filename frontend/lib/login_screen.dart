@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       var response = await http.post(
-        Uri.parse('http://192.168.31.223:3000/auth/login'),
+        Uri.parse('http://192.168.31.51:3000/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: requestBody,
       );
@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200) {
         var responseData = json.decode(response.body);
-        var token = responseData['token'];
+        // var token = responseData['token'];
         var role = responseData['role'];
         var userId = responseData['userId'];
 
@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (error) {
       Navigator.pop(context);
-      print('Error logging in: $error');
+      // print('Error logging in: $error');
       showErrorSnackBar(context, 'Network error. Please try again later.');
     }
   }

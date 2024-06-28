@@ -6,13 +6,8 @@ admin.initializeApp({
   databaseURL: "https://TeachTouch.firebaseio.com",
   storageBucket:"gs://teachtouch-20b98.appspot.com"
 });
+
 const db = admin.firestore();
 const bucket = admin.storage().bucket();
-
-// Add logging to verify initialization
 console.log('Firebase Admin Initialized');
-// console.log('Database URL:', admin.app().options_.databaseURL);
-// console.log('Storage Bucket:', admin.app().options_.storageBucket);
-// console.log('Bucket Object:', bucket);
-
 module.exports = { bucket, db, admin };
