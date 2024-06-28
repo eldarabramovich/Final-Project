@@ -1,10 +1,16 @@
-const {admin,db,bucket} = require('firebase-admin');
-const subClassModel = require('../models/subclassModel.js');
 const multer = require('multer');
+const { db ,admin} = require('../firebase/firebaseAdmin'); // Import only what you need
+
+
+// Explicitly initialize the bucket here
+const bucket = admin.storage().bucket('teachtouch-20b98.appspot.com');
+console.log('Bucket explicitly initialized:', bucket);
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: multer.memoryStorage() }).single('file');
+const upload = multer({ storage }).single('file');
+
 const uploadFile = (req, res) => {
+  
   console.log('Received file upload request');
   
   // Check if bucket is initialized
@@ -12,6 +18,10 @@ const uploadFile = (req, res) => {
     console.error("Bucket not initialized");
     return res.status(500).send("Bucket not initialized");
   }
+
+  // console.log('Bucket object:', bucket);
+  const explicitBucket = admin.storage().bucket('teachtouch-20b98.appspot.com'); // Explicitly set bucket name
+  // console.log('Explicit Bucket object:', explicitBucket);
 
   upload(req, res, async (err) => {
     if (err) {
@@ -23,18 +33,14 @@ const uploadFile = (req, res) => {
     const { teacherId, description } = req.body;
 
     if (!file || !teacherId) {
-      console.log("Missing file or teacher ID");
-      console.log("File: ", file);
-      console.log("Teacher ID: ", teacherId);
       return res.status(400).send("Missing file or teacher ID");
     }
-
-    console.log('File details:', file);
-    console.log('Teacher ID:', teacherId);
+    console.log("File: ", file);
+    console.log("Teacher ID: ", teacherId);
     console.log('Description:', description);
-
+    
     try {
-      const blob = bucket.file(`${teacherId}/${file.originalname}`);
+      const blob = explicitBucket.file(`${teacherId}/${file.originalname}`);
       console.log('Blob object:', blob);
 
       const blobStream = blob.createWriteStream({
@@ -49,7 +55,7 @@ const uploadFile = (req, res) => {
       });
 
       blobStream.on('finish', async () => {
-        const fileUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+        const fileUrl = `https://storage.googleapis.com/${explicitBucket.name}/${blob.name}`;
         console.log('File uploaded to', fileUrl);
         await db.collection('files').add({
           userId: teacherId,

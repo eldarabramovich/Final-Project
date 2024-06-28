@@ -1,7 +1,43 @@
-const { db , admin } = require('../firebase/firebaseAdmin.js');
+const { db , admin , bucket } = require('../firebase/firebaseAdmin.js');
 
+const downloadFile = async (req, res) => {
+  const { fileId } = req.params;
 
+  try {
+    // Fetch file details from Firestore using the fileId
+    const fileDoc = await db.collection('files').doc(fileId).get();
 
+    if (!fileDoc.exists) {
+      return res.status(404).send('File not found');
+    }
+
+    const fileData = fileDoc.data();
+    const filePath = `${fileData.userId}/${fileData.fileName}`;
+
+    // Create a reference to the file in the bucket
+    const fileRef = bucket.file(filePath);
+
+    // Get the file metadata
+    const [metadata] = await fileRef.getMetadata();
+
+    // Set response headers for the file download
+    res.setHeader('Content-Type', metadata.contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${fileData.fileName}"`);
+
+    // Create a read stream for the file and pipe it to the response
+    const fileStream = fileRef.createReadStream();
+
+    fileStream.on('error', (err) => {
+      console.error('File stream error:', err);
+      res.status(500).send('Error downloading file');
+    });
+
+    fileStream.pipe(res);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+    res.status(500).send('Error downloading file');
+  }
+};
 
 const getStudent = async (req, res) => {
   const { studentId } = req.params;
@@ -211,4 +247,4 @@ const GetAssignById = async (req, res) => {
 //   }
 
 
-  module.exports = {GetAssignById,GetMessageByClassname,getStudentData,editStudent,deleteStudent};
+  module.exports = {downloadFile,GetAssignById,GetMessageByClassname,getStudentData,editStudent,deleteStudent};
