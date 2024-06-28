@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/login_screen.dart';
+import 'package:frontend/Teacher/Deshboards/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

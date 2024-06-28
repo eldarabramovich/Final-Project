@@ -1,7 +1,7 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:frontend/models/teachermodel.dart';
-import 'package:frontend/Teacher/TeacherAttendancePage.dart';
+import 'package:frontend/Teacher/PagesTools/TeacherAttendancePage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -34,9 +34,9 @@ class _TeacherClassSubjectSelectionPageState
     if (response.statusCode == 200) {
       setState(() {
         _teacher = Teacher.fromFirestore(json.decode(response.body));
-        if (_teacher!.classes.isNotEmpty) {
-          _selectedClassname = _teacher!.classes.first.classname;
-          _selectedSubject = _teacher!.classes.first.subject;
+        if (_teacher!.classesHomeroom.isNotEmpty) {
+          _selectedClassname = _teacher!.classesHomeroom.first.classname;
+          _selectedSubject = _teacher!.classesHomeroom.first.subject;
         }
       });
     } else {
@@ -79,7 +79,7 @@ class _TeacherClassSubjectSelectionPageState
                       // Update _selectedSubject based on the selected class
                     });
                   },
-                  items: _teacher!.classes
+                  items: _teacher!.classesHomeroom
                       .map((cls) => DropdownMenuItem<String>(
                             value: cls.classname,
                             child: Text(cls.classname),
@@ -98,9 +98,6 @@ class _TeacherClassSubjectSelectionPageState
     );
   }
 }
-
-
-
 
 
 // import 'package:flutter/material.dart';

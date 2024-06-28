@@ -5,18 +5,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'TeacherGrade.dart';
-import 'package:frontend/Teacher/TeacherFileUpload.dart';
-import 'package:frontend/Teacher/TecherAttendance%20.dart';
-import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
-import 'package:frontend/Teacher/TeacherMessages.dart';
+import '../PagesTools/TeacherGrade.dart';
+import 'package:frontend/models/teachermodel.dart';
+import 'package:frontend/Teacher/PagesTools/TeacherFileUpload.dart';
+import 'package:frontend/Teacher/PagesTools/TecherAttendance%20.dart';
+import 'package:frontend/Teacher/PagesTools/TeacherAddNewAssi.dart';
+import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
 // import 'package:frontend/Teacher/TeacherCalendar.dart';
 
-class TeacherHomeScreen extends StatelessWidget {
-  // const TeacherHomeScreen({super.key});
-  const TeacherHomeScreen({Key? key, required this.userId}) : super(key: key);
-  //final user = FirebaseAuth.instance.currentUser!;
+class SubjectTeacherDashboard extends StatelessWidget {
   final String userId;
+  final Teacher teacherData;
+  final String selectedClass;
+  final String selectedSubject;
+
+  SubjectTeacherDashboard({
+    required this.userId,
+    required this.teacherData,
+    required this.selectedClass,
+    required this.selectedSubject,
+  });
 
   // ignore: non_constant_identifier_names
   void UserLogOut() {

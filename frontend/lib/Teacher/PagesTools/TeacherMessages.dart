@@ -30,8 +30,8 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
     if (response.statusCode == 200) {
       setState(() {
         _teacher = Teacher.fromFirestore(json.decode(response.body));
-        if (_teacher!.classes.isNotEmpty) {
-          _selectedClassname = _teacher!.classes.first.classname;
+        if (_teacher!.classesHomeroom.isNotEmpty) {
+          _selectedClassname = _teacher!.classesHomeroom.first.classname;
         }
       });
     } else {
@@ -87,7 +87,7 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
                           _selectedClassname = newValue;
                         });
                       },
-                      items: _teacher!.classes
+                      items: _teacher!.classesHomeroom
                           .map((cls) => DropdownMenuItem<String>(
                                 value: cls.classname,
                                 child: Text(cls.classname),

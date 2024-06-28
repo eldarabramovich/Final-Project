@@ -1,14 +1,13 @@
 class Teacher {
   final String fullname;
   final String email;
-  final String?
-      classHomeroom; // Single class ID where the teacher is a homeroom teacher
-  final List<ClassSubject> classesSubject; // List of class subjects
+  final List<ClassSubject> classesHomeroom;
+  final List<ClassSubject> classesSubject;
 
   Teacher({
     required this.fullname,
     required this.email,
-    this.classHomeroom,
+    required this.classesHomeroom,
     required this.classesSubject,
   });
 
@@ -16,11 +15,14 @@ class Teacher {
     return Teacher(
       fullname: data['fullname'],
       email: data['email'],
-      classHomeroom: data['classesHomeroom'],
-      classesSubject: List<ClassSubject>.from(
-        data['classesSubject']
-            .map((classSubject) => ClassSubject.fromMap(classSubject)),
-      ),
+      classesHomeroom: data['classesHomeroom'] != null
+          ? List<ClassSubject>.from(data['classesHomeroom']
+              .map((classSubject) => ClassSubject.fromMap(classSubject)))
+          : [],
+      classesSubject: data['classesSubject'] != null
+          ? List<ClassSubject>.from(data['classesSubject']
+              .map((classSubject) => ClassSubject.fromMap(classSubject)))
+          : [],
     );
   }
 }
@@ -44,3 +46,5 @@ class ClassSubject {
     );
   }
 }
+
+

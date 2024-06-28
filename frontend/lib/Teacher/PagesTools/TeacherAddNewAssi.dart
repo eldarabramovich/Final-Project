@@ -1,12 +1,14 @@
-import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../models/teachermodel.dart';
+import 'dart:convert';
+// import 'package:file_picker/file_picker.dart';
+import 'package:frontend/models/teachermodel.dart';
 
 class TeacherAddNewAssi extends StatefulWidget {
   final String userId;
   const TeacherAddNewAssi({Key? key, required this.userId}) : super(key: key);
-
   @override
   State<TeacherAddNewAssi> createState() => _TeacherAddNewAssiState();
 }
@@ -26,14 +28,14 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   }
 
   Future<void> _fetchTeacherData() async {
-    var url = Uri.parse('http://192.168.31.51:3000/teacher/${widget.userId}');
+    var url = Uri.parse('http://192.168.40.1:3000/teacher/${widget.userId}');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
         _teacher = Teacher.fromFirestore(json.decode(response.body));
-        if (_teacher!.classesSubject.isNotEmpty) {
-          _selectedClassname = _teacher!.classesSubject.first.classname;
-          _selectedSubject = _teacher!.classesSubject.first.subject;
+        if (_teacher!.classesHomeroom.isNotEmpty) {
+          _selectedClassname = _teacher!.classesHomeroom.first.classname;
+          _selectedSubject = _teacher!.classesHomeroom.first.subject;
         }
       });
     } else {
@@ -45,7 +47,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
 
   Future<void> _submitAssignment() async {
     if (_formKey.currentState!.validate()) {
-      var url = Uri.parse('http://192.168.31.51:3000/teacher/AddAssignment');
+      var url = Uri.parse('http://192.168.40.1:3000/teacher/addassi');
       var response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -84,19 +86,17 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    if (_teacher!.classHomeroom != null)
-                      Text('Homeroom Class: ${_teacher!.classHomeroom!}'),
                     DropdownButtonFormField<String>(
                       value: _selectedClassname,
                       onChanged: (newValue) {
                         setState(() {
                           _selectedClassname = newValue;
-                          _selectedSubject = _teacher!.classesSubject
+                          _selectedSubject = _teacher!.classesHomeroom
                               .firstWhere((cls) => cls.classname == newValue)
                               .subject;
                         });
                       },
-                      items: _teacher!.classesSubject
+                      items: _teacher!.classesHomeroom
                           .map((cls) => DropdownMenuItem<String>(
                                 value: cls.classname,
                                 child: Text(cls.classname),

@@ -295,18 +295,20 @@ const GetStudentByClass = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching students' });
   }
 };
+
 const getTeacherData = async (req, res) => {
   const userId = req.params.userId;
+  console.log(`Fetching data for teacher ID: ${userId}`);
 
   try {
       const teacherRef = admin.firestore().collection('teachers').doc(userId);
       const doc = await teacherRef.get();
 
       if (doc.exists) {
-          const data = doc.data();
-          console.log('Find teacher data !');
-          res.status(200).json(data);
+          console.log('Teacher data found:', doc.data());
+          res.status(200).json(doc.data());
       } else {
+          console.log('Teacher not found');
           res.status(404).send('Teacher not found');
       }
   } catch (error) {
@@ -314,8 +316,6 @@ const getTeacherData = async (req, res) => {
       res.status(500).send('Internal Server Error');
   }
 };
-
-module.exports = { getTeacherData };
 
 const editTeacher = async (req, res) => {
   const { teacherId } = req.params;

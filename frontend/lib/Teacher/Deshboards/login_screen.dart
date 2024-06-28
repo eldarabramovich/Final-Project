@@ -5,7 +5,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/Admin/AdminHomeScreen.dart';
 import 'package:frontend/Student/StudentHomeScreen.dart';
-import 'package:frontend/Teacher/TeacherHomeScreen.dart';
+import 'package:frontend/Teacher/Deshboards/SubjectTeacherDashboard.dart';
+import 'package:frontend/Teacher/Deshboards/ClassSelectionPage.dart';
+import 'package:frontend/Teacher/Deshboards/HomeroomTeacherDashboard.dart';
+import 'package:frontend/models/teachermodel.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -52,7 +55,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200) {
         var responseData = json.decode(response.body);
-        // var token = responseData['token'];
         var role = responseData['role'];
         var userId = responseData['userId'];
 
@@ -65,10 +67,48 @@ class _LoginScreenState extends State<LoginScreen> {
               MaterialPageRoute(
                   builder: (context) => HomeScreen(userId: userId)));
         } else if (role == 'teachers') {
-          Navigator.push(
+          var teacherData = await fetchTeacherData(userId);
+          var teacher = Teacher.fromFirestore(teacherData);
+          if (teacher.classesHomeroom.isNotEmpty &&
+              teacher.classesSubject.isEmpty) {
+            Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => TeacherHomeScreen(userId: userId)));
+                builder: (context) => HomeroomTeacherDashboard(
+                  userId: userId,
+                  teacherData: teacher,
+                  selectedClass: teacher.classesHomeroom.first.classname,
+                ),
+              ),
+            );
+          } else if (teacher.classesSubject.isNotEmpty &&
+              teacher.classesHomeroom.isEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SubjectTeacherDashboard(
+                  userId: userId,
+                  teacherData: teacher,
+                  selectedClass: teacher.classesSubject.first.classname,
+                  selectedSubject: teacher.classesSubject.first.subject,
+                ),
+              ),
+            );
+          } else if (teacher.classesHomeroom.isNotEmpty ||
+              teacher.classesSubject.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ClassSelectionPage(
+                  teacherData: teacher,
+                  userId: userId,
+                  isHomeroomTeacher: teacher.classesHomeroom.isNotEmpty,
+                ),
+              ),
+            );
+          } else {
+            showErrorSnackBar(context, 'Teacher has no classes assigned.');
+          }
         }
       } else {
         showErrorSnackBar(
@@ -76,11 +116,20 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (error) {
       Navigator.pop(context);
-      // print('Error logging in: $error');
       showErrorSnackBar(context, 'Network error. Please try again later.');
     }
   }
 
+  Future<Map<String, dynamic>> fetchTeacherData(String userId) async {
+    var url = Uri.parse('http://192.168.31.51:3000/teacher/$userId');
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to fetch teacher data');
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
