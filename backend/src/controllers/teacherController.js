@@ -1,20 +1,25 @@
 const multer = require('multer');
 const { db ,admin} = require('../firebase/firebaseAdmin'); // Import only what you need
-// Explicitly initialize the bucket here
+
 const bucket = admin.storage().bucket('teachtouch-20b98.appspot.com');
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).single('file');
 
-
 const AddAssignment = async (req, res) => {
+  console.error('Step 1: Starting to add assignment');
   const { classname, subjectname, description, lastDate } = req.body;
   const file = req.file;
+  const db = admin.firestore();
+  const bucket = admin.storage().bucket();
+  console.error('Step 2: Retrieved request data');
 
   if (!file) {
+    console.error('Step 3: No file uploaded');
     return res.status(400).send('No file uploaded.');
   }
 
   try {
+    console.error('Step 4: Preparing to upload file');
     const blob = bucket.file(`assignments/${file.originalname}`);
     const blobStream = blob.createWriteStream({
       metadata: {
@@ -23,11 +28,12 @@ const AddAssignment = async (req, res) => {
     });
 
     blobStream.on('error', (err) => {
-      console.error('Error uploading file:', err);
+      console.error('Step 5: Error during file upload:', err);
       res.status(500).send('Error uploading file.');
     });
 
     blobStream.on('finish', async () => {
+      console.error('Step 6: File upload finished');
       const fileUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
       const newAssignment = {
         classname,
@@ -37,13 +43,20 @@ const AddAssignment = async (req, res) => {
         fileUrl,
       };
 
-      await db.collection('assignments').add(newAssignment);
-      res.status(200).send('Assignment added successfully');
+      try {
+        console.error('Step 7: Saving assignment to Firestore');
+        await db.collection('assignments').add(newAssignment);
+        console.error('Step 8: Assignment added successfully');
+        res.status(200).send('Assignment added successfully');
+      } catch (firestoreError) {
+        console.error('Step 7.1: Error saving assignment to Firestore:', firestoreError);
+        res.status(500).send('Error saving assignment');
+      }
     });
 
     blobStream.end(file.buffer);
   } catch (error) {
-    console.error('Error adding assignment:', error);
+    console.error('Step 4.1: Error in file upload process:', error);
     res.status(500).send('Error adding assignment');
   }
 };
@@ -405,5 +418,5 @@ module.exports = {
   editTeacher,
   deleteTeacher,
   getClassStudents,
-  uploadFile
+  uploadFile,upload
  };

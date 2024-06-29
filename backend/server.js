@@ -17,14 +17,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use((req, res, next) => {
     console.log(`Received request: ${req.method} ${req.url}`);
     next();
   });
+
 app.use('/', adminRoutes);
 app.use('/auth', authRoutes);
 app.use('/', studentRoutes);
-app.use('/', teacherRoutes);
+app.use('/teacher', teacherRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

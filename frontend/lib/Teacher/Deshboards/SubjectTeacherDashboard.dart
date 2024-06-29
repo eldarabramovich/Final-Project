@@ -108,7 +108,9 @@ class SubjectTeacherDashboard extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      TeacherAddNewAssi(userId: userId)),
+                                      TeacherAddNewAssi(userId: userId,
+                                       selectedClass: selectedClass,
+                                       selectedSubject: selectedSubject)),
                             );
                           },
                           icon: 'asset/icons/assignment.svg',

@@ -30,112 +30,145 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
- void logUserIn() async {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    },
-  );
-
-  var requestBody = json.encode({
-    'username': emailController.text,
-    'password': passwordController.text,
-  });
-
-  try {
-    var response = await http.post(
-      Uri.parse('http://192.168.31.51:3000/auth/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: requestBody,
+  void logUserIn() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
-    Navigator.pop(context);
 
-    if (response.statusCode == 200) {
-      var responseData = json.decode(response.body);
-      var role = responseData['role'];
-      var userId = responseData['userId'];
+    var requestBody = json.encode({
+      'username': emailController.text,
+      'password': passwordController.text,
+    });
 
-      print('Role: $role, UserID: $userId');
+    try {
+      var response = await http.post(
+        Uri.parse('http://192.168.31.51:3000/auth/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: requestBody,
+      );
+      Navigator.pop(context);
 
-      if (role == 'admin') {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => AdminHomeScreen()));
-      } else if (role == 'students') {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HomeScreen(userId: userId)));
-      } else if (role == 'teachers') {
-        print('Fetching teacher data for userId: $userId');
-        var teacherData = await fetchTeacherData(userId);
-        print('Teacher data: $teacherData');
-        var teacher = Teacher.fromFirestore(teacherData);
-        if (teacher.classesHomeroom.isNotEmpty &&
-            teacher.classesSubject.isEmpty) {
+      if (response.statusCode == 200) {
+        var responseData = json.decode(response.body);
+        var role = responseData['role'];
+        var userId = responseData['userId'];
+        if (role == 'admin') {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AdminHomeScreen()));
+        } else if (role == 'students') {
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomeroomTeacherDashboard(
-                userId: userId,
-                teacherData: teacher,
-                selectedClass: teacher.classesHomeroom.first.classname,
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomeScreen(userId: userId)));
+        } else if (role == 'teachers') {
+          print('Fetching teacher data for userId: $userId');
+          var teacherData = await fetchTeacherData(userId);
+          print('Teacher data: $teacherData');
+          var teacher = Teacher.fromFirestore(teacherData);
+          if (teacher.classesSubject.isNotEmpty &&
+              teacher.classesHomeroom.isNotEmpty) {
+            showErrorSnackBar(context, 'Teacher cant be homroom and subjects');
+          }
+          // Scenario 1
+          if (teacher.classesHomeroom.isEmpty) {
+            if (teacher.classesSubject.length == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SubjectTeacherDashboard(
+                    userId: userId,
+                    teacherData: teacher,
+                    selectedClass: teacher.classesSubject.first.classname,
+                    selectedSubject: teacher.classesSubject.first.subject,
+                  ),
+                ),
+              );
+            } else if (teacher.classesSubject.length > 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ClassSelectionPage(
+                    teacherData: teacher,
+                    userId: userId,
+                    isHomeroomTeacher: false,
+                  ),
+                ),
+              );
+            } else {
+              showErrorSnackBar(context, 'Teacher has no classes assigned.');
+            }
+          }
+
+          // Scenario 2
+          else if (teacher.classesSubject.isEmpty) {
+            if (teacher.classesHomeroom.length == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomeroomTeacherDashboard(
+                    userId: userId,
+                    teacherData: teacher,
+                    selectedClass: teacher.classesHomeroom.first.classname,
+                  ),
+                ),
+              );
+            } else if (teacher.classesHomeroom.length > 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ClassSelectionPage(
+                    teacherData: teacher,
+                    userId: userId,
+                    isHomeroomTeacher: true,
+                  ),
+                ),
+              );
+            } else {
+              showErrorSnackBar(
+                  context, 'Teacher has no homeroom classes assigned.');
+            }
+          }
+
+          // Scenario 3: Teacher has both subject and homeroom classes
+          else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ClassSelectionPage(
+                  teacherData: teacher,
+                  userId: userId,
+                  isHomeroomTeacher: teacher.classesHomeroom.isNotEmpty,
+                ),
               ),
-            ),
-          );
-        } else if (teacher.classesSubject.isNotEmpty &&
-            teacher.classesHomeroom.isEmpty) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SubjectTeacherDashboard(
-                userId: userId,
-                teacherData: teacher,
-                selectedClass: teacher.classesSubject.first.classname,
-                selectedSubject: teacher.classesSubject.first.subject,
-              ),
-            ),
-          );
-        } else if (teacher.classesHomeroom.isNotEmpty ||
-            teacher.classesSubject.isNotEmpty) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ClassSelectionPage(
-                teacherData: teacher,
-                userId: userId,
-                isHomeroomTeacher: teacher.classesHomeroom.isNotEmpty,
-              ),
-            ),
-          );
-        } else {
-          showErrorSnackBar(context, 'Teacher has no classes assigned.');
+            );
+          }
         }
+      } else {
+        showErrorSnackBar(
+            context, 'Login failed. Please check your credentials.');
       }
-    } else {
-      showErrorSnackBar(
-          context, 'Login failed. Please check your credentials.');
+    } catch (error) {
+      Navigator.pop(context);
+      print('Error: $error');
+      showErrorSnackBar(context, 'Network error. Please try again later.');
     }
-  } catch (error) {
-    Navigator.pop(context);
-    print('Error: $error');
-    showErrorSnackBar(context, 'Network error. Please try again later.');
   }
-}
 
-Future<Map<String, dynamic>> fetchTeacherData(String userId) async {
-  var url = Uri.parse('http://192.168.31.51:3000/teacher/$userId');
-  var response = await http.get(url);
-  if (response.statusCode == 200) {
-    return json.decode(response.body);
-  } else {
-    throw Exception('Failed to fetch teacher data');
+  Future<Map<String, dynamic>> fetchTeacherData(String userId) async {
+    var url = Uri.parse('http://192.168.31.51:3000/teacher/$userId');
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to fetch teacher data');
+    }
   }
-}
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
