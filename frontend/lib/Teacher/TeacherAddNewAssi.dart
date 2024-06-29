@@ -28,7 +28,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   }
 
   Future<void> _fetchTeacherData() async {
-    var url = Uri.parse('http://10.0.0.22:3000/teacher/${widget.userId}');
+    var url = Uri.parse('http://10.0.0.14:3000/teacher/${widget.userId}');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
@@ -47,7 +47,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
 
   Future<void> _submitAssignment() async {
     if (_formKey.currentState!.validate()) {
-      var url = Uri.parse('http://10.0.0.22:3000/teacher/addassi');
+      var url = Uri.parse('http://10.0.0.14:3000/teacher/addassi');
       var response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -76,7 +76,14 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Assignment'),
+        title: Text(
+          'מטלה חדשה',
+          style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+        ),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: _teacher == null
           ? const Center(child: CircularProgressIndicator())
@@ -103,13 +110,36 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                                 child: Text(cls.classname),
                               ))
                           .toList(),
-                      decoration: const InputDecoration(labelText: 'Class'),
+                      decoration: InputDecoration(
+                        labelText: 'כיתה',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blueGrey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.grey.shade100,
+                        filled: true,
+                      ),
                     ),
                     SizedBox(height: 17.0),
                     TextFormField(
                       controller: _descriptionController,
-                      decoration:
-                          const InputDecoration(labelText: 'Description'),
+                      decoration: InputDecoration(
+                        labelText: 'הסבר',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blueGrey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.grey.shade100,
+                        filled: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a description';
@@ -120,7 +150,19 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                     SizedBox(height: 17.0),
                     TextFormField(
                       controller: _lastDateController,
-                      decoration: const InputDecoration(labelText: 'Last Date'),
+                      decoration: InputDecoration(
+                        labelText: 'Last Date',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blueGrey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.grey.shade100,
+                        filled: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a last date';
@@ -135,7 +177,13 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                         backgroundColor: Colors.blue, // Text color
                       ),
                       onPressed: _submitAssignment,
-                      child: const Text('Submit Assignment'),
+                      child: Text(
+                        'שלח משימה',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -18,6 +18,7 @@ dependencies:
   google_fonts: ^6.1.0
   cloud_firestore: ^4.12.1
   flutter_svg: ^2.0.8
+  file_picker: ^6.2.0
 
 
 
@@ -27,6 +28,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
   
 
 
@@ -46,3 +48,7 @@ flutter:
     - asset/icons/timetable.svg
     - asset/icons/check.svg
     - asset/icons/profile.svg
+    - asset/icons/teacher.svg
+    - asset/icons/student.svg
+    - asset/icons/parent.svg
+    - asset/icons/classroom.svg

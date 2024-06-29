@@ -57,14 +57,6 @@ class AdminHomeScreen extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                         ),
-                        Text(
-                          "שלום",
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white,
-                                  ),
-                        ),
                       ],
                     ),
                   ],

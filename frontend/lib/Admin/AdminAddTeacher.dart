@@ -20,7 +20,14 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Teacher'),
+        title: Text(
+          'הוספת מורה חדש',
+          style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+        ),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -29,26 +36,76 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
             SizedBox(height: 17.0),
             TextField(
               controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
+              decoration: InputDecoration(
+                labelText: 'Username',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueGrey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                fillColor: Colors.grey.shade100,
+                filled: true,
+              ),
             ),
             const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: InputDecoration(
+                labelText: 'Password',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueGrey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                fillColor: Colors.grey.shade100,
+                filled: true,
+              ),
               obscureText: true,
             ),
             const SizedBox(height: 20),
             TextField(
               controller: _fullNameController,
-              decoration: const InputDecoration(labelText: 'Full Name'),
+              decoration: InputDecoration(
+                labelText: 'Full Name',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueGrey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                fillColor: Colors.grey.shade100,
+                filled: true,
+              ),
             ),
             const SizedBox(height: 20),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: InputDecoration(
+                labelText: 'Email',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueGrey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                fillColor: Colors.grey.shade100,
+                filled: true,
+              ),
             ),
-            const SizedBox(height: 16.0),
-            const Text('Select Classes and Subjects:'),
+            const SizedBox(height: 20),
+            SizedBox(height: 16.0),
+            Text('בחר כיתה ונושא:'),
+            SizedBox(height: 10.0),
             Wrap(
               children: List<Widget>.generate(
                 _selectedClassesSubjects.length,
@@ -67,12 +124,32 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
               onPressed: () {
                 _showClassSubjectDialog();
               },
-              child: const Text('Add Class and Subject'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue, // Text color
+              ),
+              child: Text(
+                'הוספת כיתה ונושא', // Text in Hebrew
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-            const SizedBox(height: 16.0),
+            SizedBox(height: 17.0),
             ElevatedButton(
               onPressed: _saveTeacher,
-              child: const Text('Save Teacher'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue, // Text color
+              ),
+              child: Text(
+                'שמור מורה', // Text in Hebrew
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
@@ -128,7 +205,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
     String email = _emailController.text;
 
     var url = Uri.parse(
-        'http://10.0.0.22:3000/admin/addteacher'); // Replace with your actual endpoint
+        'http://10.0.0.14:3000/admin/addteacher'); // Replace with your actual endpoint
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
