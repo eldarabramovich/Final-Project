@@ -95,6 +95,7 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
                           .toList(),
                       decoration: const InputDecoration(labelText: 'Class'),
                     ),
+                    SizedBox(height: 17.0),
                     TextFormField(
                       controller: _descriptionController,
                       decoration: const InputDecoration(
@@ -109,6 +110,10 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue, // Text color
+                      ),
                       onPressed: _sendMessage,
                       child: const Text('Send Message'),
                     ),

@@ -17,7 +17,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
   final _classnameController = TextEditingController();
 
   Future<void> _addStudent() async {
-    var url = Uri.parse('http://192.168.129.122:3000/admin/addstudent');
+    var url = Uri.parse('http://10.0.0.22:3000/admin/addstudent');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -54,6 +54,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
           padding: const EdgeInsets.all(16.0),
           child: ListView(
             children: [
+              SizedBox(height: 17.0),
               TextFormField(
                 controller: _usernameController,
                 decoration: const InputDecoration(labelText: 'Username'),
@@ -64,6 +65,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
@@ -75,6 +77,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _fullnameController,
                 decoration: const InputDecoration(labelText: 'Full Name'),
@@ -85,6 +88,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _classnameController,
                 decoration: const InputDecoration(labelText: 'Class'),
@@ -95,7 +99,12 @@ class _AddStudentPageState extends State<AddStudentPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 25.0),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue, // Text color
+                ),
                 onPressed: () {
                   // Only save if the form is valid
                   if (_formKey.currentState!.validate()) {

@@ -26,19 +26,23 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
+            SizedBox(height: 17.0),
             TextField(
               controller: _usernameController,
               decoration: const InputDecoration(labelText: 'Username'),
             ),
+            const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
               decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
+            const SizedBox(height: 20),
             TextField(
               controller: _fullNameController,
               decoration: const InputDecoration(labelText: 'Full Name'),
             ),
+            const SizedBox(height: 20),
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
@@ -124,7 +128,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
     String email = _emailController.text;
 
     var url = Uri.parse(
-        'http://10.100.102.3:3000/admin/addteacher'); // Replace with your actual endpoint
+        'http://10.0.0.22:3000/admin/addteacher'); // Replace with your actual endpoint
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -139,8 +143,8 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
 
     if (response.statusCode == 200) {
       // Teacher added successfully
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Teacher added successfully')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Teacher added successfully')));
       Navigator.pop(context); // Navigate back to the previous screen
     } else {
       // Error adding teacher

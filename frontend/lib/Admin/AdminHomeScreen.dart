@@ -99,7 +99,7 @@ class AdminHomeScreen extends StatelessWidget {
                                   builder: (context) => AdminAddTeacher()),
                             );
                           },
-                          icon: '',
+                          icon: 'asset/icons/teacher.svg',
                           title: "מורה חדש",
                         ),
                         HomeCard(
@@ -110,7 +110,7 @@ class AdminHomeScreen extends StatelessWidget {
                                   builder: (context) => AdminAddClassroom()),
                             );
                           },
-                          icon: '',
+                          icon: 'asset/icons/classroom.svg',
                           title: "כיתה חדשה",
                         ),
                       ],
@@ -126,7 +126,7 @@ class AdminHomeScreen extends StatelessWidget {
                                   builder: (context) => AddStudentPage()),
                             );
                           },
-                          icon: '',
+                          icon: 'asset/icons/student.svg',
                           title: "תלמיד חדש",
                         ),
                         HomeCard(
@@ -137,7 +137,7 @@ class AdminHomeScreen extends StatelessWidget {
                                   builder: (context) => AdminAddParent()),
                             );
                           },
-                          icon: '',
+                          icon: 'asset/icons/parent.svg',
                           title: "הורה חדש",
                         ),
                       ],

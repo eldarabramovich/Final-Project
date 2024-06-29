@@ -28,7 +28,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   }
 
   Future<void> _fetchTeacherData() async {
-    var url = Uri.parse('http://192.168.40.1:3000/teacher/${widget.userId}');
+    var url = Uri.parse('http://10.0.0.22:3000/teacher/${widget.userId}');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
@@ -47,7 +47,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
 
   Future<void> _submitAssignment() async {
     if (_formKey.currentState!.validate()) {
-      var url = Uri.parse('http://192.168.40.1:3000/teacher/addassi');
+      var url = Uri.parse('http://10.0.0.22:3000/teacher/addassi');
       var response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -86,6 +86,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
+                    SizedBox(height: 25.0),
                     DropdownButtonFormField<String>(
                       value: _selectedClassname,
                       onChanged: (newValue) {
@@ -104,6 +105,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                           .toList(),
                       decoration: const InputDecoration(labelText: 'Class'),
                     ),
+                    SizedBox(height: 17.0),
                     TextFormField(
                       controller: _descriptionController,
                       decoration:
@@ -115,6 +117,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                         return null;
                       },
                     ),
+                    SizedBox(height: 17.0),
                     TextFormField(
                       controller: _lastDateController,
                       decoration: const InputDecoration(labelText: 'Last Date'),
@@ -125,7 +128,12 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
                         return null;
                       },
                     ),
+                    SizedBox(height: 20.0),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue, // Text color
+                      ),
                       onPressed: _submitAssignment,
                       child: const Text('Submit Assignment'),
                     ),

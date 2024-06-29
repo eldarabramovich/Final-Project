@@ -18,13 +18,20 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Classroom'),
+        title: const Text(
+          'הוספת כיתה חדשה',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            SizedBox(height: 17.0),
             TextField(
               controller: _classNameController,
               decoration: const InputDecoration(labelText: 'Classroom Name'),
@@ -67,7 +74,11 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
                 // Navigate back to previous screen
                 Navigator.pop(context);
               },
-              child: const Text('Save Classroom'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue, // Text color
+              ),
+              child: const Text('שמור כיתה'),
             ),
           ],
         ),
@@ -80,7 +91,7 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
     List<String> subjects = _subjects;
 
     var url = Uri.parse(
-        'http://192.168.40.1:3000/admin/addclasubj'); // Replace with your actual endpoint
+        'http://10.0.0.22:3000/admin/addclasubj'); // Replace with your actual endpoint
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

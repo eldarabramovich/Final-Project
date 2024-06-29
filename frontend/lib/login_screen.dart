@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       var response = await http.post(
-        Uri.parse('http://192.168.31.223:3000/auth/login'),
+        Uri.parse('http://192.168.129.122:3000/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: requestBody,
       );
