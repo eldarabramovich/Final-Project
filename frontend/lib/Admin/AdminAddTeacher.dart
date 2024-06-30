@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -29,20 +28,20 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
         backgroundColor: Colors.blue.shade800,
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            SizedBox(height: 17.0),
+            const SizedBox(height: 17.0),
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
                 labelText: 'Username',
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: Colors.grey),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueGrey),
+                  borderSide: const BorderSide(color: Colors.blueGrey),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 fillColor: Colors.grey.shade100,
@@ -55,11 +54,11 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
               decoration: InputDecoration(
                 labelText: 'Password',
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: Colors.grey),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueGrey),
+                  borderSide: const BorderSide(color: Colors.blueGrey),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 fillColor: Colors.grey.shade100,
@@ -73,11 +72,11 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
               decoration: InputDecoration(
                 labelText: 'Full Name',
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: Colors.grey),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueGrey),
+                  borderSide: const BorderSide(color: Colors.blueGrey),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 fillColor: Colors.grey.shade100,
@@ -90,11 +89,11 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
               decoration: InputDecoration(
                 labelText: 'Email',
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: Colors.grey),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueGrey),
+                  borderSide: const BorderSide(color: Colors.blueGrey),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 fillColor: Colors.grey.shade100,
@@ -102,9 +101,9 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
               ),
             ),
             const SizedBox(height: 20),
-            SizedBox(height: 16.0),
-            Text('בחר כיתה ונושא:'),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 16.0),
+            const Text('בחר כיתה ונושא:'),
+            const SizedBox(height: 10.0),
             Wrap(
               children: List<Widget>.generate(
                 _selectedClassesSubjects.length,
@@ -127,7 +126,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blue, // Text color
               ),
-              child: Text(
+              child: const Text(
                 'הוספת כיתה ונושא', // Text in Hebrew
                 style: TextStyle(
                   fontSize: 16.0,
@@ -135,14 +134,14 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
                 ),
               ),
             ),
-            SizedBox(height: 17.0),
+            const SizedBox(height: 17.0),
             ElevatedButton(
               onPressed: _saveTeacher,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blue, // Text color
               ),
-              child: Text(
+              child: const Text(
                 'שמור מורה', // Text in Hebrew
                 style: TextStyle(
                   fontSize: 16.0,
@@ -164,17 +163,17 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Class and Subject'),
+          title: const Text('Add Class and Subject'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: classController,
-                decoration: InputDecoration(labelText: 'Class Name'),
+                decoration: const InputDecoration(labelText: 'Class Name'),
               ),
               TextField(
                 controller: subjectController,
-                decoration: InputDecoration(labelText: 'Subject'),
+                decoration: const InputDecoration(labelText: 'Subject'),
               ),
             ],
           ),
@@ -189,7 +188,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
                 });
                 Navigator.pop(context);
               },
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
           ],
         );
@@ -220,7 +219,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
     if (response.statusCode == 200) {
       // Teacher added successfully
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Teacher added successfully')));
+          .showSnackBar(const SnackBar(content: Text('Teacher added successfully')));
       Navigator.pop(context); // Navigate back to the previous screen
     } else {
       // Error adding teacher
