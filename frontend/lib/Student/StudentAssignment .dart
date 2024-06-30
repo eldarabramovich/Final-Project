@@ -1,9 +1,10 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:frontend/models/assigmentmodel.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:file_picker/file_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StudentAssignment extends StatefulWidget {
   final String userId;
@@ -16,6 +17,7 @@ class StudentAssignment extends StatefulWidget {
 
 class _StudentAssignmentState extends State<StudentAssignment> {
   late Future<List<AssignmentData>> futureAssignments;
+
   @override
   void initState() {
     super.initState();
@@ -24,16 +26,58 @@ class _StudentAssignmentState extends State<StudentAssignment> {
 
   Future<List<AssignmentData>> fetchAssignments() async {
     var url =
-        Uri.parse('http://10.100.102.3:3000/student/getassi/${widget.userId}');
+        Uri.parse('http://192.168.31.51:3000/student/getassi/${widget.userId}');
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
-      List<dynamic> assignmentJson = json.decode(response.body);
+      var responseBody = response.body;
+      print('API Response: $responseBody');
+
+      List<dynamic> assignmentJson = json.decode(responseBody) ?? [];
       return assignmentJson
           .map((json) => AssignmentData.fromJson(json))
           .toList();
     } else {
       throw Exception('Failed to load assignments');
+    }
+  }
+
+  Future<void> downloadFile(String fileId) async {
+    var url =
+        Uri.parse('http://192.168.31.51:3000/students/downloadFile/$fileId');
+    print('Download URL: $url');
+
+    if (await canLaunch(url.toString())) {
+      await launch(url.toString());
+    } else {
+      Fluttertoast.showToast(msg: "Could not launch $url");
+      print('Could not launch URL: $url');
+    }
+  }
+
+  Future<void> submitAssignment(String assignmentId) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('http://192.168.31.51:3000/student/uploadassi'));
+      request.fields['studentId'] = widget.userId;
+      request.fields['assignmentId'] = assignmentId;
+      request.files.add(http.MultipartFile(
+        'file',
+        file.readStream!,
+        file.size,
+        filename: file.name,
+      ));
+
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(msg: "File uploaded successfully");
+      } else {
+        Fluttertoast.showToast(msg: "Failed to upload file");
+      }
     }
   }
 
@@ -58,7 +102,11 @@ class _StudentAssignmentState extends State<StudentAssignment> {
               padding: EdgeInsets.all(20.0),
               itemCount: assignments.length,
               itemBuilder: (context, index) {
-                return AssignmentCard(assignment: assignments[index]);
+                return AssignmentCard(
+                  assignment: assignments[index],
+                  onDownload: () => downloadFile(assignments[index].id),
+                  onSubmit: () => submitAssignment(assignments[index].id),
+                );
               },
             );
           } else {
@@ -141,8 +189,15 @@ class AssignmentDetailRow extends StatelessWidget {
 
 class AssignmentCard extends StatelessWidget {
   final AssignmentData assignment;
+  final VoidCallback onDownload;
+  final VoidCallback onSubmit;
 
-  const AssignmentCard({Key? key, required this.assignment}) : super(key: key);
+  const AssignmentCard({
+    Key? key,
+    required this.assignment,
+    required this.onDownload,
+    required this.onSubmit,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +232,15 @@ class AssignmentCard extends StatelessWidget {
                 fontSize: 14.0,
               ),
             ),
-            // You can add more details or actions for the assignment card here.
+            SizedBox(height: 10),
+            AssignmentButton(
+              title: 'Download',
+              onPress: onDownload,
+            ),
+            AssignmentButton(
+              title: 'Submit',
+              onPress: onSubmit,
+            ),
           ],
         ),
       ),

@@ -1,4 +1,106 @@
-const { db , admin , bucket } = require('../firebase/firebaseAdmin.js');
+const { db , admin } = require('../firebase/firebaseAdmin.js');
+
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage }).single('file');
+const bucket = admin.storage().bucket('teachtouch-20b98.appspot.com');
+
+const getAssignments = async (req, res) => {
+  const { userId } = req.params;
+  const db = admin.firestore();
+
+  try {
+    // Fetch the student document to get the class information
+    const studentDoc = await db.collection('students').doc(userId).get();
+    if (!studentDoc.exists) {
+      console.log('Step 2: Student not found');
+      return res.status(404).send('Student not found');
+    }
+
+    const studentData = studentDoc.data();
+    console.log('Step 3: Student data retrieved:', studentData);
+
+    const studentClass = studentData.classname;
+    const studentSubClass = studentData.subClassName;
+    console.log('Step 4: Student class:', studentClass, ', subclass:', studentSubClass);
+
+    // Query assignments for the student's class and subclass
+    const assignmentsSnapshot = await db.collection('assignments')
+      .where('classname', 'in', [studentClass, studentSubClass])
+      .get();
+
+    const assignments = [];
+    assignmentsSnapshot.forEach(doc => {
+      assignments.push({ id: doc.id, ...doc.data() });
+    });
+
+    console.log('Step 5: Total assignments fetched:', assignments.length);
+    res.status(200).json(assignments);
+  } catch (error) {
+    console.error('Error fetching assignments:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+const uploadStudentAssignment = async (req, res) => {
+  const { studentId, assignmentId } = req.body;
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  try {
+    const blob = bucket.file(`student_assignments/${studentId}/${file.originalname}`);
+    const blobStream = blob.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
+
+    blobStream.on('error', (err) => {
+      console.error('Error uploading file:', err);
+      res.status(500).send('Error uploading file.');
+    });
+
+    blobStream.on('finish', async () => {
+      const fileUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+      const newSubmission = {
+        studentId,
+        assignmentId,
+        fileUrl,
+        uploadDate: admin.firestore.FieldValue.serverTimestamp(),
+      };
+
+      await db.collection('student_submissions').add(newSubmission);
+      res.status(200).send('File uploaded successfully');
+    });
+
+    blobStream.end(file.buffer);
+  } catch (error) {
+    console.error('Error uploading assignment:', error);
+    res.status(500).send('Error uploading assignment');
+  }
+};
+const downloadAssignment = async (req, res) => {
+  const fileId = req.params.fileId;
+
+  try {
+    const file = bucket.file(fileId);
+    const [metadata] = await file.getMetadata();
+
+    res.setHeader('Content-Type', metadata.contentType);
+    res.setHeader('Content-Disposition', `attachment; filename=${fileId}`);
+
+    file.createReadStream().pipe(res);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+    res.status(500).send('Error downloading file');
+  }
+};
+
+
+
 const downloadFile = async (req, res) => {
   const { fileId } = req.params;
 
@@ -44,6 +146,7 @@ const downloadFile = async (req, res) => {
     res.status(500).send('Error downloading file');
   }
 };
+
 
 const getStudent = async (req, res) => {
   const { studentId } = req.params;
@@ -212,4 +315,7 @@ const GetAssignById = async (req, res) => {
   }
 };
 
-module.exports = {downloadFile,GetAssignById,GetMessageByClassname,getStudentData,editStudent,deleteStudent};
+module.exports = {getAssignments,
+  uploadStudentAssignment,
+  downloadAssignment,
+  upload,downloadFile,GetAssignById,GetMessageByClassname,getStudentData,editStudent,deleteStudent};

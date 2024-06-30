@@ -10,7 +10,6 @@ router.post('/teacher/AddStudentToSubClass',AddStudentToSubClass);
 
 router.put('/teacher/editteachers/:teacherId', editTeacher);
 router.delete('/teacher/deleteachers/:teacherId', deleteTeacher);
-
 router.get('/teacher/:classId', getClassStudents);
 router.get('/:userId', getTeacherData);
 router.get('/teacher/getstudents/:classname', GetStudentByClass);
