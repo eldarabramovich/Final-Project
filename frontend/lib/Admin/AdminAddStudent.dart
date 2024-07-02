@@ -17,7 +17,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
   final _classnameController = TextEditingController();
 
   Future<void> _addStudent() async {
-    var url = Uri.parse('http://10.0.0.14:3000/admin/addstudent');
+    var url = Uri.parse('http://10.0.0.22:3000/admin/addstudent');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

@@ -44,8 +44,7 @@ class _UploadFilePageState extends State<UploadFilePage> {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse(
-          'http://192.168.31.223:3000/upload'), // Update with your IP address
+      Uri.parse('http://10.0.0.22:3000/upload'), // Update with your IP address
     );
 
     request.fields['teacherId'] = _teacherIdController.text;

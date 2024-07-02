@@ -372,6 +372,35 @@ const getClassStudents = async (req, res) => {
       res.status(500).send("Error getting class students");
   }
 };
+const addEvent = async (req, res) => {
+  const { date, time, event, teacherId } = req.body;
+
+  if (!date || !time || !event || !teacherId) {
+    return res.status(400).send("Missing required data");
+  }
+
+  try {
+    const db = admin.firestore();
+    const eventDate = new Date(date);
+    const eventTime = new Date(time);
+    const eventDateTime = new Date(eventDate.setHours(eventTime.getHours(), eventTime.getMinutes()));
+
+    await db.collection('events').add({
+      teacherId,
+      date: eventDate,
+      time: eventDateTime,
+      event,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    res.status(200).send('Event added successfully');
+  } catch (error) {
+    console.error('Error adding event:', error);
+    res.status(500).send('Error adding event');
+  }
+};
+
+
 
 module.exports = {
   CreateSubClass,
@@ -384,5 +413,6 @@ module.exports = {
   editTeacher,
   deleteTeacher,
   getClassStudents,
-  uploadFile
+  uploadFile,
+  addEvent,
  };
