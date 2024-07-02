@@ -12,7 +12,10 @@ const AddAssignment = async (req, res) => {
   const db = admin.firestore();
   const bucket = admin.storage().bucket();
   console.error('Step 2: Retrieved request data');
-
+  if(!classname || !subjectname || !description || !lastDate)
+  {
+    return res.status(400).send('missing data');
+  }
   if (!file) {
     console.error('Step 3: No file uploaded');
     return res.status(400).send('No file uploaded.');

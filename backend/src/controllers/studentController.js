@@ -1,5 +1,4 @@
 const { db , admin } = require('../firebase/firebaseAdmin.js');
-
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).single('file');
@@ -82,6 +81,7 @@ const uploadStudentAssignment = async (req, res) => {
     res.status(500).send('Error uploading assignment');
   }
 };
+
 const downloadAssignment = async (req, res) => {
   const fileId = req.params.fileId;
 
@@ -99,16 +99,13 @@ const downloadAssignment = async (req, res) => {
   }
 };
 
-
-
 const downloadFile = async (req, res) => {
   const { fileId } = req.params;
+  console.log(`Received request to download file: ${fileId}`);
 
   try {
-    console.log(`Fetching file with ID: ${fileId}`);
-
-    // Fetch file details from Firestore using the fileId
-    const fileDoc = await db.collection('files').doc(fileId).get();
+    // Find the file document in Firestore by the fileId
+    const fileDoc = await admin.firestore().collection('assignments').doc(fileId).get();
 
     if (!fileDoc.exists) {
       console.log(`File with ID: ${fileId} not found`);
@@ -116,23 +113,23 @@ const downloadFile = async (req, res) => {
     }
 
     const fileData = fileDoc.data();
-    const filePath = `${fileData.userId}/${fileData.fileName}`;
+    const fileUrl = fileData.fileUrl;
+    console.log(`File URL: ${fileUrl}`);
 
+    // Extract and decode the file path from the URL
+    const filePath = decodeURIComponent(fileUrl.split('/assignments/')[1]);
     console.log(`File path: ${filePath}`);
 
-    // Create a reference to the file in the bucket
-    const fileRef = bucket.file(filePath);
-
-    // Get the file metadata
+    // Create a reference to the file in Google Cloud Storage
+    const fileRef = bucket.file(`assignments/${filePath}`);
     const [metadata] = await fileRef.getMetadata();
-
     console.log(`File metadata: ${JSON.stringify(metadata)}`);
 
-    // Set response headers for the file download
+    // Setting the headers for the download response
     res.setHeader('Content-Type', metadata.contentType);
-    res.setHeader('Content-Disposition', `attachment; filename="${fileData.fileName}"`);
+    res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${filePath}`);
 
-    // Create a read stream for the file and pipe it to the response
+    // Create a stream to read the file and transfer it to the response
     const fileStream = fileRef.createReadStream();
 
     fileStream.on('error', (err) => {
