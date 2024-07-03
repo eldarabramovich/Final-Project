@@ -91,7 +91,7 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
     List<String> subjects = _subjects;
 
     var url = Uri.parse(
-        'http://10.0.0.22:3000/admin/addclasubj'); // Replace with your actual endpoint
+        'http://172.20.10.2:3000/admin/addclasubj'); // Replace with your actual endpoint
 
     var response = await http.post(
       url,

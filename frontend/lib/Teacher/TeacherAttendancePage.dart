@@ -32,7 +32,7 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
 
   Future<void> _fetchStudents() async {
     var url = Uri.parse(
-        'http://10.0.0.22:3000/teacher/getstudents/${widget.classname}');
+        'http://172.20.10.2:3000/teacher/getstudents/${widget.classname}');
     try {
       var response = await http.get(url);
 
@@ -87,7 +87,7 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
   //   }
   // }
   Future<void> _submitAttendance() async {
-    var url = Uri.parse('http://10.0.0.22:3000/teacher/addatte');
+    var url = Uri.parse('http://172.20.10.2:3000/teacher/addatte');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

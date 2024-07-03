@@ -9,6 +9,7 @@ import 'package:frontend/Admin/AdminAddClassroom.dart';
 import 'package:frontend/Admin/AdminAddParent.dart';
 import 'package:frontend/Admin/AdminAddStudent.dart';
 import 'package:frontend/Admin/AdminAddTeacher.dart';
+import 'package:frontend/Admin/AdminAddEventPage.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   static String routeName = 'AdminHomeScreen';
@@ -142,7 +143,7 @@ class AdminHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AdminAddParent()),
+                                  builder: (context) => AdminAddEventPage()),
                             );
                           },
                           icon: 'asset/icons/addpost.svg',

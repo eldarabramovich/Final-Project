@@ -3,14 +3,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/Teacher/TeacherEventPage.dart';
 import 'package:frontend/Teacher/TeacherPresence.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'TeacherGrade.dart';
 
 import 'package:frontend/Teacher/TeacherFiles.dart';
-
 import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
+
+import 'package:frontend/Teacher/TeacherProfile.dart';
 import 'package:frontend/Teacher/TeacherMessages.dart';
 import 'package:frontend/Teacher/TeacherCalendar.dart';
 
@@ -177,11 +180,27 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherFiles()),
+                                  builder: (context) => TeacherEventPage()),
                             );
                           },
                           icon: 'asset/icons/news.svg',
                           title: "אירועים",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherProfile(
+                                        username: 'teacherUsername',
+                                        name: 'Teacher Name',
+                                        userClass: 'Class Name',
+                                        password: 'password123',
+                                      )),
+                            );
+                          },
+                          icon: 'asset/icons/profile.svg',
+                          title: "איזור אישי",
                         ),
                       ],
                     ),
