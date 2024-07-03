@@ -10,12 +10,27 @@ import 'StudentDocuments.dart';
 import 'StudentGrade.dart';
 import 'StudentMessages.dart';
 import 'StudentPresence.dart';
+import '../models/studenmodel.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class HomeScreen extends StatelessWidget {
-  // HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
   final String userId;
   const HomeScreen({Key? key, required this.userId}) : super(key: key);
-  //final user = FirebaseAuth.instance.currentUser!;
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Student? student;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+ 
 
   void UserLogOut() {
     FirebaseAuth.instance.signOut();
@@ -97,8 +112,11 @@ class HomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      StudentAssignment(userId: userId)),
+                                builder: (context) => StudentAssignment(
+                                  userId: widget.userId,
+                                  
+                                ),
+                              ),
                             );
                           },
                           icon: 'asset/icons/assignment.svg',
@@ -125,7 +143,9 @@ class HomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => StudentClassMessagesScreen(userId: userId)),
+                                  builder: (context) =>
+                                      StudentClassMessagesScreen(
+                                          userId: widget.userId)),
                             );
                           },
                           icon: 'asset/icons/chat.svg',

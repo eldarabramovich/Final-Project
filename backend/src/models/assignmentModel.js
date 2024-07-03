@@ -4,13 +4,19 @@ const assignmentModel = {
     description: '',
     lastDate: '',
     fileUrl: '',
-    submissions: [], // List of submissions
+    submissionID: '', // List of submissions
   };
   
   const submissionModel = {
-    studentId: '',
-    fileUrl: '',
-    submittedAt: admin.firestore.FieldValue.serverTimestamp(),
+    assignmentID: '',
+    studentsubmission:[],
   };
   
-  module.exports = { assignmentModel, submissionModel };
+  
+  const studentsubmissionsModel = {
+    fullname: '',
+    Grade:'',
+    fileUrl: '',
+    submittedDate: admin.firestore.FieldValue.serverTimestamp(),
+  };
+  module.exports = { assignmentModel, submissionModel ,studentsubmissionsModel};

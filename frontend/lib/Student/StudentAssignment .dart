@@ -1,3 +1,5 @@
+// ignore: file_names
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/assigmentmodel.dart';
@@ -9,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
+import '../models/studenmodel.dart';
 
 class StudentAssignment extends StatefulWidget {
   final String userId;
@@ -21,11 +24,30 @@ class StudentAssignment extends StatefulWidget {
 
 class _StudentAssignmentState extends State<StudentAssignment> {
   late Future<List<AssignmentData>> futureAssignments;
-
+  Student? student;
   @override
   void initState() {
     super.initState();
+    fetchStudentData();
     futureAssignments = fetchAssignments();
+  }
+
+  Future<void> fetchStudentData() async {
+    try {
+      final response = await http.get(Uri.parse(
+          'http://192.168.31.51:3000/student/getstudent/${widget.userId}'));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          student = Student.fromFirestore(data);
+        });
+      } else {
+        print('Failed to load student data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching student data: $e');
+    }
   }
 
   Future<List<AssignmentData>> fetchAssignments() async {
@@ -43,32 +65,6 @@ class _StudentAssignmentState extends State<StudentAssignment> {
           .toList();
     } else {
       throw Exception('Failed to load assignments');
-    }
-  }
-
-  Future<void> submitAssignment(String assignmentId) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      PlatformFile file = result.files.first;
-      var request = http.MultipartRequest(
-          'POST', Uri.parse('http://192.168.31.51:3000/student/uploadassi'));
-      request.fields['studentId'] = widget.userId;
-      request.fields['assignmentId'] = assignmentId;
-      request.files.add(http.MultipartFile(
-        'file',
-        file.readStream!,
-        file.size,
-        filename: file.name,
-      ));
-
-      var response = await request.send();
-
-      if (response.statusCode == 200) {
-        Fluttertoast.showToast(msg: "File uploaded successfully");
-      } else {
-        Fluttertoast.showToast(msg: "Failed to upload file");
-      }
     }
   }
 
@@ -157,17 +153,47 @@ class _StudentAssignmentState extends State<StudentAssignment> {
     }
   }
 
-  String extensionFromMime(String mime) {
-    switch (mime) {
-      case 'application/pdf':
-        return 'pdf';
-      case 'application/msword':
-        return 'doc';
-      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-        return 'docx';
-      // Add more mime types as needed
-      default:
-        return 'bin';
+  Future<void> submitAssignment(String assignmentId) async {
+    if (student == null) {
+      Fluttertoast.showToast(msg: "Student data not loaded");
+      return;
+    }
+
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('http://192.168.31.51:3000/student/addSubmission'));
+
+      // Add file to the request
+      request.files.add(await http.MultipartFile.fromPath(
+        'file',
+        file.path!,
+        filename: file.name,
+      ));
+
+      // Add other fields
+      request.fields['assignmentID'] = assignmentId;
+      request.fields['fullName'] = student!.fullname;
+
+      try {
+        var streamedResponse = await request.send();
+        var response = await http.Response.fromStream(streamedResponse);
+
+        if (response.statusCode == 200) {
+          Fluttertoast.showToast(msg: "Assignment submitted successfully");
+        } else {
+          print('Server error: ${response.body}');
+          Fluttertoast.showToast(
+              msg: "Failed to submit assignment: ${response.statusCode}");
+        }
+      } catch (e) {
+        print('Error submitting assignment: $e');
+        Fluttertoast.showToast(msg: "Error submitting assignment: $e");
+      }
+    } else {
+      Fluttertoast.showToast(msg: "No file selected");
     }
   }
 

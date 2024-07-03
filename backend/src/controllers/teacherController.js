@@ -48,8 +48,17 @@ const AddAssignment = async (req, res) => {
 
       try {
         console.error('Step 7: Saving assignment to Firestore');
-        await db.collection('assignments').add(newAssignment);
-        console.error('Step 8: Assignment added successfully');
+        const assignmentRef = await db.collection('assignments').add(newAssignment);
+        const assignmentID = assignmentRef.id;
+
+        const newSubmission = {
+          assignmentID: assignmentID,
+          studentsubmission: [],
+        };
+
+        await db.collection('submissions').doc(assignmentID).set(newSubmission);
+
+        console.error('Step 8: Assignment record added successfully');
         res.status(200).send('Assignment added successfully');
       } catch (firestoreError) {
         console.error('Step 7.1: Error saving assignment to Firestore:', firestoreError);

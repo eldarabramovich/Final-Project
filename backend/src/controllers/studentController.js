@@ -1,8 +1,86 @@
 const { db , admin } = require('../firebase/firebaseAdmin.js');
 const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).single('file');
 const bucket = admin.storage().bucket('teachtouch-20b98.appspot.com');
+
+
+const addSubmission = async (req, res) => {
+  console.log('Received request: POST /student/addSubmission');
+
+  const { assignmentID, fullName } = req.body;
+  const file = req.file;
+  const db = admin.firestore();
+  const bucket = admin.storage().bucket();
+
+  if (!assignmentID || !fullName) {
+    return res.status(400).send('Missing assignment ID or full name');
+  }
+
+  if (!file) {
+    console.log('No file uploaded');
+    return res.status(400).send('No file uploaded.');
+  }
+
+  try {
+    console.log('Preparing to upload file');
+    const blob = bucket.file(`submissions/${file.originalname}`);
+    const blobStream = blob.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
+
+    blobStream.on('error', (err) => {
+      console.error('Error during file upload:', err);
+      res.status(500).send('Error uploading file.');
+    });
+
+    blobStream.on('finish', async () => {
+      console.log('File upload finished');
+      const fileUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
+      // Create the new submission object
+      const newSubmission = {
+        fileUrl: fileUrl,
+        fullName: fullName,
+        submittedDate: new Date(), // Using Date object for date
+        grade: '' // Add grade field if required
+      };
+
+      try {
+        // Update the submissions document with the new submission
+        const submissionDocRef = db.collection('submissions').doc(assignmentID);
+        await submissionDocRef.update({
+          studentsubmission: admin.firestore.FieldValue.arrayUnion(newSubmission)
+        });
+
+        console.log('Submission added successfully');
+        res.status(200).send('Submission added successfully');
+      } catch (firestoreError) {
+        console.error('Error updating submission document:', firestoreError);
+        res.status(500).send('Error updating submission document');
+      }
+    });
+
+    blobStream.end(file.buffer);
+  } catch (error) {
+    console.error('Error in file upload process:', error);
+    res.status(500).send('Error adding submission');
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
 
 const getAssignments = async (req, res) => {
   const { userId } = req.params;
@@ -314,5 +392,5 @@ const GetAssignById = async (req, res) => {
 
 module.exports = {getAssignments,
   uploadStudentAssignment,
-  downloadAssignment,
+  downloadAssignment,addSubmission,
   upload,downloadFile,GetAssignById,GetMessageByClassname,getStudentData,editStudent,deleteStudent};

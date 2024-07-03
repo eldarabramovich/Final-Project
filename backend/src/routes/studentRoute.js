@@ -1,8 +1,8 @@
 const express = require('express');
-const {upload, uploadStudentAssignment,getAssignments,downloadFile,GetAssignById,GetMessageByClassname,getStudentData ,deleteStudent,editStudent} = require('../controllers/studentController');
+const {addSubmission,upload,getAssignments,downloadFile,GetAssignById,GetMessageByClassname,getStudentData ,deleteStudent,editStudent} = require('../controllers/studentController');
 const router = express.Router();
 router.get('/getassi/:userId', getAssignments);
-router.post('/uploadassi', upload, uploadStudentAssignment);
+router.post('/addSubmission', upload, addSubmission);
 router.get('/downloadFile/:fileId',downloadFile );
 router.get('/getassi/:userId',GetAssignById );
 router.post('/student/editStudent',editStudent );

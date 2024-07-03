@@ -4,7 +4,7 @@ const studentModel = {
     fullname: '',
     classname: '',
     subClassName: '',
-    role: 'student'
+    role:'student'
 };
 
 module.exports = studentModel;
