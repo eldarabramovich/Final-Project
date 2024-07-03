@@ -52,3 +52,7 @@ flutter:
     - asset/icons/student.svg
     - asset/icons/parent.svg
     - asset/icons/classroom.svg
+    - asset/icons/news.svg
+    - asset/icons/addpost.svg
+
+    

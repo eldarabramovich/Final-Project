@@ -169,6 +169,22 @@ class TeacherHomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherFiles()),
+                            );
+                          },
+                          icon: 'asset/icons/news.svg',
+                          title: "אירועים",
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

@@ -125,7 +125,9 @@ class HomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => StudentClassMessagesScreen(userId: userId)),
+                                  builder: (context) =>
+                                      StudentClassMessagesScreen(
+                                          userId: userId)),
                             );
                           },
                           icon: 'asset/icons/chat.svg',
@@ -136,7 +138,8 @@ class HomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => StudentCalendar()),
+                                  builder: (context) =>
+                                      StudentCalendar(userId: userId)),
                             );
                           },
                           icon: 'asset/icons/timetable.svg',
@@ -174,6 +177,11 @@ class HomeScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
+                        HomeCard(
+                          onPress: () {},
+                          icon: 'asset/icons/news.svg',
+                          title: "אירועים",
+                        ),
                         HomeCard(
                           onPress: () {},
                           icon: 'asset/icons/profile.svg',

@@ -134,6 +134,22 @@ class AdminHomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AdminAddParent()),
+                            );
+                          },
+                          icon: 'asset/icons/addpost.svg',
+                          title: "אירוע חדש",
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
