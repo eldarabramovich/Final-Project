@@ -38,7 +38,8 @@ class _StudentClassMessagesScreenState
 
           // Fetch messages for the student's class
           var messagesResponse = await http.get(
-            Uri.parse('http://10.0.0.14:3000/student/getmess/${studentClass}'),
+            Uri.parse(
+                'http://10.100.102.3:3000/student/getmess/$studentClass'),
           );
 
           if (messagesResponse.statusCode == 200) {
@@ -78,19 +79,12 @@ class _StudentClassMessagesScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'הודעות לכיתה',
-          style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-        ),
-        backgroundColor: Colors.blue.shade800,
+        title: const Text('Messages for Class'),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _messages.isEmpty
-              ? Center(child: Text('No messages found'))
+              ? const Center(child: Text('No messages found'))
               : ListView.builder(
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {

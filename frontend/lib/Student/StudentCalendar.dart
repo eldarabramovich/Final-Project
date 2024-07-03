@@ -7,10 +7,10 @@ class StudentCalendar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("לוח שנה"),
+        title: const Text("לוח שנה"),
         backgroundColor: Colors.blue.shade800,
       ),
-      body: Center(
+      body: const Center(
         child: Text("זה מסך של לוח שנה"),
       ),
     );

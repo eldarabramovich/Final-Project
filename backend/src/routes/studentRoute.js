@@ -1,7 +1,12 @@
 const express = require('express');
-const { GetAssignById,GetMessageByClassname,getStudentData } = require('../controllers/studentController');
+const {addSubmission,upload,getAssignments,downloadFile,GetAssignById,GetMessageByClassname,getStudentData ,deleteStudent,editStudent} = require('../controllers/studentController');
 const router = express.Router();
+router.get('/getassi/:userId', getAssignments);
+router.post('/addSubmission', upload, addSubmission);
+router.get('/downloadFile/:fileId',downloadFile );
 router.get('/getassi/:userId',GetAssignById );
+router.post('/student/editStudent',editStudent );
+router.delete('/deletestudents/:studentId', deleteStudent);
 router.get('/getmess/:classname',GetMessageByClassname);
 router.get('/getstudent/:userId',getStudentData);
 module.exports = router;

@@ -3,25 +3,30 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:frontend/Teacher/TeacherPresence%20.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'TeacherAssignment.dart';
-import 'TeacherGrade.dart';
-
-import 'package:frontend/Teacher/TeacherFiles.dart';
-
-import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
-import 'package:frontend/Teacher/TeacherMessages.dart';
-import 'package:frontend/Teacher/TeacherCalendar.dart';
+import '../PagesTools/TeacherGrade.dart';
 import 'package:frontend/models/teachermodel.dart';
+import 'package:frontend/Teacher/PagesTools/TeacherFileUpload.dart';
+import 'package:frontend/Teacher/PagesTools/TecherAttendance%20.dart';
+import 'package:frontend/Teacher/PagesTools/TeacherAddNewAssi.dart';
+import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
+// import 'package:frontend/Teacher/TeacherCalendar.dart';
 
-class TeacherHomeScreen extends StatelessWidget {
-  // const TeacherHomeScreen({super.key});
-  const TeacherHomeScreen({Key? key, required this.userId}) : super(key: key);
-  //final user = FirebaseAuth.instance.currentUser!;
+class SubjectTeacherDashboard extends StatelessWidget {
   final String userId;
+  final Teacher teacherData;
+  final String selectedClass;
+  final String selectedSubject;
 
+  SubjectTeacherDashboard({
+    required this.userId,
+    required this.teacherData,
+    required this.selectedClass,
+    required this.selectedSubject,
+  });
+
+  // ignore: non_constant_identifier_names
   void UserLogOut() {
     FirebaseAuth.instance.signOut();
   }
@@ -58,8 +63,16 @@ class TeacherHomeScreen extends StatelessWidget {
                         Text(
                           " Welcome Teacher ",
                           style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                        ),
+                        Text(
+                          "שלום",
+                          style:
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    fontWeight: FontWeight.normal,
                                     color: Colors.white,
                                   ),
                         ),
@@ -95,7 +108,9 @@ class TeacherHomeScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      TeacherAddNewAssi(userId: userId)),
+                                      TeacherAddNewAssi(userId: userId,
+                                       selectedClass: selectedClass,
+                                       selectedSubject: selectedSubject)),
                             );
                           },
                           icon: 'asset/icons/assignment.svg',
@@ -134,7 +149,7 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherCalendar()),
+                                  builder: (context) => UploadFilePage()),
                             );
                           },
                           icon: 'asset/icons/timetable.svg',
@@ -150,22 +165,18 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherPresence()),
+                                  builder: (context) =>
+                                      TeacherClassSubjectSelectionPage(
+                                          userId: userId)),
                             );
                           },
-                          icon: 'asset/icons/check.svg',
+                          icon: 'asset/icons/chat.svg',
                           title: "נוחכות",
                         ),
                         HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TeacherFiles()),
-                            );
-                          },
-                          icon: 'asset/icons/document.svg',
-                          title: "מסמכים",
+                          onPress: () {},
+                          icon: 'asset/icons/profile.svg',
+                          title: "Profile",
                         ),
                       ],
                     ),

@@ -7,10 +7,10 @@ class AdminAddParent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("הורה חדש"),
+        title: const Text("הורה חדש"),
         backgroundColor: Colors.blue.shade800,
       ),
-      body: Center(
+      body: const Center(
         child: Text("זה מסך של הוספת הורה חדש"),
       ),
     );

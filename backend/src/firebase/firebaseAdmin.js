@@ -3,7 +3,11 @@ const serviceAccount = require('../config/teachtouch-20b98-firebase-adminsdk-ui7
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://TeachTouch.firebaseio.com"
+  databaseURL: "https://TeachTouch.firebaseio.com",
+  storageBucket:"gs://teachtouch-20b98.appspot.com"
 });
 
-module.exports = admin;
+const db = admin.firestore();
+const bucket = admin.storage().bucket();
+console.log('Firebase Admin Initialized');
+module.exports = { bucket, db, admin };

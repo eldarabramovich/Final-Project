@@ -3,29 +3,24 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AdminAddTeacher extends StatefulWidget {
+  const AdminAddTeacher({super.key});
+
   @override
   _AdminAddTeacher createState() => _AdminAddTeacher();
 }
 
 class _AdminAddTeacher extends State<AdminAddTeacher> {
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _fullNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  List<Map<String, String>> _selectedClassesSubjects = [];
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final List<Map<String, String>> _selectedClassesSubjects = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'הוספת מורה חדש',
-          style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-        ),
-        backgroundColor: Colors.blue.shade800,
+        title: const Text('Add Teacher'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -34,76 +29,24 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
             const SizedBox(height: 17.0),
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: 'Username',
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.blueGrey),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                fillColor: Colors.grey.shade100,
-                filled: true,
-              ),
+              decoration: const InputDecoration(labelText: 'Username'),
             ),
-            const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.blueGrey),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                fillColor: Colors.grey.shade100,
-                filled: true,
-              ),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
             const SizedBox(height: 20),
             TextField(
               controller: _fullNameController,
-              decoration: InputDecoration(
-                labelText: 'Full Name',
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.blueGrey),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                fillColor: Colors.grey.shade100,
-                filled: true,
-              ),
+              decoration: const InputDecoration(labelText: 'Full Name'),
             ),
-            const SizedBox(height: 20),
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.blueGrey),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                fillColor: Colors.grey.shade100,
-                filled: true,
-              ),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            const SizedBox(height: 20),
             const SizedBox(height: 16.0),
-            const Text('בחר כיתה ונושא:'),
-            const SizedBox(height: 10.0),
+            const Text('Select Classes and Subjects:'),
             Wrap(
               children: List<Widget>.generate(
                 _selectedClassesSubjects.length,
@@ -122,32 +65,12 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
               onPressed: () {
                 _showClassSubjectDialog();
               },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blue, // Text color
-              ),
-              child: const Text(
-                'הוספת כיתה ונושא', // Text in Hebrew
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: const Text('Add Class and Subject'),
             ),
-            const SizedBox(height: 17.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _saveTeacher,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blue, // Text color
-              ),
-              child: const Text(
-                'שמור מורה', // Text in Hebrew
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: const Text('Save Teacher'),
             ),
           ],
         ),

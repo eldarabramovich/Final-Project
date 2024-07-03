@@ -1,36 +1,29 @@
 class AssignmentData {
+  final String id;
   final String classname;
-  final String subjectname;
   final String description;
+  final String fileUrl;
   final String lastDate;
+  final String subjectname;
 
   AssignmentData({
+    required this.id,
     required this.classname,
-    required this.subjectname,
     required this.description,
+    required this.fileUrl,
     required this.lastDate,
+    required this.subjectname,
   });
 
-  factory AssignmentData.fromJson(Map<String, dynamic> data) {
+  factory AssignmentData.fromJson(Map<String, dynamic> json) {
     return AssignmentData(
-        classname: data['classname'],
-        subjectname: data['subjectname'],
-        description: data['description'],
-        lastDate: data['lastdate'] ?? '');
+      id: json['id'] ?? '',
+      classname: json['classname'] ?? '',
+      description: json['description'] ?? '',
+      fileUrl: json['fileUrl'] ?? '',
+      lastDate: json['lastDate'] ?? '',
+      subjectname: json['subjectname'] ?? '',
+    );
   }
 }
 
-// List<AssignmentData> assignment = [
-//   AssignmentData(
-//     classname: "א'1",
-//     subjectname: "עברית",
-//     description: "כתיבת תחביר",
-//     lastDate: "10 מאי",
-//   ),
-//   AssignmentData(
-//     classname: "א'1",
-//     subjectname: "עברית",
-//     description: "כתיבת תחביר",
-//     lastDate: "10 מאי",
-//   )
-// ];

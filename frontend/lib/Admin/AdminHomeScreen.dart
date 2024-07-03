@@ -12,7 +12,7 @@ import 'package:frontend/Admin/AdminAddTeacher.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   static String routeName = 'AdminHomeScreen';
-  AdminHomeScreen({super.key});
+  const AdminHomeScreen({super.key});
 
   //final user = FirebaseAuth.instance.currentUser!;
 
@@ -52,8 +52,16 @@ class AdminHomeScreen extends StatelessWidget {
                         Text(
                           " Welcome Admin ",
                           style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                        ),
+                        Text(
+                          "שלום",
+                          style:
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    fontWeight: FontWeight.normal,
                                     color: Colors.white,
                                   ),
                         ),

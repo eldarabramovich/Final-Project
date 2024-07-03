@@ -16,15 +16,15 @@ class AssignmentDetailRow extends StatelessWidget {
       children: [
         Text(
           statusValue,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14.0,
             fontWeight: FontWeight.w600,
-            color: const Color.fromARGB(255, 43, 42, 42),
+            color: Color.fromARGB(255, 43, 42, 42),
           ),
         ),
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14.0,
             fontWeight: FontWeight.w400,
             color: Color(0xFFA5A5A5),

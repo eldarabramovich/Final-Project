@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AddStudentPage extends StatefulWidget {
+  const AddStudentPage({super.key});
+
   @override
   _AddStudentPageState createState() => _AddStudentPageState();
 }
@@ -15,7 +17,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
   final _classnameController = TextEditingController();
 
   Future<void> _addStudent() async {
-    var url = Uri.parse('http://10.0.0.14:3000/admin/addstudent');
+    var url = Uri.parse('http://192.168.129.122:3000/admin/addstudent');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -29,13 +31,13 @@ class _AddStudentPageState extends State<AddStudentPage> {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Student added successfully')),
+        const SnackBar(content: Text('Student added successfully')),
       );
       // Navigate back to the home screen
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add student')),
+        const SnackBar(content: Text('Failed to add student')),
       );
     }
   }
@@ -44,14 +46,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'הוספת תלמיד',
-          style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-        ),
-        backgroundColor: Colors.blue.shade800,
+        title: const Text('Add Student'),
       ),
       body: Form(
         key: _formKey,
@@ -62,19 +57,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
               SizedBox(height: 17.0),
               TextFormField(
                 controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  fillColor: Colors.grey.shade100,
-                  filled: true,
-                ),
+                decoration: const InputDecoration(labelText: 'Username'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a username';
@@ -86,19 +69,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  fillColor: Colors.grey.shade100,
-                  filled: true,
-                ),
+                decoration: const InputDecoration(labelText: 'Password'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a password';
@@ -109,19 +80,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _fullnameController,
-                decoration: InputDecoration(
-                  labelText: 'Full Name',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  fillColor: Colors.grey.shade100,
-                  filled: true,
-                ),
+                decoration: const InputDecoration(labelText: 'Full Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the full name';
@@ -132,19 +91,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _classnameController,
-                decoration: InputDecoration(
-                  labelText: 'Class',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  fillColor: Colors.grey.shade100,
-                  filled: true,
-                ),
+                decoration: const InputDecoration(labelText: 'Class'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a class';
@@ -164,13 +111,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
                     _addStudent();
                   }
                 },
-                child: Text(
-                  'שמור תלמיד',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: const Text('Add Student'),
               ),
             ],
           ),

@@ -3,14 +3,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AdminAddClassroom extends StatefulWidget {
+  const AdminAddClassroom({super.key});
+
   @override
   _AdminAddClassroomState createState() => _AdminAddClassroomState();
 }
 
 class _AdminAddClassroomState extends State<AdminAddClassroom> {
-  TextEditingController _classNameController = TextEditingController();
-  TextEditingController _subjectController = TextEditingController();
-  List<String> _subjects = [];
+  final TextEditingController _classNameController = TextEditingController();
+  final TextEditingController _subjectController = TextEditingController();
+  final List<String> _subjects = [];
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +91,7 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
     List<String> subjects = _subjects;
 
     var url = Uri.parse(
-        'http://10.0.0.14:3000/admin/addclasubj'); // Replace with your actual endpoint
+        'http://192.168.40.1:3000/admin/addclasubj'); // Replace with your actual endpoint
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

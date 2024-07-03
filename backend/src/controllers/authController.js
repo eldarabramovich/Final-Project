@@ -31,7 +31,6 @@ const loginUser = async (req, res) => {
            
         }
         
-        
         if (userData.password !== password) {
             return res.status(401).send('Invalid password');
         }
