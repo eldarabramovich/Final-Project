@@ -24,7 +24,7 @@ class _StudentAssignmentState extends State<StudentAssignment> {
 
   Future<List<AssignmentData>> fetchAssignments() async {
     var url =
-        Uri.parse('http://172.20.10.2:3000/student/getassi/${widget.userId}');
+        Uri.parse('http://10.0.0.22:3000/student/getassi/${widget.userId}');
     var response = await http.get(url);
 
     if (response.statusCode == 200) {

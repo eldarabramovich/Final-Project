@@ -28,7 +28,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   }
 
   Future<void> _fetchTeacherData() async {
-    var url = Uri.parse('http://172.20.10.2:3000/teacher/${widget.userId}');
+    var url = Uri.parse('http://10.0.0.22:3000/teacher/${widget.userId}');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
@@ -47,7 +47,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
 
   Future<void> _submitAssignment() async {
     if (_formKey.currentState!.validate()) {
-      var url = Uri.parse('http://172.20.10.2:3000/teacher/addassi');
+      var url = Uri.parse('http://10.0.0.22:3000/teacher/addassi');
       var response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},

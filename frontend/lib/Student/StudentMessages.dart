@@ -28,8 +28,7 @@ class _StudentClassMessagesScreenState
     try {
       // Fetch the student's class using the student ID
       var studentClassResponse = await http.get(
-        Uri.parse(
-            'http://172.20.10.2:3000/student/getstudent/${widget.userId}'),
+        Uri.parse('http://10.0.0.22:3000/student/getstudent/${widget.userId}'),
       );
 
       if (studentClassResponse.statusCode == 200) {
@@ -39,8 +38,7 @@ class _StudentClassMessagesScreenState
 
           // Fetch messages for the student's class
           var messagesResponse = await http.get(
-            Uri.parse(
-                'http://172.20.10.2:3000/student/getmess/${studentClass}'),
+            Uri.parse('http://10.0.0.22:3000/student/getmess/${studentClass}'),
           );
 
           if (messagesResponse.statusCode == 200) {

@@ -205,7 +205,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
     String email = _emailController.text;
 
     var url = Uri.parse(
-        'http://172.20.10.2:3000/admin/addteacher'); // Replace with your actual endpoint
+        'http://10.0.0.22:3000/admin/addteacher'); // Replace with your actual endpoint
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

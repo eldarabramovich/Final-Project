@@ -8,7 +8,9 @@ import 'package:frontend/Teacher/TeacherPresence.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'TeacherGrade.dart';
+
+
+import 'package:frontend/Teacher/TeacherClassesPage.dart';
 
 import 'package:frontend/Teacher/TeacherFiles.dart';
 import 'package:frontend/Teacher/TeacherAddNewAssi.dart';
@@ -108,7 +110,7 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherGrade()),
+                                  builder: (context) => TeacherClassesPage()),
                             );
                           },
                           icon: 'asset/icons/resume.svg',
