@@ -1,6 +1,5 @@
 const multer = require('multer');
 const { db ,admin} = require('../firebase/firebaseAdmin'); // Import only what you need
-
 const bucket = admin.storage().bucket('teachtouch-20b98.appspot.com');
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).single('file');
@@ -58,7 +57,26 @@ const AddAssignment = async (req, res) => {
 
         await db.collection('submissions').doc(assignmentID).set(newSubmission);
 
-        console.error('Step 8: Assignment record added successfully');
+        console.error('Step 8: Updating subject document');
+        const subjectSnapshot = await db.collection('subjects')
+          .where('subClassName', '==', classname)
+          .where('subjectname', '==', subjectname)
+          .get();
+
+          if (subjectSnapshot.empty) {
+            console.error('No matching subjects found');
+            return res.status(404).send('Subject not found');
+          }
+  
+          subjectSnapshot.forEach(async doc => {
+            console.log(`Updating subject doc: ${doc.id}`);
+            await doc.ref.update({
+              assignments: admin.firestore.FieldValue.arrayUnion(assignmentID)
+            });
+            console.log(`Assignment ID ${assignmentID} added to subject doc ${doc.id}`);
+          });
+
+        console.error('Step 9: Assignment record added successfully');
         res.status(200).send('Assignment added successfully');
       } catch (firestoreError) {
         console.error('Step 7.1: Error saving assignment to Firestore:', firestoreError);
@@ -185,6 +203,7 @@ const CreateSubClass = async (req, res) => {
       res.status(500).send("Error adding subclass");
   }
 };
+
 const AddStudentToSubClass = async (req, res) => {
   const { classId, students } = req.body;
 
@@ -237,6 +256,7 @@ const AddStudentToSubClass = async (req, res) => {
       res.status(500).send("Error adding students to subclass");
   }
 };
+
 const AddAttendance = async (req, res) => {
   const { classname, subjectname, students } = req.body;
 
@@ -261,6 +281,7 @@ const AddAttendance = async (req, res) => {
     res.status(500).send('Error adding attendance');
   }
 };
+
 const SendMessageToClass = async (req, res) => {
   const { classname, description } = req.body;
 
@@ -297,6 +318,7 @@ const SendMessageToClass = async (req, res) => {
     res.status(500).send('Error adding message');
   }
 };
+
 const GetStudentByClass = async (req, res) => {
   const classname = req.params.classname;
   const db = admin.firestore();
@@ -369,6 +391,7 @@ const editTeacher = async (req, res) => {
       res.status(500).send("Error editing teacher");
   }
 };
+
 const deleteTeacher = async (req, res) => {
   const { teacherId } = req.params;
 
@@ -387,6 +410,7 @@ const deleteTeacher = async (req, res) => {
       res.status(500).send("Error deleting teacher");
   }
 };
+
 const getClassStudents = async (req, res) => {
   const { classId } = req.params;
 
@@ -419,7 +443,116 @@ const getClassStudents = async (req, res) => {
   }
 };
 
+const getSubmissions = async (req, res) => {
+  const { assignmentID } = req.params;
+
+  try {
+    const submissionDoc = await admin.firestore().collection('submissions').doc(assignmentID).get();
+
+    if (!submissionDoc.exists) {
+      return res.status(404).send('Submissions not found');
+    }
+
+    const submissionData = submissionDoc.data();
+
+    // Ensure the data structure is correct
+    const formattedSubmissions = submissionData.studentsubmission.map(submission => ({
+      fileUrl: submission.fileUrl,
+      fullName: submission.fullName,
+      submittedDate: submission.submittedDate.toDate(), // Convert Firestore Timestamp to JavaScript Date
+      grade: submission.grade
+    }));
+
+    res.status(200).json(formattedSubmissions);
+  } catch (error) {
+    console.error('Error fetching submissions:', error);
+    res.status(500).send('Error fetching submissions');
+  }
+};
+
+const downloadFile = async (req, res) => {
+  const { fileId } = req.params;
+  console.log(`Received request to download file: ${fileId}`);
+
+  try {
+    // Find the file document in Firestore by the fileId
+    const fileDoc = await admin.firestore().collection('assignments').doc(fileId).get();
+
+    if (!fileDoc.exists) {
+      console.log(`File with ID: ${fileId} not found`);
+      return res.status(404).send('File not found');
+    }
+
+    const fileData = fileDoc.data();
+    const fileUrl = fileData.fileUrl;
+    console.log(`File URL: ${fileUrl}`);
+
+    // Extract and decode the file path from the URL
+    const filePath = decodeURIComponent(fileUrl.split('/assignments/')[1]);
+    console.log(`File path: ${filePath}`);
+
+    // Create a reference to the file in Google Cloud Storage
+    const fileRef = bucket.file(`assignments/${filePath}`);
+    const [metadata] = await fileRef.getMetadata();
+    console.log(`File metadata: ${JSON.stringify(metadata)}`);
+
+    // Setting the headers for the download response
+    res.setHeader('Content-Type', metadata.contentType);
+    res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${filePath}`);
+
+    // Create a stream to read the file and transfer it to the response
+    const fileStream = fileRef.createReadStream();
+
+    fileStream.on('error', (err) => {
+      console.error('File stream error:', err);
+      res.status(500).send('Error downloading file');
+    });
+
+    fileStream.pipe(res);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+    res.status(500).send('Error downloading file');
+  }
+};
+
+const getAssignmentsBySubjectAndClass = async (req, res) => {
+  const { subjectname, classname } = req.params;
+
+  try {
+    const subjectsSnapshot = await admin.firestore()
+      .collection('subjects')
+      .where('subjectname', '==', subjectname)
+      .where('classname', '==', classname)
+      .get();
+
+    if (subjectsSnapshot.empty) {
+      return res.status(404).send('No subjects found');
+    }
+
+    const subjectDoc = subjectsSnapshot.docs[0]; // Assuming there's only one matching subject
+    const assignmentIDs = subjectDoc.data().assignments || [];
+
+    const assignments = await Promise.all(
+      assignmentIDs.map(async (assignmentID) => {
+        const assignmentDoc = await admin.firestore().collection('assignments').doc(assignmentID).get();
+        if (assignmentDoc.exists) {
+          return { id: assignmentDoc.id, ...assignmentDoc.data() };
+        }
+      })
+    );
+
+    res.status(200).json(assignments.filter(Boolean));
+  } catch (error) {
+    console.error('Error fetching assignments:', error);
+    res.status(500).send('Error fetching assignments');
+  }
+};
+
+
 module.exports = {
+  getAssignmentsBySubjectAndClass,
+  downloadFile,
+  getSubmissions,
   CreateSubClass,
   AddStudentToSubClass,
   AddAssignment,

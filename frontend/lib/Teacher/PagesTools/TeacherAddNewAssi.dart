@@ -1,9 +1,11 @@
+// ignore: file_names
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
-import 'package:frontend/models/teachermodel.dart';
+import 'TeacherAssignmentSubmission.dart';
+import 'package:frontend/config.dart';
 
 class TeacherAddNewAssi extends StatefulWidget {
   final String userId;
@@ -30,6 +32,19 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   @override
   void initState() {
     super.initState();
+  }
+
+  void _navigateToSubmissions() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TeacherAssignmentSubmission(
+          userId: widget.userId,
+          selectedClass: widget.selectedClass,
+          selectedSubject: widget.selectedSubject,
+        ),
+      ),
+    );
   }
 
   Future<void> _pickFile() async {
@@ -84,6 +99,15 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Assignment'),
+        actions: [
+          TextButton(
+            onPressed: _navigateToSubmissions,
+            child: const Text(
+              'ניהול הגשות',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
       body: Form(
         key: _formKey,

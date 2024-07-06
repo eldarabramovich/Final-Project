@@ -9,6 +9,7 @@ import 'package:frontend/Teacher/Deshboards/SubjectTeacherDashboard.dart';
 import 'package:frontend/Teacher/Deshboards/ClassSelectionPage.dart';
 import 'package:frontend/Teacher/Deshboards/HomeroomTeacherDashboard.dart';
 import 'package:frontend/models/teachermodel.dart';
+import 'config.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       var response = await http.post(
-        Uri.parse('http://192.168.31.51:3000/auth/login'),
+        Uri.parse('http://${Config.baseUrl}/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: requestBody,
       );
@@ -160,12 +161,26 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<Map<String, dynamic>> fetchTeacherData(String userId) async {
-    var url = Uri.parse('http://192.168.31.51:3000/teacher/$userId');
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to fetch teacher data');
+    var url = Uri.parse('http://${Config.baseUrl}/teacher/teacher/$userId');
+  
+    try {
+      var response = await http.get(url);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        if (data is Map<String, dynamic>) {
+          return data;
+        } else {
+          throw Exception('Unexpected data format');
+        }
+      } else {
+        throw Exception('Failed to fetch teacher data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching teacher data: $e');
+      throw Exception('Failed to fetch teacher data: $e');
     }
   }
 

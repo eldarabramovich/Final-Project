@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:frontend/config.dart';
 class StudentDocuments extends StatelessWidget {
   const StudentDocuments({super.key});
 

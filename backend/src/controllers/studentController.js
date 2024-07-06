@@ -1,6 +1,5 @@
 const { db , admin } = require('../firebase/firebaseAdmin.js');
 const multer = require('multer');
-const { v4: uuidv4 } = require('uuid');
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).single('file');
 const bucket = admin.storage().bucket('teachtouch-20b98.appspot.com');
@@ -71,17 +70,6 @@ const addSubmission = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
 const getAssignments = async (req, res) => {
   const { userId } = req.params;
   const db = admin.firestore();
@@ -116,64 +104,6 @@ const getAssignments = async (req, res) => {
   } catch (error) {
     console.error('Error fetching assignments:', error);
     res.status(500).send('Internal Server Error');
-  }
-};
-
-const uploadStudentAssignment = async (req, res) => {
-  const { studentId, assignmentId } = req.body;
-  const file = req.file;
-
-  if (!file) {
-    return res.status(400).send('No file uploaded.');
-  }
-
-  try {
-    const blob = bucket.file(`student_assignments/${studentId}/${file.originalname}`);
-    const blobStream = blob.createWriteStream({
-      metadata: {
-        contentType: file.mimetype,
-      },
-    });
-
-    blobStream.on('error', (err) => {
-      console.error('Error uploading file:', err);
-      res.status(500).send('Error uploading file.');
-    });
-
-    blobStream.on('finish', async () => {
-      const fileUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-      const newSubmission = {
-        studentId,
-        assignmentId,
-        fileUrl,
-        uploadDate: admin.firestore.FieldValue.serverTimestamp(),
-      };
-
-      await db.collection('student_submissions').add(newSubmission);
-      res.status(200).send('File uploaded successfully');
-    });
-
-    blobStream.end(file.buffer);
-  } catch (error) {
-    console.error('Error uploading assignment:', error);
-    res.status(500).send('Error uploading assignment');
-  }
-};
-
-const downloadAssignment = async (req, res) => {
-  const fileId = req.params.fileId;
-
-  try {
-    const file = bucket.file(fileId);
-    const [metadata] = await file.getMetadata();
-
-    res.setHeader('Content-Type', metadata.contentType);
-    res.setHeader('Content-Disposition', `attachment; filename=${fileId}`);
-
-    file.createReadStream().pipe(res);
-  } catch (error) {
-    console.error('Error downloading file:', error);
-    res.status(500).send('Error downloading file');
   }
 };
 
@@ -221,26 +151,7 @@ const downloadFile = async (req, res) => {
     res.status(500).send('Error downloading file');
   }
 };
-
-
-const getStudent = async (req, res) => {
-  const { studentId } = req.params;
-
-  try {
-      const studentRef = db.collection('students').doc(studentId);
-      const studentDoc = await studentRef.get();
-
-      if (!studentDoc.exists) {
-          return res.status(404).send("Student not found");
-      }
-
-      res.status(200).json(studentDoc.data());
-  } catch (error) {
-      console.error("Error getting student: ", error);
-      res.status(500).send("Error getting student");
-  }
-};
-
+//as a admin i want to edit all my students for fordur changes 
 const editStudent = async (req, res) => {
   const { studentId } = req.params;
   const { username, password, fullname, classname, subClassName } = req.body;
@@ -330,7 +241,7 @@ const getStudentData = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
-
+//think about get massage buy subclass name and class
 const GetMessageByClassname = async (req, res) => {
   try {
     const classname = req.params.classname; // Changed from req.query.classname to req.params.classname
@@ -390,7 +301,13 @@ const GetAssignById = async (req, res) => {
   }
 };
 
-module.exports = {getAssignments,
-  uploadStudentAssignment,
-  downloadAssignment,addSubmission,
-  upload,downloadFile,GetAssignById,GetMessageByClassname,getStudentData,editStudent,deleteStudent};
+module.exports = {
+  getAssignments,
+  addSubmission,
+  upload,
+  downloadFile,
+  GetAssignById,
+  GetMessageByClassname,
+  getStudentData,
+  editStudent,
+  deleteStudent};

@@ -77,9 +77,9 @@ const CreateTeacher = async (req, res) => {
 
                 const subjectRef = db.collection('subjects').doc();
                 await subjectRef.set({
-                    name: cls.subjectname,
+                    subjectname: cls.subjectname,
                     teacherId: teacherRef.id,
-                    subClassId: cls.classname
+                    subClassName: cls.classname
                 });
 
                 updatedClassesSubject.push({
