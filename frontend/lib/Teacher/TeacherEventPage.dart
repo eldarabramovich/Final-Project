@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/config.dart';
 
 class TeacherEventPage extends StatelessWidget {
   const TeacherEventPage({super.key});

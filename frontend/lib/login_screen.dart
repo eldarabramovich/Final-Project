@@ -5,7 +5,15 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/Admin/AdminHomeScreen.dart';
 import 'package:frontend/Student/StudentHomeScreen.dart';
+<<<<<<< HEAD
 import 'package:frontend/Teacher/TeacherHomeScreen.dart';
+=======
+import 'package:frontend/Teacher/Deshboards/SubjectTeacherDashboard.dart';
+import 'package:frontend/Teacher/Deshboards/ClassSelectionPage.dart';
+import 'package:frontend/Teacher/Deshboards/HomeroomTeacherDashboard.dart';
+import 'package:frontend/models/teachermodel.dart';
+import 'config.dart';
+>>>>>>> 43a9c70fe73be010dbdd065f985d1b6fa280a889
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -44,7 +52,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       var response = await http.post(
+<<<<<<< HEAD
         Uri.parse('http://10.0.0.22:3000/auth/login'),
+=======
+        Uri.parse('http://${Config.baseUrl}/auth/login'),
+>>>>>>> 43a9c70fe73be010dbdd065f985d1b6fa280a889
         headers: {'Content-Type': 'application/json'},
         body: requestBody,
       );
@@ -81,6 +93,33 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+<<<<<<< HEAD
+=======
+  Future<Map<String, dynamic>> fetchTeacherData(String userId) async {
+    var url = Uri.parse('http://${Config.baseUrl}/teacher/teacher/$userId');
+  
+    try {
+      var response = await http.get(url);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        if (data is Map<String, dynamic>) {
+          return data;
+        } else {
+          throw Exception('Unexpected data format');
+        }
+      } else {
+        throw Exception('Failed to fetch teacher data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching teacher data: $e');
+      throw Exception('Failed to fetch teacher data: $e');
+    }
+  }
+
+>>>>>>> 43a9c70fe73be010dbdd065f985d1b6fa280a889
   @override
   Widget build(BuildContext context) {
     return Scaffold(

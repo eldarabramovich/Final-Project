@@ -1,4 +1,115 @@
+<<<<<<< HEAD
 const { db , admin , bucket } = require('../firebase/firebaseAdmin.js');
+=======
+const { db , admin } = require('../firebase/firebaseAdmin.js');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage }).single('file');
+const bucket = admin.storage().bucket('teachtouch-20b98.appspot.com');
+
+
+const addSubmission = async (req, res) => {
+  console.log('Received request: POST /student/addSubmission');
+
+  const { assignmentID, fullName } = req.body;
+  const file = req.file;
+  const db = admin.firestore();
+  const bucket = admin.storage().bucket();
+
+  if (!assignmentID || !fullName) {
+    return res.status(400).send('Missing assignment ID or full name');
+  }
+
+  if (!file) {
+    console.log('No file uploaded');
+    return res.status(400).send('No file uploaded.');
+  }
+
+  try {
+    console.log('Preparing to upload file');
+    const blob = bucket.file(`submissions/${file.originalname}`);
+    const blobStream = blob.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
+
+    blobStream.on('error', (err) => {
+      console.error('Error during file upload:', err);
+      res.status(500).send('Error uploading file.');
+    });
+
+    blobStream.on('finish', async () => {
+      console.log('File upload finished');
+      const fileUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
+      // Create the new submission object
+      const newSubmission = {
+        fileUrl: fileUrl,
+        fullName: fullName,
+        submittedDate: new Date(), // Using Date object for date
+        grade: '' // Add grade field if required
+      };
+
+      try {
+        // Update the submissions document with the new submission
+        const submissionDocRef = db.collection('submissions').doc(assignmentID);
+        await submissionDocRef.update({
+          studentsubmission: admin.firestore.FieldValue.arrayUnion(newSubmission)
+        });
+
+        console.log('Submission added successfully');
+        res.status(200).send('Submission added successfully');
+      } catch (firestoreError) {
+        console.error('Error updating submission document:', firestoreError);
+        res.status(500).send('Error updating submission document');
+      }
+    });
+
+    blobStream.end(file.buffer);
+  } catch (error) {
+    console.error('Error in file upload process:', error);
+    res.status(500).send('Error adding submission');
+  }
+};
+
+const getAssignments = async (req, res) => {
+  const { userId } = req.params;
+  const db = admin.firestore();
+
+  try {
+    // Fetch the student document to get the class information
+    const studentDoc = await db.collection('students').doc(userId).get();
+    if (!studentDoc.exists) {
+      console.log('Step 2: Student not found');
+      return res.status(404).send('Student not found');
+    }
+
+    const studentData = studentDoc.data();
+    console.log('Step 3: Student data retrieved:', studentData);
+
+    const studentClass = studentData.classname;
+    const studentSubClass = studentData.subClassName;
+    console.log('Step 4: Student class:', studentClass, ', subclass:', studentSubClass);
+
+    // Query assignments for the student's class and subclass
+    const assignmentsSnapshot = await db.collection('assignments')
+      .where('classname', 'in', [studentClass, studentSubClass])
+      .get();
+
+    const assignments = [];
+    assignmentsSnapshot.forEach(doc => {
+      assignments.push({ id: doc.id, ...doc.data() });
+    });
+
+    console.log('Step 5: Total assignments fetched:', assignments.length);
+    res.status(200).json(assignments);
+  } catch (error) {
+    console.error('Error fetching assignments:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+>>>>>>> 43a9c70fe73be010dbdd065f985d1b6fa280a889
 
 const downloadFile = async (req, res) => {
   const { fileId } = req.params;
@@ -38,6 +149,7 @@ const downloadFile = async (req, res) => {
     res.status(500).send('Error downloading file');
   }
 };
+<<<<<<< HEAD
 
 const getStudent = async (req, res) => {
   const { studentId } = req.params;
@@ -57,6 +169,9 @@ const getStudent = async (req, res) => {
   }
 };
 
+=======
+//as a admin i want to edit all my students for fordur changes 
+>>>>>>> 43a9c70fe73be010dbdd065f985d1b6fa280a889
 const editStudent = async (req, res) => {
   const { studentId } = req.params;
   const { username, password, fullname, classname, subClassName } = req.body;
@@ -146,7 +261,7 @@ const getStudentData = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
-
+//think about get massage buy subclass name and class
 const GetMessageByClassname = async (req, res) => {
   try {
     const classname = req.params.classname; // Changed from req.query.classname to req.params.classname
@@ -206,6 +321,7 @@ const GetAssignById = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 
 // const GetAssignById = async (req, res) => {
 //     const userId = req.params.userId;
@@ -248,3 +364,15 @@ const GetAssignById = async (req, res) => {
 
 
   module.exports = {downloadFile,GetAssignById,GetMessageByClassname,getStudentData,editStudent,deleteStudent};
+=======
+module.exports = {
+  getAssignments,
+  addSubmission,
+  upload,
+  downloadFile,
+  GetAssignById,
+  GetMessageByClassname,
+  getStudentData,
+  editStudent,
+  deleteStudent};
+>>>>>>> 43a9c70fe73be010dbdd065f985d1b6fa280a889
