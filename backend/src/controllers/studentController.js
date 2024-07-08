@@ -248,19 +248,29 @@ const getStudentData = async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const teacherRef = admin.firestore().collection('students').doc(userId);
-    const doc = await teacherRef.get();
+    const studentRef = admin.firestore().collection('students').doc(userId);
+    const doc = await studentRef.get();
 
     if (doc.exists) {
-      res.status(200).json(doc.data());
+      const data = doc.data();
+      const studentData = {
+        id: doc.id,
+        fullname: data.fullname,
+        classname: data.classname,
+        subClassName: data.subClassName
+      };
+      res.status(200).json(studentData);
     } else {
-      res.status(404).send('student not found');
+      res.status(404).send('Student not found');
     }
   } catch (error) {
-    console.error('Error student teacher data:', error);
+    console.error('Error fetching student data:', error);
     res.status(500).send('Internal Server Error');
   }
 };
+
+
+
 //think about get massage buy subclass name and class
 const GetMessageByClassname = async (req, res) => {
   try {
@@ -268,7 +278,7 @@ const GetMessageByClassname = async (req, res) => {
     const db = admin.firestore();
 
     const classQuerySnapshot = await db.collection('subClasses')
-                                      .where('classname', '==', classname)
+                                      .where('classNumber', '==', classname)
                                       .get();
     
     if (classQuerySnapshot.empty) {

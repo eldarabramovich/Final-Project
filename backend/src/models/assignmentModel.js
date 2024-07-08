@@ -19,4 +19,22 @@ const assignmentModel = {
     fileUrl: '',
     submittedDate: admin.firestore.FieldValue.serverTimestamp(),
   };
-  module.exports = { assignmentModel, submissionModel ,studentsubmissionsModel};
+
+
+
+  const attendancemodel = {
+    subClassname:'',
+    Date: '',
+    students:[],
+    subjectname:'',
+  };
+
+
+
+
+
+
+
+
+
+  module.exports = { assignmentModel, submissionModel ,studentsubmissionsModel,attendancemodel};

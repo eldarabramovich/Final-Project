@@ -10,12 +10,46 @@ import 'StudentDocuments.dart';
 import 'StudentGrade.dart';
 import 'StudentMessages.dart';
 import 'StudentPresence.dart';
+import '../models/studenmodel.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:frontend/config.dart';
 
 class HomeScreen extends StatelessWidget {
   // HomeScreen({super.key});
   final String userId;
   const HomeScreen({Key? key, required this.userId}) : super(key: key);
-  //final user = FirebaseAuth.instance.currentUser!;
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Student? student;
+  late Future<Student> _studentFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _studentFuture = fetchStudentData(widget.userId);
+  }
+
+  Future<Student> fetchStudentData(String userId) async {
+    var url = Uri.parse('http://${Config.baseUrl}/student/getstudent/$userId');
+
+    try {
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        return Student.fromFirestore(data);
+      } else {
+        throw Exception('Failed to fetch student data');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch student data: $e');
+    }
+  }
 
   void UserLogOut() {
     FirebaseAuth.instance.signOut();
@@ -33,171 +67,195 @@ class HomeScreen extends StatelessWidget {
         ],
         backgroundColor: Colors.blue.shade800,
       ),
-      body: Column(
-        children: [
-          //divide the screen into two parts
-          //The part 1, basic information about the student:
-
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 10.0,
-            padding: EdgeInsets.all(20),
-            color: Colors.blue.shade800,
-            child: Column(
+      body: FutureBuilder<Student>(
+        future: _studentFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error loading student data'));
+          } else if (snapshot.hasData) {
+            var student = snapshot.data!;
+            return Column(
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          "  Welcome Student ",
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                        ),
-                        Text(
-                          "",
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-
-          Expanded(
-            child: Container(
-              color: Colors.blue.shade800,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Color(0xFFF4F6F7),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(60),
-                    topRight: Radius.circular(60),
+                // Part 1: Basic information about the student
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 10.0,
+                  padding: EdgeInsets.all(20),
+                  color: Colors.blue.shade800,
+                  child: Column(
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "  Welcome Student ",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                              ),
+                              Text(
+                                student.fullname,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
                   ),
                 ),
-                child: ListView(
-                  physics: BouncingScrollPhysics(),
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      StudentAssignment(userId: userId)),
-                            );
-                          },
-                          icon: 'asset/icons/assignment.svg',
-                          title: "מטלות",
-                        ),
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => StudentGrade()),
-                            );
-                          },
-                          icon: 'asset/icons/resume.svg',
-                          title: "ציונים",
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      StudentClassMessagesScreen(
-                                          userId: userId)),
-                            );
-                          },
-                          icon: 'asset/icons/chat.svg',
-                          title: "הודעות",
-                        ),
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      StudentCalendar(userId: userId)),
-                            );
-                          },
-                          icon: 'asset/icons/timetable.svg',
-                          title: "לוח שנה",
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => StudentPresence()),
-                            );
-                          },
-                          icon: 'asset/icons/check.svg',
-                          title: "נוכחות",
-                        ),
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => StudentDocuments()),
-                            );
-                          },
-                          icon: 'asset/icons/document.svg',
-                          title: "מסמכים",
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        HomeCard(
-                          onPress: () {},
-                          icon: 'asset/icons/news.svg',
-                          title: "אירועים",
-                        ),
-                        HomeCard(
-                          onPress: () {},
-                          icon: 'asset/icons/profile.svg',
-                          title: "Profile",
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
 
-      //body: Center(child: Text("Welcome back " + user.email!)),
+                // Part 2: Other sections
+                Expanded(
+                  child: Container(
+                    color: Colors.blue.shade800,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF4F6F7),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(60),
+                          topRight: Radius.circular(60),
+                        ),
+                      ),
+                      child: ListView(
+                        physics: BouncingScrollPhysics(),
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              HomeCard(
+                                onPress: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => StudentAssignment(
+                                          userId: widget.userId),
+                                    ),
+                                  );
+                                },
+                                icon: 'asset/icons/assignment.svg',
+                                title: "מטלות",
+                              ),
+                              HomeCard(
+                                onPress: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => StudentGrade()),
+                                  );
+                                },
+                                icon: 'asset/icons/resume.svg',
+                                title: "ציונים",
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              HomeCard(
+                                onPress: () {
+                                  if (student.subClassName != null) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            StudentClassMessagesScreen(
+                                          userId: widget.userId,
+                                          selectedClass: student.subClassName!,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'Sub Class Name is not available')),
+                                    );
+                                  }
+                                },
+                                icon: 'asset/icons/chat.svg',
+                                title: "הודעות",
+                              ),
+                              HomeCard(
+                                onPress: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            StudentCalendar()),
+                                  );
+                                },
+                                icon: 'asset/icons/timetable.svg',
+                                title: "לוח שנה",
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              HomeCard(
+                                onPress: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            StudentPresence()),
+                                  );
+                                },
+                                icon: 'asset/icons/check.svg',
+                                title: "נוכחות",
+                              ),
+                              HomeCard(
+                                onPress: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            StudentDocuments()),
+                                  );
+                                },
+                                icon: 'asset/icons/document.svg',
+                                title: "מסמכים",
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              HomeCard(
+                                onPress: () {},
+                                icon: 'asset/icons/profile.svg',
+                                title: "Profile",
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Center(child: Text('No data found'));
+          }
+        },
+      ),
     );
   }
 }
@@ -211,7 +269,7 @@ class HomeCard extends StatelessWidget {
     this.color = Colors.black,
     this.elevation = 4.0,
   });
-  final VoidCallback onPress;
+  final VoidCallback? onPress;
   final String icon;
   final String title;
   final Color color;
@@ -246,7 +304,6 @@ class HomeCard extends StatelessWidget {
               height: 55.0,
               width: 55.0,
               color: color,
-              //color: Color.fromARGB(255, 35, 155, 214),
             ),
             Text(
               title,

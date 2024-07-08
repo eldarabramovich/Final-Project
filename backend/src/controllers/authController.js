@@ -7,7 +7,7 @@ const loginUser = async (req, res) => {
     const { username, password } = req.body;
     try {
         // Check each collection for the username
-        const collections = ['admin', 'students', 'teachers'];
+        const collections = ['admin', 'students', 'teachers','parents'];
         let userData = null;
         let userId = null; // Variable to store the user's document ID
         let userRole = null; // Variable to store the user's role

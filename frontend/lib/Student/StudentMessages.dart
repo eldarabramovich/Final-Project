@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/config.dart';
+
 class StudentClassMessagesScreen extends StatefulWidget {
   final String userId;
+  final String selectedClass;
 
-  const StudentClassMessagesScreen({Key? key, required this.userId})
+  const StudentClassMessagesScreen(
+      {Key? key, required this.userId, required this.selectedClass})
       : super(key: key);
 
   @override
@@ -21,45 +24,33 @@ class _StudentClassMessagesScreenState
   @override
   void initState() {
     super.initState();
-    _fetchStudentClassAndMessages();
+    _fetchMessages();
   }
 
-  Future<void> _fetchStudentClassAndMessages() async {
+  Future<void> _fetchMessages() async {
     try {
-      // Fetch the student's class using the student ID
-      var studentClassResponse = await http.get(
-        Uri.parse('http://10.0.0.22:3000/student/getstudent/${widget.userId}'),
+      print('Fetching messages for class: ${widget.selectedClass}');
+      var messagesResponse = await http.get(
+        Uri.parse(
+            'http://${Config.baseUrl}/student/getmess/${widget.selectedClass}'),
       );
 
-      if (studentClassResponse.statusCode == 200) {
+      if (messagesResponse.statusCode == 200) {
         try {
-          var studentData = json.decode(studentClassResponse.body);
-          var studentClass = studentData['classname'];
-
-          // Fetch messages for the student's class
-          var messagesResponse = await http.get(
-            Uri.parse('http://10.0.0.22:3000/student/getmess/${studentClass}'),
-          );
-
-          if (messagesResponse.statusCode == 200) {
-            try {
-              List<dynamic> messagesData = json.decode(messagesResponse.body);
-              setState(() {
-                _messages = List<String>.from(messagesData
-                    .map((message) => message['description'] as String));
-                _isLoading = false;
-              });
-            } on FormatException {
-              _showError('Error parsing messages data');
-            }
-          } else {
-            _showError('Failed to fetch messages');
-          }
-        } on FormatException {
-          _showError('Error parsing student class data');
+          List<dynamic> messagesData = json.decode(messagesResponse.body);
+          setState(() {
+            _messages = List<String>.from(messagesData
+                .map((message) => message['description'] as String));
+            _isLoading = false;
+          });
+        } on FormatException catch (e) {
+          print('Error parsing messages data: $e');
+          _showError('Error parsing messages data');
         }
       } else {
-        _showError('Failed to fetch student class');
+        print('Failed to fetch messages: ${messagesResponse.statusCode}');
+        print('Response body: ${messagesResponse.body}');
+        _showError('Failed to fetch messages');
       }
     } catch (e, stacktrace) {
       print('An error occurred: $e');

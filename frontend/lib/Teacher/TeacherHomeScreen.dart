@@ -8,8 +8,6 @@ import 'package:frontend/Teacher/TeacherPresence.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
-
 import 'package:frontend/Teacher/TeacherClassesPage.dart';
 
 import 'package:frontend/Teacher/TeacherFiles.dart';
@@ -98,8 +96,10 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      TeacherAddNewAssi(userId: userId)),
+                                  builder: (context) => TeacherAddNewAssi(
+                                      userId: userId,
+                                      selectedClass: selectedClass,
+                                      selectedSubject: selectedSubject)),
                             );
                           },
                           icon: 'asset/icons/assignment.svg',
@@ -126,8 +126,10 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      TeacherSendMessage(userId: userId)),
+                                  builder: (context) => TeacherSendMessage(
+                                        userId: userId,
+                                        selectedClass: selectedClass,
+                                      )),
                             );
                           },
                           icon: 'asset/icons/chat.svg',
@@ -155,7 +157,11 @@ class TeacherHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherPresence()),
+                                  builder: (context) => TeacherAttendancePage(
+                                        userId: userId,
+                                        selectedClass: selectedClass,
+                                        subject: selectedSubject,
+                                      )),
                             );
                           },
                           icon: 'asset/icons/check.svg',

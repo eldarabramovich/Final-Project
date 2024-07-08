@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/config.dart';
+
 class AddStudentPage extends StatefulWidget {
   const AddStudentPage({super.key});
 
@@ -14,10 +15,11 @@ class _AddStudentPageState extends State<AddStudentPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _fullnameController = TextEditingController();
-  final _classnameController = TextEditingController();
+  final _classLetterController = TextEditingController();
+  final _subClassNameController = TextEditingController();
 
   Future<void> _addStudent() async {
-    var url = Uri.parse('http://10.0.0.22:3000/admin/addstudent');
+    var url = Uri.parse('http://${Config.baseUrl}/admin/createStudent');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -25,7 +27,10 @@ class _AddStudentPageState extends State<AddStudentPage> {
         'username': _usernameController.text,
         'password': _passwordController.text,
         'fullname': _fullnameController.text,
-        'classname': _classnameController.text,
+        'classLetter': _classLetterController.text,
+        'subClassName': _subClassNameController.text.isEmpty
+            ? null
+            : _subClassNameController.text,
       }),
     );
 
@@ -37,7 +42,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to add student')),
+        SnackBar(content: Text('Failed to add student: ${response.body}')),
       );
     }
   }
@@ -61,7 +66,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
           padding: const EdgeInsets.all(16.0),
           child: ListView(
             children: [
-              SizedBox(height: 17.0),
+              const SizedBox(height: 17.0),
               TextFormField(
                 controller: _usernameController,
                 decoration: InputDecoration(
@@ -133,26 +138,20 @@ class _AddStudentPageState extends State<AddStudentPage> {
               ),
               const SizedBox(height: 20),
               TextFormField(
-                controller: _classnameController,
-                decoration: InputDecoration(
-                  labelText: 'Class',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  fillColor: Colors.grey.shade100,
-                  filled: true,
-                ),
+                controller: _classLetterController,
+                decoration: const InputDecoration(labelText: 'Class Letter'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a class';
+                    return 'Please enter a class letter';
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _subClassNameController,
+                decoration: const InputDecoration(
+                    labelText: 'Sub Class Name (Optional)'),
               ),
               const SizedBox(height: 25.0),
               ElevatedButton(
@@ -179,5 +178,15 @@ class _AddStudentPageState extends State<AddStudentPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _fullnameController.dispose();
+    _classLetterController.dispose();
+    _subClassNameController.dispose();
+    super.dispose();
   }
 }

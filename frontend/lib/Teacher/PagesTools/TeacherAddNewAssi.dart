@@ -62,7 +62,7 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
 
   Future<void> _submitAssignment() async {
     if (_formKey.currentState!.validate()) {
-      var url = Uri.parse('http://192.168.31.51:3000/teacher/AddAssignment');
+      var url = Uri.parse('http://${Config.baseUrl}/teacher/AddAssignment');
       var request = http.MultipartRequest('POST', url);
 
       request.fields['classname'] = widget.selectedClass;
