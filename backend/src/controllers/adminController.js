@@ -222,8 +222,6 @@ const CreateClass = async (req, res) => {
     }
 };
 
-
-
 const CreateAndAddStudent = async (req, res) => {
     const { username, password, fullname, classLetter, subClassName } = req.body;
   
@@ -293,8 +291,6 @@ const CreateAndAddStudent = async (req, res) => {
       res.status(500).send("Error adding student");
     }
   };
-
-
   
 const AddStudentToClass = async (req, res) => {
     const { studentName, classLetter } = req.body;
