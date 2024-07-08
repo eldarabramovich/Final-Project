@@ -282,6 +282,7 @@ const AddAttendance = async (req, res) => {
   }
 };
 
+
 const SendMessageToClass = async (req, res) => {
   const { classname, description } = req.body;
 
@@ -292,7 +293,7 @@ const SendMessageToClass = async (req, res) => {
   try {
     const db = admin.firestore();
     // Query for the class document by classname
-    const classQuerySnapshot = await db.collection('classes').where('classname', '==', classname).get();
+    const classQuerySnapshot = await db.collection('subClasses').where('classNumber', '==', classname).get();
 
     if (classQuerySnapshot.empty) {
       return res.status(404).send('Class not found.');
@@ -304,11 +305,11 @@ const SendMessageToClass = async (req, res) => {
     // Create a new message object with a server timestamp
     const newMessage = {
       description,
-      date: new Date(), // Gets the current server time
+      date: new Date(), // Server timestamp
     };
 
     // Update the class document with the new message
-    await db.collection('classes').doc(classDoc.id).update({
+    await db.collection('subClasses').doc(classDoc.id).update({
       messages: admin.firestore.FieldValue.arrayUnion(newMessage)
     });
 
@@ -319,7 +320,8 @@ const SendMessageToClass = async (req, res) => {
   }
 };
 
-const GetStudentByClass = async (req, res) => {
+
+const GetStudentBySubClass = async (req, res) => {
   const classname = req.params.classname;
   const db = admin.firestore();
   if (!classname) {
@@ -327,14 +329,20 @@ const GetStudentByClass = async (req, res) => {
   }
 
   try {
-    // Fetch student documents where classname matches the provided value
-    const studentDocs = await db.collection('students').where('classname', '==', classname).get();
+    // Fetch subclass documents where classNumber matches the provided value
+    const subClassDocs = await db.collection('subClasses').where('classNumber', '==', classname).get();
 
-    if (studentDocs.empty) {
+    if (subClassDocs.empty) {
       return res.status(404).json({ error: 'No students found for the given class' });
     }
 
-    const students = studentDocs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    let students = [];
+    subClassDocs.forEach(doc => {
+      const data = doc.data();
+      if (data.students && Array.isArray(data.students)) {
+        students = students.concat(data.students);
+      }
+    });
 
     res.json(students);
   } catch (error) {
@@ -516,27 +524,40 @@ const downloadFile = async (req, res) => {
 };
 
 const getAssignmentsBySubjectAndClass = async (req, res) => {
-  const { subjectname, classname } = req.params;
+  const { subjectname, subClassName } = req.query;
+
+  console.log(`Query parameters - subjectname: ${subjectname}, subClassName: ${subClassName}`); // Debugging line
 
   try {
-    const subjectsSnapshot = await admin.firestore()
-      .collection('subjects')
+    const subjectsCollection = admin.firestore().collection('subjects');
+    console.log(`Querying subjects collection: ${subjectsCollection.path}`); // Debugging line
+
+    const subjectsSnapshot = await subjectsCollection
       .where('subjectname', '==', subjectname)
-      .where('classname', '==', classname)
       .get();
 
     if (subjectsSnapshot.empty) {
-      return res.status(404).send('No subjects found');
+      console.log('No subjects found'); // Debugging line
+      return res.status(404).send('Class not found');
     }
+
+    console.log('Subjects found:'); // Debugging line
+    subjectsSnapshot.forEach(doc => {
+      console.log(doc.id, '=>', doc.data()); // Debugging line
+    });
 
     const subjectDoc = subjectsSnapshot.docs[0]; // Assuming there's only one matching subject
     const assignmentIDs = subjectDoc.data().assignments || [];
+
+    console.log(`Found subject document with assignments: ${assignmentIDs}`); // Debugging line
 
     const assignments = await Promise.all(
       assignmentIDs.map(async (assignmentID) => {
         const assignmentDoc = await admin.firestore().collection('assignments').doc(assignmentID).get();
         if (assignmentDoc.exists) {
-          return { id: assignmentDoc.id, ...assignmentDoc.data() };
+          return { id: assignmentDoc.id, description: assignmentDoc.data().description };
+        } else {
+          console.log(`Assignment not found for ID: ${assignmentID}`); // Debugging line
         }
       })
     );
@@ -549,6 +570,7 @@ const getAssignmentsBySubjectAndClass = async (req, res) => {
 };
 
 
+
 module.exports = {
   getAssignmentsBySubjectAndClass,
   downloadFile,
@@ -558,7 +580,7 @@ module.exports = {
   AddAssignment,
   getTeacherData,
   SendMessageToClass,
-  GetStudentByClass,
+  GetStudentBySubClass,
   AddAttendance,
   editTeacher,
   deleteTeacher,

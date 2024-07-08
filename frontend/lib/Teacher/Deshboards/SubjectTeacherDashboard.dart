@@ -107,10 +107,10 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      TeacherAddNewAssi(userId: userId,
-                                       selectedClass: selectedClass,
-                                       selectedSubject: selectedSubject)),
+                                  builder: (context) => TeacherAddNewAssi(
+                                      userId: userId,
+                                      selectedClass: selectedClass,
+                                      selectedSubject: selectedSubject)),
                             );
                           },
                           icon: 'asset/icons/assignment.svg',
@@ -137,8 +137,10 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      TeacherSendMessage(userId: userId)),
+                                  builder: (context) => TeacherSendMessage(
+                                        userId: userId,
+                                        selectedClass: selectedClass,
+                                      )),
                             );
                           },
                           icon: 'asset/icons/chat.svg',

@@ -9,6 +9,7 @@ import 'package:frontend/Teacher/Deshboards/SubjectTeacherDashboard.dart';
 import 'package:frontend/Teacher/Deshboards/ClassSelectionPage.dart';
 import 'package:frontend/Teacher/Deshboards/HomeroomTeacherDashboard.dart';
 import 'package:frontend/models/teachermodel.dart';
+import 'package:frontend/config.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       var response = await http.post(
-        Uri.parse('http://192.168.31.51:3000/auth/login'),
+        Uri.parse('http://${Config.baseUrl}/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: requestBody,
       );
@@ -160,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<Map<String, dynamic>> fetchTeacherData(String userId) async {
-    var url = Uri.parse('http://192.168.31.51:3000/teacher/$userId');
+    var url = Uri.parse('http://${Config.baseUrl}/teacher/$userId');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       return json.decode(response.body);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:frontend/models/studenmodel.dart';
 import 'package:frontend/config.dart';
+import 'package:frontend/models/studenmodel.dart';
 
 class TeacherAttendancePage extends StatefulWidget {
   final String userId;
@@ -33,7 +33,7 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
 
   Future<void> _fetchStudents() async {
     var url = Uri.parse(
-        'http://10.100.102.3:3000/teacher/getstudents/${widget.classname}');
+        'http://${Config.baseUrl}/teacher/getstudents/${widget.classname}');
     try {
       var response = await http.get(url);
 
@@ -60,35 +60,8 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
     }
   }
 
-  // Future<void> _submitAttendance() async {
-  //   List<Student> presentStudents =
-  //       _students.where((student) => _attendance[student.id] == true).toList();
-
-  //   var url = Uri.parse('http://10.100.102.3:3000/teacher/addatte');
-  //   var response = await http.post(
-  //     url,
-  //     headers: {'Content-Type': 'application/json'},
-  //     body: json.encode({
-  //       'classname': widget.classname,
-  //       'subjectname': widget.subject,
-  //       'students': presentStudents.map((student) => student.id).toList(),
-  //       'presdate': '20.4.2024', // Use actual present date
-  //     }),
-  //   );
-
-  //   if (response.statusCode == 200) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Attendance added successfully')),
-  //     );
-  //     Navigator.pop(context); // Navigate back to the previous page
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Error adding attendance')),
-  //     );
-  //   }
-  // }
   Future<void> _submitAttendance() async {
-    var url = Uri.parse('http://10.100.102.3:3000/teacher/addatte');
+    var url = Uri.parse('http://${Config.baseUrl}/teacher/addatte');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -100,7 +73,6 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
             .map((student) => {
                   'id': student.id,
                   'fullname': student.fullname,
-                  'classname': student.classname,
                   // add other properties as needed
                 })
             .toList(),
@@ -127,7 +99,7 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
             Text('Mark Attendance for ${widget.classname} - ${widget.subject}'),
       ),
       body: _isLoading
-          ? const Center(child: const CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemCount: _students.length,
               itemBuilder: (context, index) {

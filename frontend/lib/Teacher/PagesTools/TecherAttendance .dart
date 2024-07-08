@@ -30,7 +30,7 @@ class _TeacherClassSubjectSelectionPageState
   }
 
   Future<void> _fetchTeacherData() async {
-    var url = Uri.parse('http://10.100.102.3:3000/teacher/${widget.userId}');
+    var url = Uri.parse('http://${Config.baseUrl}/teacher/${widget.userId}');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {

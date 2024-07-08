@@ -36,7 +36,7 @@ class _StudentAssignmentState extends State<StudentAssignment> {
   Future<void> fetchStudentData() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://192.168.31.51:3000/student/getstudent/${widget.userId}'));
+          'http://${Config.baseUrl}/student/getstudent/${widget.userId}'));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -53,7 +53,7 @@ class _StudentAssignmentState extends State<StudentAssignment> {
 
   Future<List<AssignmentData>> fetchAssignments() async {
     var url =
-        Uri.parse('http://192.168.31.51:3000/student/getassi/${widget.userId}');
+        Uri.parse('http://${Config.baseUrl}/student/getassi/${widget.userId}');
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -102,9 +102,9 @@ class _StudentAssignmentState extends State<StudentAssignment> {
       print('Storage Directory: ${directory.path}');
 
       print(
-          'Getting file from: http://192.168.31.51:3000/student/downloadFile/$fileId');
+          'Getting file from: http://${Config.baseUrl}/student/downloadFile/$fileId');
       final response = await dio.get(
-        'http://192.168.31.51:3000/student/downloadFile/$fileId',
+        'http://${Config.baseUrl}/student/downloadFile/$fileId',
         options: Options(
           responseType: ResponseType.bytes,
           followRedirects: false,
@@ -165,7 +165,7 @@ class _StudentAssignmentState extends State<StudentAssignment> {
     if (result != null) {
       PlatformFile file = result.files.first;
       var request = http.MultipartRequest(
-          'POST', Uri.parse('http://192.168.31.51:3000/student/addSubmission'));
+          'POST', Uri.parse('http://${Config.baseUrl}/student/addSubmission'));
 
       // Add file to the request
       request.files.add(await http.MultipartFile.fromPath(

@@ -35,7 +35,7 @@ class _TeacherAssignmentSubmissionState
   Future<void> fetchAssignments() async {
     final response = await http.get(
       Uri.parse(
-          'http://192.168.31.51:3000/teacher/assignments?class=${widget.selectedClass}&subject=${widget.selectedSubject}'),
+          'http://${Config.baseUrl}/teacher/getAssigments/assignments?class=${widget.selectedClass}&subject=${widget.selectedSubject}'),
     );
 
     if (response.statusCode == 200) {
@@ -51,7 +51,7 @@ class _TeacherAssignmentSubmissionState
 
   Future<void> fetchSubmissions(String assignmentId) async {
     final response = await http.get(
-      Uri.parse('http://192.168.31.51:3000/teacher/submissions/$assignmentId'),
+      Uri.parse('http://${Config.baseUrl}/teacher/submissions/$assignmentId'),
     );
 
     if (response.statusCode == 200) {
@@ -72,7 +72,7 @@ class _TeacherAssignmentSubmissionState
 
   Future<void> gradeSubmission(String submissionId, String grade) async {
     final response = await http.post(
-      Uri.parse('http://192.168.31.51:3000/teacher/grade-submission'),
+      Uri.parse('http://${Config.baseUrl}/teacher/grade-submission'),
       body: {'submissionId': submissionId, 'grade': grade},
     );
 
