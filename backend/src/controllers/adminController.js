@@ -283,7 +283,7 @@ const CreateAndAddStudent = async (req, res) => {
   
         const subClassRef = db.collection('subClasses').doc(subClassDocId);
         await subClassRef.update({
-          students: admin.firestore.FieldValue.arrayUnion({ id: studentRef.id, name: fullname })
+          students: admin.firestore.FieldValue.arrayUnion({ id: studentRef.id, fullname: fullname })
         });
       }
   

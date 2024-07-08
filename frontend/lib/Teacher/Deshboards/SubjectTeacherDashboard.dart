@@ -167,9 +167,11 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      TeacherClassSubjectSelectionPage(
-                                          userId: userId)),
+                                  builder: (context) => TeacherAttendancePage(
+                                        userId: userId,
+                                        selectedClass: selectedClass,
+                                        subject: selectedSubject,
+                                      )),
                             );
                           },
                           icon: 'asset/icons/chat.svg',
