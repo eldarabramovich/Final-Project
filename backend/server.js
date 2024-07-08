@@ -12,7 +12,6 @@ const studentRoutes = require('../backend/src/routes/studentRoute.js');
 const teacherRoutes = require('../backend/src/routes/teacherRoute.js');
 const parentRoutes = require('../backend/src/routes/parentRoute.js');
 
-
 app.use(cors()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,10 +22,13 @@ app.use((req, res, next) => {
     next();
   });
 
+
 app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);
 app.use('/student', studentRoutes);
 app.use('/teacher', teacherRoutes);
+app.use('/parent',parentRoutes);
+
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

@@ -194,7 +194,7 @@ const CreateStudent = async (req, res) => {
 //create class
 const CreateClass = async (req, res) => {
 
-    const { classLetter, subClasses, students, SubjectsTeachers,HomeRoomTeachers,Subjects } = req.body;
+    const { classLetter,students,Subjects } = req.body;
 
     if (!classLetter || !Subjects) {
         return res.status(400).send("Missing data!");
@@ -204,10 +204,9 @@ const CreateClass = async (req, res) => {
     const newClass = {
         ...classModel,
         classLetter,
-        subClasses: subClasses || [],
         students: students || [],
-        SubjectsTeachers: SubjectsTeachers || [],
-        HomeRoomTeachers: HomeRoomTeachers || [],
+        SubjectsTeachers: [],
+        HomeRoomTeachers: [],
         Subjects: Subjects || []
     };
 
@@ -347,7 +346,55 @@ const AddStudentToClass = async (req, res) => {
     }
 };
 
-module.exports = {CreateAndAddStudent,CreateClass, CreateStudent, CreateTeacher, AddStudentToClass,addAdmin}
+const GetAllStudents = async (req, res) => {
+    try {
+      const studentsRef = admin.firestore().collection('students');
+      const snapshot = await studentsRef.get();
+      const students = [];
+  
+      snapshot.forEach((doc) => {
+        students.push({
+          id: doc.id,
+          fullname: doc.data().fullname,
+        });
+      });
+  
+      res.status(200).json(students);
+    } catch (error) {
+      console.error('Error fetching students:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+
+
+ const AddParent = async (req, res) => {
+    const { username, password, fullname, children } = req.body;
+  
+    if (!username || !password || !fullname || !Array.isArray(children)) {
+      return res.status(400).send("Missing data!");
+    }
+  
+    const newParent = {
+      username,
+      password,
+      fullname,
+      role: 'parent',
+      children: children || [],
+    };
+  
+    try {
+      const db = admin.firestore();
+      const parentRef = db.collection('parents').doc();
+      await parentRef.set(newParent);
+  
+      res.status(200).send('Parent added successfully');
+    } catch (error) {
+      console.error('Error adding parent:', error);
+      res.status(500).send('Error adding parent');
+    }
+  };
+
+module.exports = {CreateAndAddStudent,CreateClass, CreateStudent, CreateTeacher, AddStudentToClass,addAdmin,GetAllStudents,AddParent}
 
 
 

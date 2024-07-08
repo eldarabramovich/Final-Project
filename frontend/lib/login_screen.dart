@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:frontend/Parent/ParentHomeScreen.dart';
+import 'package:frontend/Parent/ChildSelectionPage.dart';
 import 'package:frontend/Admin/AdminHomeScreen.dart';
 import 'package:frontend/Student/StudentHomeScreen.dart';
 import 'package:frontend/Teacher/Deshboards/SubjectTeacherDashboard.dart';
@@ -56,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200) {
         var responseData = json.decode(response.body);
-        var role = responseData['role'];
+        var role = responseData['role'].trim(); // Trim whitespace
         var userId = responseData['userId'];
         if (role == 'admin') {
           Navigator.push(context,
@@ -67,16 +69,12 @@ class _LoginScreenState extends State<LoginScreen> {
               MaterialPageRoute(
                   builder: (context) => HomeScreen(userId: userId)));
         } else if (role == 'teachers') {
-          print('Fetching teacher data for userId: $userId');
           var teacherData = await fetchTeacherData(userId);
-          print('Teacher data: $teacherData');
           var teacher = Teacher.fromFirestore(teacherData);
           if (teacher.classesSubject.isNotEmpty &&
               teacher.classesHomeroom.isNotEmpty) {
-            showErrorSnackBar(context, 'Teacher cant be homroom and subjects');
-          }
-          // Scenario 1
-          if (teacher.classesHomeroom.isEmpty) {
+            showErrorSnackBar(context, 'Teacher cant be homeroom and subjects');
+          } else if (teacher.classesHomeroom.isEmpty) {
             if (teacher.classesSubject.length == 1) {
               Navigator.push(
                 context,
@@ -103,10 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               showErrorSnackBar(context, 'Teacher has no classes assigned.');
             }
-          }
-
-          // Scenario 2
-          else if (teacher.classesSubject.isEmpty) {
+          } else if (teacher.classesSubject.isEmpty) {
             if (teacher.classesHomeroom.length == 1) {
               Navigator.push(
                 context,
@@ -133,10 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
               showErrorSnackBar(
                   context, 'Teacher has no homeroom classes assigned.');
             }
-          }
-
-          // Scenario 3: Teacher has both subject and homeroom classes
-          else {
+          } else {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -148,6 +140,34 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             );
           }
+        } else if (role == 'parents') {
+          var parentData = await fetchParentData(userId);
+          var children = parentData['children'] as List<dynamic>;
+          if (children.length == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ParentHomeScreen(
+                  userId: userId,
+                  childData: children.first,
+                ),
+              ),
+            );
+          } else if (children.length > 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChildSelectionPage(
+                  userId: userId,
+                  children: children.cast<Map<String, dynamic>>(),
+                ),
+              ),
+            );
+          } else {
+            showErrorSnackBar(context, 'No children found for this parent.');
+          }
+        } else {
+          showErrorSnackBar(context, 'Invalid role.');
         }
       } else {
         showErrorSnackBar(
@@ -160,9 +180,27 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<Map<String, dynamic>> fetchParentData(String parentId) async {
+    var url =
+        Uri.parse('http://${Config.baseUrl}/parent/getParentData/$parentId');
+
+    try {
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        return data;
+      } else {
+        throw Exception('Failed to fetch parent data');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch parent data: $e');
+    }
+  }
+
   Future<Map<String, dynamic>> fetchTeacherData(String userId) async {
     var url = Uri.parse('http://${Config.baseUrl}/teacher/teacher/$userId');
-  
+
     try {
       var response = await http.get(url);
       print('Response status: ${response.statusCode}');
