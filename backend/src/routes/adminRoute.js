@@ -1,14 +1,11 @@
-
 const express = require('express');
-
-const { addStudent, addTeacher,addAdmin , addAssignmentToSubject,addClasswithsubject} = require('../controllers/adminController.js');
-
 const router = express.Router();
+const {AddParent,GetAllStudents,CreateAndAddStudent,CreateClass,CreateTeacher,addAdmin} = require('../controllers/adminController.js');
+router.post('/createStudent', CreateAndAddStudent);
+router.post('/CreateClass',CreateClass);
+router.post('/CreateTeacher',CreateTeacher);
+router.post('/addadmin',addAdmin);
+router.post('/AddParent',AddParent);
+router.get('/GetAllStudents',GetAllStudents);
 
-
-router.post('/admin/addstudent',addStudent);
-router.post('/admin/addteacher',addTeacher);
-router.post('/admin/addadmin',addAdmin);
-router.post('/admin/addassi',addAssignmentToSubject);
-router.post('/admin/addclasubj',addClasswithsubject);
 module.exports = router;

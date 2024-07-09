@@ -1,3 +1,4 @@
 {
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "cmake.sourceDirectory": "D:/Desktop/Final-Project/frontend/build/windows/x64/extracted/firebase_cpp_sdk_windows"
 }

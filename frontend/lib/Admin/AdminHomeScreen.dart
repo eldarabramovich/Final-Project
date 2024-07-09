@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:frontend/Admin/AdminAddClassroom.dart';
 import 'package:frontend/Admin/AdminAddParent.dart';
 import 'package:frontend/Admin/AdminAddStudent.dart';
@@ -12,7 +11,7 @@ import 'package:frontend/Admin/AdminAddTeacher.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   static String routeName = 'AdminHomeScreen';
-  AdminHomeScreen({super.key});
+  const AdminHomeScreen({super.key});
 
   //final user = FirebaseAuth.instance.currentUser!;
 
@@ -52,7 +51,7 @@ class AdminHomeScreen extends StatelessWidget {
                         Text(
                           " Welcome Admin ",
                           style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -60,7 +59,7 @@ class AdminHomeScreen extends StatelessWidget {
                         Text(
                           "שלום",
                           style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
                                     fontWeight: FontWeight.normal,
                                     color: Colors.white,
                                   ),
@@ -99,7 +98,7 @@ class AdminHomeScreen extends StatelessWidget {
                                   builder: (context) => AdminAddTeacher()),
                             );
                           },
-                          icon: '',
+                          icon: 'asset/icons/teacher.svg',
                           title: "מורה חדש",
                         ),
                         HomeCard(
@@ -110,7 +109,7 @@ class AdminHomeScreen extends StatelessWidget {
                                   builder: (context) => AdminAddClassroom()),
                             );
                           },
-                          icon: '',
+                          icon: 'asset/icons/classroom.svg',
                           title: "כיתה חדשה",
                         ),
                       ],
@@ -126,7 +125,7 @@ class AdminHomeScreen extends StatelessWidget {
                                   builder: (context) => AddStudentPage()),
                             );
                           },
-                          icon: '',
+                          icon: 'asset/icons/student.svg',
                           title: "תלמיד חדש",
                         ),
                         HomeCard(
@@ -137,7 +136,7 @@ class AdminHomeScreen extends StatelessWidget {
                                   builder: (context) => AdminAddParent()),
                             );
                           },
-                          icon: '',
+                          icon: 'asset/icons/parent.svg',
                           title: "הורה חדש",
                         ),
                       ],
