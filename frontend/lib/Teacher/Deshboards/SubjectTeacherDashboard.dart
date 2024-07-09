@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/Teacher/TeacherCalendar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../PagesTools/TeacherGrade.dart';
@@ -11,7 +12,7 @@ import 'package:frontend/Teacher/PagesTools/TeacherFileUpload.dart';
 import 'package:frontend/Teacher/PagesTools/TecherAttendance%20.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
-// import 'package:frontend/Teacher/TeacherCalendar.dart';
+import 'package:frontend/Teacher/TeacherCalendar.dart';
 
 class SubjectTeacherDashboard extends StatelessWidget {
   final String userId;
@@ -154,8 +155,8 @@ class SubjectTeacherDashboard extends StatelessWidget {
                                   builder: (context) => UploadFilePage()),
                             );
                           },
-                          icon: 'asset/icons/timetable.svg',
-                          title: "לוח שנה",
+                          icon: 'asset/icons/document.svg',
+                          title: "שיתוף מסמכים",
                         ),
                       ],
                     ),
@@ -174,13 +175,23 @@ class SubjectTeacherDashboard extends StatelessWidget {
                                       )),
                             );
                           },
-                          icon: 'asset/icons/chat.svg',
+                          icon: 'asset/icons/check.svg',
                           title: "נוחכות",
                         ),
                         HomeCard(
                           onPress: () {},
+                          icon: 'asset/icons/timetable.svg',
+                          title: "לוח שנה",
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {},
                           icon: 'asset/icons/profile.svg',
-                          title: "Profile",
+                          title: " איזור אישי",
                         ),
                       ],
                     ),
