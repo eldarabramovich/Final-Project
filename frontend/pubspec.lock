@@ -128,6 +128,14 @@ packages:
       sha256: be325344c1f3070354a1d84a231a1ba75ea85d413774ec4bdf444c023342e030
       url: "https://pub.dev"
     source: hosted
+    version: "2.1.0"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: be325344c1f3070354a1d84a231a1ba75ea85d413774ec4bdf444c023342e030
+      url: "https://pub.dev"
+    source: hosted
     version: "5.5.0"
   firebase_auth:
     dependency: "direct main"
@@ -320,6 +328,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.0"
+  mime:
+    dependency: "direct main"
+    description:
+      name: mime
+      sha256: "2e123074287cc9fd6c09de8336dae606d1ddb88d9ac47358826db698c176a1f2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
+  open_file:
+    dependency: "direct main"
+    description:
+      name: open_file
+      sha256: a5a32d44acb7c899987d0999e1e3cbb0a0f1adebbf41ac813ec6d2d8faa0af20
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.10.0"
   mime:
     dependency: "direct main"
     description:
@@ -622,5 +646,5 @@ packages:
     source: hosted
     version: "6.5.0"
 sdks:
-  dart: ">=3.3.0 <4.0.0"
+  dart: ">=3.2.6 <4.0.0"
   flutter: ">=3.16.0"
