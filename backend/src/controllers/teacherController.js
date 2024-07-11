@@ -1,5 +1,6 @@
 const multer = require('multer');
 const { db ,admin} = require('../firebase/firebaseAdmin'); // Import only what you need
+const path = require('path');
 const bucket = admin.storage().bucket('teachtouch-20b98.appspot.com');
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).single('file');
@@ -282,7 +283,6 @@ const AddAttendance = async (req, res) => {
   }
 };
 
-
 const SendMessageToClass = async (req, res) => {
   const { classname, description } = req.body;
 
@@ -319,7 +319,6 @@ const SendMessageToClass = async (req, res) => {
     res.status(500).send('Error adding message');
   }
 };
-
 
 const GetStudentBySubClass = async (req, res) => {
   const classname = req.params.classname;
@@ -522,57 +521,46 @@ const downloadFile = async (req, res) => {
     res.status(500).send('Error downloading file');
   }
 };
-
-const getAssignmentsBySubjectAndClass = async (req, res) => {
-  const { subjectname, subClassName } = req.query;
-
-  console.log(`Query parameters - subjectname: ${subjectname}, subClassName: ${subClassName}`); // Debugging line
+const downloadSubmission = async (req, res) => {
+  const { submissionId, fileUrl } = req.body;
+  console.log(`Received request to download submission: ${submissionId} with file URL: ${fileUrl}`);
 
   try {
-    const subjectsCollection = admin.firestore().collection('subjects');
-    console.log(`Querying subjects collection: ${subjectsCollection.path}`); // Debugging line
+    // Find the submission document in Firestore by the submissionId
+    const submissionDoc = await admin.firestore().collection('submissions').doc(submissionId).get();
 
-    const subjectsSnapshot = await subjectsCollection
-      .where('subjectname', '==', subjectname)
-      .get();
-
-    if (subjectsSnapshot.empty) {
-      console.log('No subjects found'); // Debugging line
-      return res.status(404).send('Class not found');
+    if (!submissionDoc.exists) {
+      console.log(`Submission with ID: ${submissionId} not found`);
+      return res.status(404).send('Submission not found');
     }
 
-    console.log('Subjects found:'); // Debugging line
-    subjectsSnapshot.forEach(doc => {
-      console.log(doc.id, '=>', doc.data()); // Debugging line
-    });
+    const submissionData = submissionDoc.data();
+    const studentsubmissions = submissionData.studentsubmission;
 
-    const subjectDoc = subjectsSnapshot.docs[0]; // Assuming there's only one matching subject
-    const assignmentIDs = subjectDoc.data().assignments || [];
+    // Find the specific fileUrl in the studentsubmission array
+    const submission = studentsubmissions.find(sub => sub.fileUrl === fileUrl);
 
-    console.log(`Found subject document with assignments: ${assignmentIDs}`); // Debugging line
+    if (!submission) {
+      console.log(`File with URL: ${fileUrl} not found in submissions`);
+      return res.status(404).send('File not found in submissions');
+    }
 
-    const assignments = await Promise.all(
-      assignmentIDs.map(async (assignmentID) => {
-        const assignmentDoc = await admin.firestore().collection('assignments').doc(assignmentID).get();
-        if (assignmentDoc.exists) {
-          return { id: assignmentDoc.id, description: assignmentDoc.data().description };
-        } else {
-          console.log(`Assignment not found for ID: ${assignmentID}`); // Debugging line
-        }
-      })
-    );
+    const bucket = admin.storage().bucket();
+    const file = bucket.file(decodeURIComponent(fileUrl.split('https://storage.googleapis.com/teachtouch-20b98.appspot.com/')[1]));
 
-    res.status(200).json(assignments.filter(Boolean));
+    // Set the appropriate headers
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="${path.basename(fileUrl)}"`);
+
+    // Pipe the file to the response
+    file.createReadStream().pipe(res);
   } catch (error) {
-    console.error('Error fetching assignments:', error);
-    res.status(500).send('Error fetching assignments');
+    console.error('Error downloading submission:', error);
+    res.status(500).send('Error downloading submission');
   }
 };
 
-
-
 module.exports = {
-  getAssignmentsBySubjectAndClass,
   downloadFile,
   getSubmissions,
   CreateSubClass,
@@ -585,5 +573,5 @@ module.exports = {
   editTeacher,
   deleteTeacher,
   getClassStudents,
-  uploadFile,upload
- };
+  uploadFile,upload,downloadSubmission
+}

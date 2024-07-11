@@ -394,7 +394,80 @@ const GetAllStudents = async (req, res) => {
     }
   };
 
-module.exports = {CreateAndAddStudent,CreateClass, CreateStudent, CreateTeacher, AddStudentToClass,addAdmin,GetAllStudents,AddParent}
+
+
+  const getAssignmentsByClassAndSubject = async (req, res) => {
+    const { classname, subjectname } = req.query;
+  
+    console.log(`Query parameters - classname: ${classname}, subjectname: ${subjectname}`); // Debugging line
+  
+    try {
+      const assignmentsCollection = admin.firestore().collection('assignments');
+      console.log(`Querying assignments collection: ${assignmentsCollection.path}`); // Debugging line
+  
+      const assignmentsSnapshot = await assignmentsCollection
+        .where('classname', '==', classname)
+        .where('subjectname', '==', subjectname)
+        .get();
+  
+      console.log(`Query executed with classname: ${classname} and subjectname: ${subjectname}`);
+  
+      if (assignmentsSnapshot.empty) {
+        console.log('No assignments found'); // Debugging line
+        return res.status(404).send('Class not found');
+      }
+  
+      const assignments = assignmentsSnapshot.docs.map(doc => {
+        const assignmentData = doc.data();
+        console.log(`Found assignment with ID: ${doc.id} and data: ${JSON.stringify(assignmentData)}`);
+        return { id: doc.id, ...assignmentData };
+      });
+  
+      console.log('Assignments found:', assignments); // Debugging line
+  
+      res.status(200).json(assignments);
+    } catch (error) {
+      console.error('Error fetching assignments:', error);
+      res.status(500).send('Error fetching assignments');
+    }
+  };
+
+
+
+
+
+  
+const getAssignmentsBySubject = async (req, res) => {
+    const { subjectname } = req.query;
+    if (!subjectname) {
+      console.log('Error: subjectname query parameter is missing.');
+      return res.status(400).send('subjectname is required.');
+    }
+  
+    try {
+      const assignmentsSnapshot = await admin.firestore().collection('assignments')
+        .where('subjectname', '==', subjectname)
+        .get();
+  
+      if (assignmentsSnapshot.empty) {
+        console.log('No assignments found for the subject:', subjectname);
+        return res.status(404).send('No assignments found for this subject');
+      }
+  
+      const assignments = assignmentsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+  
+      console.log('Assignments retrieved:', assignments);
+      res.status(200).json(assignments);
+    } catch (error) {
+      console.error('Error fetching assignments by subject:', error);
+      res.status(500).send('Error fetching assignments');
+    }
+  };
+
+module.exports = {getAssignmentsByClassAndSubject,getAssignmentsBySubject,CreateAndAddStudent,CreateClass, CreateStudent, CreateTeacher, AddStudentToClass,addAdmin,GetAllStudents,AddParent}
 
 
 

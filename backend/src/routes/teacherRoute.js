@@ -1,7 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { getAssignmentsBySubjectAndClass,
+const {
     downloadFile,
     getSubmissions,
     upload,
@@ -14,7 +14,9 @@ const { getAssignmentsBySubjectAndClass,
     getTeacherData ,
     SendMessageToClass,
     GetStudentBySubClass,
-    AddAttendance
+    AddAttendance,
+    downloadSubmission
+    
 } = require('../controllers/teacherController.js');
 
 router.post('/AddAssignment',upload,AddAssignment);
@@ -22,6 +24,7 @@ router.post('/addatte',AddAttendance);
 router.post('/addmess',SendMessageToClass);
 router.post('/CreateSubClass',CreateSubClass);
 router.post('/AddStudentToSubClass',AddStudentToSubClass);
+router.post('/downloadSubmission', downloadSubmission);
 
 router.put('/editteachers/:teacherId', editTeacher);
 router.delete('/deleteachers/:teacherId', deleteTeacher);
@@ -31,6 +34,4 @@ router.get('/:classId', getClassStudents);
 router.get('/teacher/:userId', getTeacherData);
 router.get('/getstudents/:classname', GetStudentBySubClass);
 router.get('/getSubmissions/:assignmentID', getSubmissions);
-router.get('/getAssignmentsBySubjectAndClass', getAssignmentsBySubjectAndClass);
-
 module.exports = router;
