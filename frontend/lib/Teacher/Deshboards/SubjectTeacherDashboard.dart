@@ -121,7 +121,10 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherGrade()),
+                                  builder: (context) => TeacherClassDetailPage(
+                                      userId: userId,
+                                      selectedClass: selectedClass,
+                                      selectedSubject: selectedSubject)),
                             );
                           },
                           icon: 'asset/icons/resume.svg',
