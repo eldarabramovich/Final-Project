@@ -26,6 +26,7 @@ const addAdmin = async (req, res) => {
 }; 
 
 const CreateTeacher = async (req, res) => {
+
     const { username, password, fullname, email, classesSubject, classHomeroom } = req.body;
 
     if (!username || !email || !password || !fullname) {
@@ -222,74 +223,89 @@ const CreateClass = async (req, res) => {
 };
 
 const CreateAndAddStudent = async (req, res) => {
-    const { username, password, fullname, classLetter, subClassName } = req.body;
-  
-    if (!username || !password || !fullname || !classLetter) {
-      return res.status(400).send("Missing data!");
-    }
-  
-    const newStudent = {
-      ...studentModel,
-      username,
-      password,
-      fullname,
-      classname: classLetter,
-      subClassName: subClassName || '' // Initialize as empty if not provided
-    };
-  
-    try {
-      const db = admin.firestore();
-      const studentRef = db.collection('students').doc();
-      await studentRef.set(newStudent);
-  
-      // Find the class by class letter
-      const classesRef = db.collection('classes');
-      const classSnapshot = await classesRef.where('classLetter', '==', classLetter).get();
-  
-      if (classSnapshot.empty) {
-        return res.status(404).send(`Class ${classLetter} not found`);
-      }
-  
-      let classId;
-      classSnapshot.forEach(doc => {
-        classId = doc.id;
-      });
-  
-      // Update the class document to include the new student
-      const classRef = db.collection('classes').doc(classId);
-      await classRef.update({
-        students: admin.firestore.FieldValue.arrayUnion({ id: studentRef.id, name: fullname })
-      });
-  
-      // If a subclass name is provided, update the subclass document
-      if (subClassName) {
-        const subClassesRef = db.collection('subClasses');
-        const subClassSnapshot = await subClassesRef
-          .where('classNumber', '==', subClassName)
-          .where('parentClass', '==', classId)
-          .get();
-  
-        if (subClassSnapshot.empty) {
-          return res.status(404).send(`SubClass ${subClassName} not found in class ${classLetter}`);
-        }
-  
-        let subClassDocId;
-        subClassSnapshot.forEach(doc => {
-          subClassDocId = doc.id;
-        });
-  
-        const subClassRef = db.collection('subClasses').doc(subClassDocId);
-        await subClassRef.update({
-          students: admin.firestore.FieldValue.arrayUnion({ id: studentRef.id, fullname: fullname })
-        });
-      }
-  
-      res.status(200).send('Student added successfully');
-    } catch (error) {
-      console.error("Error adding student: ", error);
-      res.status(500).send("Error adding student");
-    }
+  const { username, password, fullname, classLetter, subClassName } = req.body;
+
+  if (!username || !password || !fullname || !classLetter) {
+    return res.status(400).send("Missing data!");
+  }
+
+  const newStudent = {
+    ...studentModel,
+    username,
+    password,
+    fullname,
+    classname: classLetter,
+    subClassName: subClassName || '' // Initialize as empty if not provided
   };
+
+  try {
+    const db = admin.firestore();
+    const studentRef = db.collection('students').doc();
+    await studentRef.set(newStudent);
+
+    // Find the class by class letter
+    const classesRef = db.collection('classes');
+    const classSnapshot = await classesRef.where('classLetter', '==', classLetter).get();
+
+    if (classSnapshot.empty) {
+      return res.status(404).send(`Class ${classLetter} not found`);
+    }
+
+    let classId;
+    classSnapshot.forEach(doc => {
+      classId = doc.id;
+    });
+
+    // Update the class document to include the new student
+    const classRef = db.collection('classes').doc(classId);
+    await classRef.update({
+      students: admin.firestore.FieldValue.arrayUnion({ id: studentRef.id, name: fullname })
+    });
+
+    // If a subclass name is provided, update the subclass document
+    if (subClassName) {
+      const subClassesRef = db.collection('subClasses');
+      const subClassSnapshot = await subClassesRef
+        .where('classNumber', '==', subClassName)
+        .where('parentClass', '==', classId)
+        .get();
+
+      if (subClassSnapshot.empty) {
+        return res.status(404).send(`SubClass ${subClassName} not found in class ${classLetter}`);
+      }
+
+      let subClassDocId;
+      subClassSnapshot.forEach(doc => {
+        subClassDocId = doc.id;
+      });
+
+      const subClassRef = db.collection('subClasses').doc(subClassDocId);
+      await subClassRef.update({
+        students: admin.firestore.FieldValue.arrayUnion({ id: studentRef.id, fullname: fullname })
+      });
+    }
+
+    // Update the subject documents to include the new student
+    const subjectsRef = db.collection('subjects');
+    const subjectSnapshot = await subjectsRef
+      .where('subClassName', '==', subClassName)
+      .get();
+
+    if (!subjectSnapshot.empty) {
+      subjectSnapshot.forEach(async (doc) => {
+        const subjectRef = db.collection('subjects').doc(doc.id);
+        await subjectRef.update({
+          students: admin.firestore.FieldValue.arrayUnion({ fullname: fullname, finalGrade: '' })
+        });
+      });
+    }
+
+    res.status(200).send('Student added successfully');
+  } catch (error) {
+    console.error("Error adding student: ", error);
+    res.status(500).send("Error adding student");
+  }
+};
   
 const AddStudentToClass = async (req, res) => {
     const { studentName, classLetter } = req.body;

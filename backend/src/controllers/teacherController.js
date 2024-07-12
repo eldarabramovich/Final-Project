@@ -603,6 +603,97 @@ const updateSubmissionGrade = async (req, res) => {
   }
 };
 
+const updateFinalGrade = async (req, res) => {
+  const { subClassName, subjectName, fullName, finalGrade } = req.body;
+
+  if (!subClassName || !subjectName || !fullName || finalGrade === undefined) {
+    return res.status(400).send('Missing subClassName, subjectName, fullName, or finalGrade');
+  }
+
+  try {
+    const db = admin.firestore();
+    const subjectsRef = db.collection('subjects');
+    const subjectSnapshot = await subjectsRef
+      .where('subClassName', '==', subClassName)
+      .where('subjectname', '==', subjectName)
+      .get();
+
+    if (subjectSnapshot.empty) {
+      return res.status(404).send('Subject not found');
+    }
+
+    let updated = false;
+
+    subjectSnapshot.forEach(async (doc) => {
+      const subjectData = doc.data();
+      const students = subjectData.students;
+
+      for (let i = 0; i < students.length; i++) {
+        if (students[i].fullname === fullName) {
+          students[i].finalGrade = finalGrade;
+          updated = true;
+          break;
+        }
+      }
+
+      if (updated) {
+        await doc.ref.update({ students });
+      }
+    });
+
+    if (!updated) {
+      return res.status(404).send('Student not found in subject');
+    }
+
+    res.status(200).send('Final grade updated successfully');
+  } catch (error) {
+    console.error('Error updating final grade:', error);
+    res.status(500).send('Error updating final grade');
+  }
+};
+
+
+
+
+
+
+const addEvent = async (req, res) => {
+  const { date, time, event } = req.body;
+
+  if (!date || !time || !event) {
+    return res.status(400).send('Missing date, time or event description');
+  }
+
+  try {
+    await db.collection('events').add({
+      date: new Date(date),
+      time: time,
+      event: event,
+    });
+
+    res.status(200).send('Event added successfully');
+  } catch (error) {
+    console.error('Error adding event:', error);
+    res.status(500).send('Error adding event');
+  }
+};
+
+const getEvents = async (req, res) => {
+  try {
+    const snapshot = await db.collection('events').get();
+    const events = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    res.status(500).send('Error fetching events');
+  }
+};
+
+
 module.exports = {
   downloadFile,
   getSubmissions,
@@ -616,5 +707,5 @@ module.exports = {
   editTeacher,
   deleteTeacher,
   getClassStudents,
-  uploadFile,upload,downloadSubmission,updateSubmissionGrade
+  uploadFile,upload,downloadSubmission,updateSubmissionGrade,updateFinalGrade, addEvent,getEvents
 }
