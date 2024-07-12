@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/Admin/AdminAddEventPage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:frontend/Admin/AdminAddClassroom.dart';
 import 'package:frontend/Admin/AdminAddParent.dart';
@@ -138,6 +139,22 @@ class AdminHomeScreen extends StatelessWidget {
                           },
                           icon: 'asset/icons/parent.svg',
                           title: "הורה חדש",
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AdminAddEventPage()),
+                            );
+                          },
+                          icon: 'asset/icons/addpost.svg',
+                          title: "אירוע חדש",
                         ),
                       ],
                     ),
