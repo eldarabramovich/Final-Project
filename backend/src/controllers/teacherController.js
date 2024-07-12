@@ -521,6 +521,7 @@ const downloadFile = async (req, res) => {
     res.status(500).send('Error downloading file');
   }
 };
+
 const downloadSubmission = async (req, res) => {
   const { submissionId, fileUrl } = req.body;
   console.log(`Received request to download submission: ${submissionId} with file URL: ${fileUrl}`);
@@ -560,6 +561,48 @@ const downloadSubmission = async (req, res) => {
   }
 };
 
+const updateSubmissionGrade = async (req, res) => {
+  const { submissionId, fullName, grade } = req.body;
+  console.log('Received parameters:', { submissionId, fullName, grade });
+  if (!submissionId || !fullName || grade === undefined) {
+    return res.status(400).send('Missing submission ID, student full name, or grade');
+  }
+
+  try {
+    const db = admin.firestore();
+    const submissionDocRef = db.collection('submissions').doc(submissionId);
+    const submissionDoc = await submissionDocRef.get();
+
+    if (!submissionDoc.exists) {
+      return res.status(404).send('Submission not found');
+    }
+
+    const submissionData = submissionDoc.data();
+    const studentsubmission = submissionData.studentsubmission;
+
+    let found = false;
+
+    for (let i = 0; i < studentsubmission.length; i++) {
+      if (studentsubmission[i].fullName === fullName) {
+        studentsubmission[i].grade = grade;
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      return res.status(404).send('Student submission not found');
+    }
+
+    await submissionDocRef.update({ studentsubmission });
+
+    res.status(200).send('Grade updated successfully');
+  } catch (error) {
+    console.error('Error updating grade:', error);
+    res.status(500).send('Error updating grade');
+  }
+};
+
 module.exports = {
   downloadFile,
   getSubmissions,
@@ -573,5 +616,5 @@ module.exports = {
   editTeacher,
   deleteTeacher,
   getClassStudents,
-  uploadFile,upload,downloadSubmission
+  uploadFile,upload,downloadSubmission,updateSubmissionGrade
 }

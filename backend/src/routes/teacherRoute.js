@@ -15,7 +15,8 @@ const {
     SendMessageToClass,
     GetStudentBySubClass,
     AddAttendance,
-    downloadSubmission
+    downloadSubmission,
+    updateSubmissionGrade
     
 } = require('../controllers/teacherController.js');
 
@@ -25,6 +26,7 @@ router.post('/addmess',SendMessageToClass);
 router.post('/CreateSubClass',CreateSubClass);
 router.post('/AddStudentToSubClass',AddStudentToSubClass);
 router.post('/downloadSubmission', downloadSubmission);
+router.post('/updateSubmissionGrade', updateSubmissionGrade);
 
 router.put('/editteachers/:teacherId', editTeacher);
 router.delete('/deleteachers/:teacherId', deleteTeacher);

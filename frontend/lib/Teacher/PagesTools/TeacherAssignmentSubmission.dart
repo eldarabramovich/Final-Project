@@ -137,16 +137,20 @@ class _TeacherAssignmentSubmissionState
     return filePath;
   }
 
-  Future<void> gradeSubmission(String submissionId, String grade) async {
+  Future<void> updateGrade(
+      String submissionId, String fullName, String grade) async {
     final response = await http.post(
-      Uri.parse('http://${Config.baseUrl}/teacher/grade-submission'),
-      body: {'submissionId': submissionId, 'grade': grade},
+      Uri.parse('http://${Config.baseUrl}/teacher/updateSubmissionGrade'),
+      body: jsonEncode(
+          {'submissionId': submissionId, 'fullName': fullName, 'grade': grade}),
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
-      Fluttertoast.showToast(msg: "Grade submitted successfully");
+      Fluttertoast.showToast(msg: "Grade updated successfully");
     } else {
-      Fluttertoast.showToast(msg: "Failed to submit grade");
+      Fluttertoast.showToast(
+          msg: "Failed to update grade: ${response.statusCode}");
     }
   }
 
@@ -203,8 +207,8 @@ class _TeacherAssignmentSubmissionState
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          gradeSubmission(
-                                              assignments[index].id, grade);
+                                          updateGrade(assignments[index].id,
+                                              submission.fullName, grade);
                                           Navigator.pop(context);
                                         },
                                         child: Text('Submit'),
