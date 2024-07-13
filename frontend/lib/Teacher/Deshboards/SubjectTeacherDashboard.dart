@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../PagesTools/TeacherGrade.dart';
 import 'package:frontend/models/teachermodel.dart';
-import 'package:frontend/Teacher/PagesTools/TeacherFileUpload.dart';
+import 'package:frontend/Teacher/PagesTools/TeacherCalendar.dart';
 import 'package:frontend/Teacher/PagesTools/TecherAttendance%20.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
@@ -121,7 +121,10 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherGrade()),
+                                  builder: (context) => TeacherClassDetailPage(
+                                      userId: userId,
+                                      selectedClass: selectedClass,
+                                      selectedSubject: selectedSubject)),
                             );
                           },
                           icon: 'asset/icons/resume.svg',
@@ -151,7 +154,9 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UploadFilePage()),
+                                  builder: (context) => TeacherCalendar(
+                                        userId: userId,
+                                      )),
                             );
                           },
                           icon: 'asset/icons/timetable.svg',

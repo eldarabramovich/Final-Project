@@ -16,8 +16,10 @@ const {
     GetStudentBySubClass,
     AddAttendance,
     downloadSubmission,
-    updateSubmissionGrade
-    
+    updateSubmissionGrade,
+    updateFinalGrade,
+    addEvent,getEvents,
+    getStudentsBySubject
 } = require('../controllers/teacherController.js');
 
 router.post('/AddAssignment',upload,AddAssignment);
@@ -27,11 +29,15 @@ router.post('/CreateSubClass',CreateSubClass);
 router.post('/AddStudentToSubClass',AddStudentToSubClass);
 router.post('/downloadSubmission', downloadSubmission);
 router.post('/updateSubmissionGrade', updateSubmissionGrade);
+router.post('/updateFinalGrade', updateFinalGrade);
+router.post('/addEvent', addEvent);
 
+
+router.get('/getStudentsBySubject',getStudentsBySubject);
 router.put('/editteachers/:teacherId', editTeacher);
 router.delete('/deleteachers/:teacherId', deleteTeacher);
 router.get('/downloadFile/:fileId',downloadFile );
-
+router.get('/getEvents',getEvents );
 router.get('/:classId', getClassStudents);
 router.get('/teacher/:userId', getTeacherData);
 router.get('/getstudents/:classname', GetStudentBySubClass);
