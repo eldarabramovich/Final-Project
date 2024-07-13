@@ -11,6 +11,7 @@ import 'package:frontend/Teacher/Deshboards/SubjectTeacherDashboard.dart';
 import 'package:frontend/Teacher/Deshboards/ClassSelectionPage.dart';
 import 'package:frontend/Teacher/Deshboards/HomeroomTeacherDashboard.dart';
 import 'package:frontend/models/teachermodel.dart';
+import 'package:frontend/models/parentmodel.dart';
 import 'config.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -142,24 +143,23 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         } else if (role == 'parents') {
           var parentData = await fetchParentData(userId);
-          var children = parentData['children'] as List<dynamic>;
-          if (children.length == 1) {
+          Parent parent = Parent.fromFirestore(parentData);
+          if (parent.children.length == 1) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ParentHomeScreen(
-                  userId: userId,
-                  childData: children.first,
+                builder: (context) => ParentDashboard(
+                  parent: parent,
+                  selectedChild: parent.children[0],
                 ),
               ),
             );
-          } else if (children.length > 1) {
+          } else if (parent.children.length > 1) {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ChildSelectionPage(
-                  userId: userId,
-                  children: children.cast<Map<String, dynamic>>(),
+                  parent: parent,
                 ),
               ),
             );
@@ -180,21 +180,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<Map<String, dynamic>> fetchParentData(String parentId) async {
-    var url =
-        Uri.parse('http://${Config.baseUrl}/parent/getParentData/$parentId');
+  Future<Map<String, dynamic>> fetchParentData(String userId) async {
+    final response =
+        await http.get(Uri.parse('http://${Config.baseUrl}/parent/getParentData/$userId'));
 
-    try {
-      var response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        return data;
-      } else {
-        throw Exception('Failed to fetch parent data');
-      }
-    } catch (e) {
-      throw Exception('Failed to fetch parent data: $e');
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load parent data');
     }
   }
 

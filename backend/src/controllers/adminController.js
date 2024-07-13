@@ -152,6 +152,7 @@ const CreateTeacher = async (req, res) => {
         res.status(500).send("Error adding teacher");
     }
 };
+
 //create and add student to a classes 
 const CreateStudent = async (req, res) => {
 
@@ -267,7 +268,6 @@ const CreateAndAddStudent = async (req, res) => {
       const subClassesRef = db.collection('subClasses');
       const subClassSnapshot = await subClassesRef
         .where('classNumber', '==', subClassName)
-        .where('parentClass', '==', classId)
         .get();
 
       if (subClassSnapshot.empty) {
