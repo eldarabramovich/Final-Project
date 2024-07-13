@@ -155,7 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => StudentGrade()),
+                                        builder: (context) => StudentGrade(
+                                            studentName: student.fullname)),
                                   );
                                 },
                                 icon: 'asset/icons/resume.svg',

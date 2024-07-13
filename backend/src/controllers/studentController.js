@@ -311,6 +311,43 @@ const GetAssignById = async (req, res) => {
   }
 };
 
+
+
+const getStudentGrades = async (req, res) => {
+  const { studentName } = req.query;
+
+  if (!studentName) {
+    return res.status(400).send('Missing student name');
+  }
+
+  try {
+    const db = admin.firestore();
+    const subjectsSnapshot = await db.collection('subjects').get();
+
+    let studentGrades = [];
+
+    subjectsSnapshot.forEach(doc => {
+      const subjectData = doc.data();
+      if (subjectData.students && Array.isArray(subjectData.students)) {
+        subjectData.students.forEach(student => {
+          if (student.fullname === studentName) {
+            studentGrades.push({
+              subjectName: subjectData.subjectname,
+              subClassName: subjectData.subClassName,
+              finalGrade: student.finalGrade
+            });
+          }
+        });
+      }
+    });
+
+    res.status(200).json(studentGrades);
+  } catch (error) {
+    console.error('Error fetching student grades:', error);
+    res.status(500).send('Error fetching student grades');
+  }
+};
+
 module.exports = {
   getAssignments,
   addSubmission,
@@ -320,4 +357,5 @@ module.exports = {
   GetMessageByClassname,
   getStudentData,
   editStudent,
-  deleteStudent};
+  deleteStudent,
+  getStudentGrades};
