@@ -1,5 +1,3 @@
-// ignore: file_names
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -98,11 +96,12 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Assignment'),
+        title: Text('הוספת מטלה'),
+        backgroundColor: Colors.blue,
         actions: [
           TextButton(
             onPressed: _navigateToSubmissions,
-            child: const Text(
+            child: Text(
               'ניהול הגשות',
               style: TextStyle(color: Colors.white),
             ),
@@ -114,34 +113,76 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: TextFormField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                    labelText: 'תיאור המטלה',
+                    alignLabelWithHint: true,
+                    border: InputBorder.none,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'יש להזין תיאור למטלה';
+                    }
+                    return null;
+                  },
+                  textAlign: TextAlign.right,
+                ),
               ),
-              TextFormField(
-                controller: _lastDateController,
-                decoration: const InputDecoration(labelText: 'Last Date'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a last date';
-                  }
-                  return null;
-                },
+              SizedBox(height: 16),
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: TextFormField(
+                  controller: _lastDateController,
+                  decoration: InputDecoration(
+                    labelText: 'תאריך אחרון להגשה',
+                    alignLabelWithHint: true,
+                    border: InputBorder.none,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'יש להזין תאריך אחרון להגשה';
+                    }
+                    return null;
+                  },
+                  textAlign: TextAlign.right,
+                ),
               ),
-              ElevatedButton(
-                onPressed: _pickFile,
-                child: const Text('Pick File'),
+              SizedBox(height: 20),
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: _pickFile,
+                  icon: Icon(Icons.attach_file),
+                  label: Text('בחר קובץ'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlueAccent, // baby blue color
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                  ),
+                ),
               ),
-              ElevatedButton(
-                onPressed: _submitAssignment,
-                child: const Text('Submit Assignment'),
+              Spacer(),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ElevatedButton(
+                  onPressed: _submitAssignment,
+                  child: Text('שלח מטלה'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlueAccent, // baby blue color
+                    padding: EdgeInsets.symmetric(horizontal: 48),
+                  ),
+                ),
               ),
             ],
           ),

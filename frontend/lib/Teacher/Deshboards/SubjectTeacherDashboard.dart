@@ -179,7 +179,7 @@ class SubjectTeacherDashboard extends StatelessWidget {
                                       )),
                             );
                           },
-                          icon: 'asset/icons/chat.svg',
+                          icon: 'asset/icons/result.svg',
                           title: "נוחכות",
                         ),
                         HomeCard(

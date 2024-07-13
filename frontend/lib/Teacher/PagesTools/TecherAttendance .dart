@@ -1,4 +1,3 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -10,12 +9,12 @@ class TeacherAttendancePage extends StatefulWidget {
   final String selectedClass;
   final String subject;
 
-  const TeacherAttendancePage(
-      {Key? key,
-      required this.userId,
-      required this.selectedClass,
-      required this.subject})
-      : super(key: key);
+  const TeacherAttendancePage({
+    Key? key,
+    required this.userId,
+    required this.selectedClass,
+    required this.subject,
+  }) : super(key: key);
 
   @override
   State<TeacherAttendancePage> createState() => _TeacherAttendancePageState();
@@ -30,7 +29,7 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
   void initState() {
     super.initState();
     _fetchStudents();
-  } // Maps student ID to attendance status
+  }
 
   Future<void> _fetchStudents() async {
     var url = Uri.parse(
@@ -96,14 +95,27 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mark Attendance'),
+        title: Text('סמן נוכחות'),
+        backgroundColor: Colors.blue, // Set app bar color to blue
       ),
       body: Column(
         children: [
-          // Dropdowns for class and subject
-          // ...
-
-          // List of students with checkboxes
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'נא לסמן נוכחות',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'שם מלא',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: _students.length,
@@ -116,16 +128,26 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
                       _attendance[student.id] = value!;
                     });
                   },
-                  title: Text(student.fullname),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  title: Text(
+                    student.fullname,
+                    textAlign: TextAlign.right,
+                  ),
                 );
               },
             ),
           ),
 
           // Submit button
-          ElevatedButton(
-            onPressed: _submitAttendance,
-            child: Text('Submit Attendance'),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: _submitAttendance,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue, // Set button color to blue
+              ),
+              child: Text('שמור נוכחות'),
+            ),
           ),
         ],
       ),

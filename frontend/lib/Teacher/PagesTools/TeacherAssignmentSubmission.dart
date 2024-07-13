@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:dio/dio.dart';
 import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
@@ -158,7 +157,8 @@ class _TeacherAssignmentSubmissionState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage submissions'),
+        title: const Text('ניהול הגשות'),
+        backgroundColor: Colors.blue,
       ),
       body: ListView.builder(
         itemCount: assignments.length,
@@ -169,7 +169,7 @@ class _TeacherAssignmentSubmissionState
               if (submissions[assignments[index].id] == null)
                 ElevatedButton(
                   onPressed: () => fetchSubmissions(assignments[index].id),
-                  child: Text('Load Submissions'),
+                  child: Text('טען הגשות'),
                 )
               else
                 Column(
@@ -178,7 +178,7 @@ class _TeacherAssignmentSubmissionState
                     return ListTile(
                       title: Text(submission.fullName),
                       subtitle: Text(
-                          'Grade: ${submission.grade.isEmpty ? 'Not graded' : submission.grade}'),
+                          'ציון: ${submission.grade.isEmpty ? 'לא מדורג' : submission.grade}'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -195,7 +195,7 @@ class _TeacherAssignmentSubmissionState
                                 builder: (context) {
                                   String grade = '';
                                   return AlertDialog(
-                                    title: Text('Enter Grade'),
+                                    title: Text('הזן ציון'),
                                     content: TextField(
                                       onChanged: (value) => grade = value,
                                       keyboardType: TextInputType.number,
@@ -203,7 +203,7 @@ class _TeacherAssignmentSubmissionState
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: Text('Cancel'),
+                                        child: Text('ביטול'),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -211,7 +211,7 @@ class _TeacherAssignmentSubmissionState
                                               submission.fullName, grade);
                                           Navigator.pop(context);
                                         },
-                                        child: Text('Submit'),
+                                        child: Text('שלח'),
                                       ),
                                     ],
                                   );
