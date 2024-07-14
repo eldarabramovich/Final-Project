@@ -71,11 +71,42 @@ class _LoginScreenState extends State<LoginScreen> {
                   builder: (context) => HomeScreen(userId: userId)));
         } else if (role == 'teachers') {
           var teacherData = await fetchTeacherData(userId);
+          print(
+              "Fetched Teacher Data: $teacherData"); // Add this line for debugging
           var teacher = Teacher.fromFirestore(teacherData);
+          print("Parsed Teacher: $teacher"); // Add this line for debugging
+
           if (teacher.classesSubject.isNotEmpty &&
-              teacher.classesHomeroom.isNotEmpty) {
+              teacher.classHomeroom.isNotEmpty) {
             showErrorSnackBar(context, 'Teacher cant be homeroom and subjects');
-          } else if (teacher.classesHomeroom.isEmpty) {
+          } else if (teacher.classHomeroom.isNotEmpty) {
+            if (teacher.classHomeroom.length == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomeroomTeacherDashboard(
+                    userId: userId,
+                    teacherData: teacher,
+                    selectedClass: teacher.classHomeroom.first,
+                  ),
+                ),
+              );
+            } else if (teacher.classHomeroom.length > 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ClassSelectionPage(
+                    teacherData: teacher,
+                    userId: userId,
+                    isHomeroomTeacher: true,
+                  ),
+                ),
+              );
+            } else {
+              showErrorSnackBar(
+                  context, 'Teacher has no homeroom classes assigned.');
+            }
+          } else if (teacher.classesSubject.isNotEmpty) {
             if (teacher.classesSubject.length == 1) {
               Navigator.push(
                 context,
@@ -102,33 +133,6 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               showErrorSnackBar(context, 'Teacher has no classes assigned.');
             }
-          } else if (teacher.classesSubject.isEmpty) {
-            if (teacher.classesHomeroom.length == 1) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomeroomTeacherDashboard(
-                    userId: userId,
-                    teacherData: teacher,
-                    selectedClass: teacher.classesHomeroom.first.classname,
-                  ),
-                ),
-              );
-            } else if (teacher.classesHomeroom.length > 1) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ClassSelectionPage(
-                    teacherData: teacher,
-                    userId: userId,
-                    isHomeroomTeacher: true,
-                  ),
-                ),
-              );
-            } else {
-              showErrorSnackBar(
-                  context, 'Teacher has no homeroom classes assigned.');
-            }
           } else {
             Navigator.push(
               context,
@@ -136,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 builder: (context) => ClassSelectionPage(
                   teacherData: teacher,
                   userId: userId,
-                  isHomeroomTeacher: teacher.classesHomeroom.isNotEmpty,
+                  isHomeroomTeacher: teacher.classHomeroom.isNotEmpty,
                 ),
               ),
             );
@@ -181,8 +185,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<Map<String, dynamic>> fetchParentData(String userId) async {
-    final response =
-        await http.get(Uri.parse('http://${Config.baseUrl}/parent/getParentData/$userId'));
+    final response = await http.get(
+        Uri.parse('http://${Config.baseUrl}/parent/getParentData/$userId'));
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
