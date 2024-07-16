@@ -249,8 +249,6 @@ const getStudentData = async (req, res) => {
   }
 };
 
-
-
 //think about get massage buy subclass name and class
 const GetMessageByClassname = async (req, res) => {
   try {
@@ -311,8 +309,6 @@ const GetAssignById = async (req, res) => {
   }
 };
 
-
-
 const getStudentGrades = async (req, res) => {
   const { studentName } = req.query;
 
@@ -347,6 +343,7 @@ const getStudentGrades = async (req, res) => {
     res.status(500).send('Error fetching student grades');
   }
 };
+
 
 module.exports = {
   getAssignments,
