@@ -1,42 +1,16 @@
-/*
-import 'package:flutter/material.dart';
-
-class ParentCalendarPage extends StatelessWidget {
-  final String userId;
-  final Map<String, dynamic> childData;
-
-  const ParentCalendarPage({
-    Key? key,
-    required this.userId,
-    required this.childData,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Calendar'),
-      ),
-      body: Center(
-        child: Text('Calendar for ${childData['fullname']}'),
-      ),
-    );
-  }
-}
-*/
-
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:frontend/models/parentmodel.dart';
 
 class ParentCalendarPage extends StatelessWidget {
   final String userId;
-  final Map<String, dynamic> childData;
+  final Children children;
 
   const ParentCalendarPage({
     Key? key,
     required this.userId,
-    required this.childData,
+    required this.children,
   }) : super(key: key);
 
   @override
@@ -55,7 +29,7 @@ class ParentCalendarPage extends StatelessWidget {
           children: [
             SizedBox(height: 20),
             Text(
-              'Calendar for ${childData['fullname']}',
+              'Calendar',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
@@ -117,18 +91,4 @@ class ParentCalendarPage extends StatelessWidget {
       },
     );
   }
-}
-
-void main() {
-  // Example child data
-  Map<String, dynamic> childData = {
-    'fullname': 'John Doe', // Replace with actual child's name
-  };
-
-  runApp(MaterialApp(
-    home: ParentCalendarPage(
-      userId: 'exampleUserId', // Replace with actual user ID
-      childData: childData,
-    ),
-  ));
 }

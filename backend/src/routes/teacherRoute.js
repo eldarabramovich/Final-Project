@@ -19,7 +19,8 @@ const {
     updateSubmissionGrade,
     updateFinalGrade,
     addEvent,getEvents,
-    getStudentsBySubject
+    getStudentsBySubject,
+    getStudentsByClass
 } = require('../controllers/teacherController.js');
 
 router.post('/AddAssignment',upload,AddAssignment);
@@ -31,7 +32,7 @@ router.post('/downloadSubmission', downloadSubmission);
 router.post('/updateSubmissionGrade', updateSubmissionGrade);
 router.post('/updateFinalGrade', updateFinalGrade);
 router.post('/addEvent', addEvent);
-
+router.post('/getStudentsByClass', getStudentsByClass);
 
 router.get('/getStudentsBySubject',getStudentsBySubject);
 router.put('/editteachers/:teacherId', editTeacher);

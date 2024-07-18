@@ -298,6 +298,37 @@ const GetStudentBySubClass = async (req, res) => {
 };
 
 
+const getStudentsByClass = async (req, res) => {
+  const className = req.body.className;
+  console.log('Received className:', className);
+  if (!className) {
+    return res.status(400).send('Missing class parameter');
+  }
+
+  try {
+    const subClassesRef = db.collection('subClasses');
+    const snapshot = await subClassesRef.where('classNumber', '==', className).get();
+
+    if (snapshot.empty) {
+      return res.status(404).send('No students found');
+    }
+    console.error('Step 2 find subclass');
+    console.error('Step 6: File upload finished');
+    let students = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.students) {
+        students = students.concat(data.students);
+      }
+    });
+
+    res.status(200).json(students);
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    res.status(500).send('Error fetching students');
+  }
+};
+
 //______________________________________________________________________________________________________________________________________
 //login pages 
 const getTeacherData = async (req, res) => {
@@ -760,11 +791,6 @@ const updateFinalGrade = async (req, res) => {
 
 
 
-
-
-
-
-
 module.exports = {
   downloadFile,
   getSubmissions,
@@ -784,5 +810,6 @@ module.exports = {
   updateSubmissionGrade,
   updateFinalGrade,
   addEvent,getEvents,
-  getStudentsBySubject
+  getStudentsBySubject,
+  getStudentsByClass
 }

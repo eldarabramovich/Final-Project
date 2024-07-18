@@ -1,5 +1,5 @@
 const express = require('express');
-const {addSubmission,upload,getAssignments,downloadFile,GetAssignById,GetMessageByClassname,getStudentData ,deleteStudent,editStudent} = require('../controllers/studentController');
+const {getStudentGrades,addSubmission,upload,getAssignments,downloadFile,GetAssignById,GetMessageByClassname,getStudentData ,deleteStudent,editStudent} = require('../controllers/studentController');
 const router = express.Router();
 router.get('/getassi/:userId', getAssignments);
 router.post('/addSubmission', upload, addSubmission);
@@ -9,4 +9,5 @@ router.post('/student/editStudent',editStudent );
 router.delete('/deletestudents/:studentId', deleteStudent);
 router.get('/getmess/:classname',GetMessageByClassname);
 router.get('/getstudent/:userId',getStudentData);
+router.get('/student/grades', getStudentGrades);
 module.exports = router;

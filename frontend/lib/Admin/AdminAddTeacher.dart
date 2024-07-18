@@ -17,8 +17,8 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _homeroomClassController = TextEditingController();
   final List<Map<String, String>> _selectedClassesSubjects = [];
-  String? _selectedClassHomeroom;
 
   @override
   Widget build(BuildContext context) {
@@ -73,24 +73,9 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
             ),
             const SizedBox(height: 16.0),
             const Text('Select Homeroom Class (Optional):'),
-            DropdownButton<String>(
-              value: _selectedClassHomeroom,
-              hint: const Text('Select Homeroom Class'),
-              items: _selectedClassesSubjects.map((classSubject) {
-                return DropdownMenuItem<String>(
-                  value: classSubject['classname'],
-                  child: Text(classSubject['classname']!),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedClassHomeroom = newValue;
-                  // If a homeroom class is selected, clear selected class subjects
-                  if (newValue != null) {
-                    _selectedClassesSubjects.clear();
-                  }
-                });
-              },
+            TextField(
+              controller: _homeroomClassController,
+              decoration: const InputDecoration(labelText: 'Homeroom Class'),
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
@@ -134,7 +119,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
                     'subjectname': subjectController.text,
                   });
                   // If a class subject is added, clear the selected homeroom class
-                  _selectedClassHomeroom = null;
+                  _homeroomClassController.clear();
                 });
                 Navigator.pop(context);
               },
@@ -151,6 +136,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
     String password = _passwordController.text;
     String fullName = _fullNameController.text;
     String email = _emailController.text;
+    String homeroomClass = _homeroomClassController.text;
 
     var url = Uri.parse(
         'http://${Config.baseUrl}/admin/CreateTeacher'); // Replace with your actual endpoint
@@ -160,10 +146,8 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
       'password': password,
       'fullname': fullName,
       'email': email,
-      'classesSubject':
-          _selectedClassHomeroom == null ? _selectedClassesSubjects : null,
-      'classHomeroom':
-          _selectedClassHomeroom == null ? '' : _selectedClassHomeroom,
+      'classesSubject': _selectedClassesSubjects.isNotEmpty ? _selectedClassesSubjects : null,
+      'classHomeroom': homeroomClass.isNotEmpty ? homeroomClass : null,
     };
 
     print(
@@ -193,6 +177,7 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
     _passwordController.dispose();
     _fullNameController.dispose();
     _emailController.dispose();
+    _homeroomClassController.dispose();
     super.dispose();
   }
 }

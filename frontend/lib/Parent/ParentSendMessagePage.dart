@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/parentmodel.dart';
 
 class ParentSendMessagePage extends StatelessWidget {
   final String userId;
-  final Map<String, dynamic> childData;
+  final Children selectedChild;
 
   const ParentSendMessagePage({
-    Key? key,
     required this.userId,
-    required this.childData,
-  }) : super(key: key);
+    required this.selectedChild,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,6 @@ class ParentSendMessagePage extends StatelessWidget {
     void sendMessage() {
       String message = messageController.text.trim();
       // Implement logic to send message here
-      print('Sending message to ${childData['fullname']}: $message');
       // Optionally, you can clear the text field after sending
       messageController.clear();
     }
@@ -33,7 +32,7 @@ class ParentSendMessagePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Send message to ${childData['fullname']} teacher',
+              'Send message to  teacher',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
