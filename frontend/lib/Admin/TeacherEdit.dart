@@ -17,8 +17,10 @@ class _EditTeacherPageState extends State<EditTeacherPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _classHomeroomController = TextEditingController();
-  final TextEditingController _classesSubjectController = TextEditingController();
+  final TextEditingController _classHomeroomController =
+      TextEditingController();
+  final TextEditingController _classesSubjectController =
+      TextEditingController();
 
   bool isLoading = true;
 
@@ -31,7 +33,8 @@ class _EditTeacherPageState extends State<EditTeacherPage> {
   Future<void> fetchTeacherData() async {
     try {
       final response = await http.get(
-        Uri.parse('http://${Config.baseUrl}/teacher/getTeacherById/${widget.userId}'),
+        Uri.parse(
+            'http://${Config.baseUrl}/teacher/getTeacherById/${widget.userId}'),
       );
 
       if (response.statusCode == 200) {
@@ -43,7 +46,8 @@ class _EditTeacherPageState extends State<EditTeacherPage> {
           _emailController.text = data['email'];
           _classHomeroomController.text = data['classHomeroom'].join(', ');
           _classesSubjectController.text = data['classesSubject']
-              .map((subject) => '${subject['classname']} - ${subject['subjectname']}')
+              .map((subject) =>
+                  '${subject['classname']} - ${subject['subjectname']}')
               .join(', ');
           isLoading = false;
         });
@@ -68,8 +72,12 @@ class _EditTeacherPageState extends State<EditTeacherPage> {
           'username': _usernameController.text,
           'password': _passwordController.text,
           'email': _emailController.text,
-          'classHomeroom': _classHomeroomController.text.split(',').map((name) => name.trim()).toList(),
-          'classesSubject': _classesSubjectController.text.split(',').map((subject) {
+          'classHomeroom': _classHomeroomController.text
+              .split(',')
+              .map((name) => name.trim())
+              .toList(),
+          'classesSubject':
+              _classesSubjectController.text.split(',').map((subject) {
             var parts = subject.split('-');
             return {
               'classname': parts[0].trim(),
@@ -121,11 +129,13 @@ class _EditTeacherPageState extends State<EditTeacherPage> {
                   ),
                   TextField(
                     controller: _classHomeroomController,
-                    decoration: InputDecoration(labelText: 'Class Homeroom (comma separated)'),
+                    decoration: InputDecoration(
+                        labelText: 'Class Homeroom (comma separated)'),
                   ),
                   TextField(
                     controller: _classesSubjectController,
-                    decoration: InputDecoration(labelText: 'Classes and Subjects (comma separated)'),
+                    decoration: InputDecoration(
+                        labelText: 'Classes and Subjects (comma separated)'),
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(

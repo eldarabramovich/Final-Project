@@ -30,7 +30,8 @@ class _EditStudentPageState extends State<EditStudentPage> {
   Future<void> fetchStudentData() async {
     try {
       final response = await http.get(
-        Uri.parse('http://${Config.baseUrl}/student/getStudentById/${widget.userId}'),
+        Uri.parse(
+            'http://${Config.baseUrl}/student/getStudentById/${widget.userId}'),
       );
 
       if (response.statusCode == 200) {

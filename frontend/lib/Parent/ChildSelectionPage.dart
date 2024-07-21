@@ -11,8 +11,7 @@ class ChildSelectionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('בחר ילד'),
-        backgroundColor: Colors.blue,
+        title: const Text('Select Child'),
       ),
       body: ListView.builder(
         itemCount: parent.children.length,
