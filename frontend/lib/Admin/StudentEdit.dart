@@ -4,10 +4,6 @@ import 'dart:convert';
 import 'package:frontend/config.dart';
 
 class EditStudentPage extends StatefulWidget {
-  final String userId;
-
-  EditStudentPage({required this.userId});
-
   @override
   _EditStudentPageState createState() => _EditStudentPageState();
 }
@@ -19,53 +15,29 @@ class _EditStudentPageState extends State<EditStudentPage> {
   final TextEditingController _classNameController = TextEditingController();
   final TextEditingController _subClassNameController = TextEditingController();
 
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchStudentData();
-  }
-
-  Future<void> fetchStudentData() async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-            'http://${Config.baseUrl}/student/getStudentById/${widget.userId}'),
-      );
-
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        setState(() {
-          _fullnameController.text = data['fullname'];
-          _usernameController.text = data['username'];
-          _passwordController.text = data['password'];
-          _classNameController.text = data['classname'];
-          _subClassNameController.text = data['subClassName'];
-          isLoading = false;
-        });
-      } else {
-        print('Failed to load student data: ${response.body}');
-      }
-    } catch (e) {
-      print('Error fetching student data: $e');
-    }
-  }
+  bool isLoading = false;
 
   Future<void> saveStudentData() async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
       final response = await http.post(
-        Uri.parse('http://${Config.baseUrl}/student/updateStudent'),
+        Uri.parse('http://${Config.baseUrl}/admin/updateStudent'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, String>{
-          'id': widget.userId,
+        body: jsonEncode(<String, dynamic>{
           'fullname': _fullnameController.text,
-          'username': _usernameController.text,
-          'password': _passwordController.text,
-          'classname': _classNameController.text,
-          'subClassName': _subClassNameController.text,
+          'newUsername': _usernameController.text,
+          'newPassword': _passwordController.text,
+          'newClassname': _classNameController.text.isEmpty
+              ? null
+              : _classNameController.text,
+          'newSubClassName': _subClassNameController.text.isEmpty
+              ? null
+              : _subClassNameController.text,
         }),
       );
 
@@ -74,10 +46,56 @@ class _EditStudentPageState extends State<EditStudentPage> {
             SnackBar(content: Text('Student updated successfully')));
       } else {
         print('Failed to save student data: ${response.body}');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to update student')));
       }
     } catch (e) {
       print('Error saving student data: $e');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error updating student')));
     }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> deleteStudent() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://${Config.baseUrl}/admin/deleteStudent'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'fullname': _fullnameController.text,
+          'classname': _classNameController.text,
+          'subClassName': _subClassNameController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Student deleted successfully')));
+        Navigator.pop(context); // Navigate back after deletion
+      } else {
+        print('Failed to delete student: ${response.body}');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to delete student')));
+      }
+    } catch (e) {
+      print('Error deleting student: $e');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error deleting student')));
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -117,6 +135,12 @@ class _EditStudentPageState extends State<EditStudentPage> {
                   ElevatedButton(
                     onPressed: saveStudentData,
                     child: Text('Save'),
+                  ),
+                  ElevatedButton(
+                    onPressed: deleteStudent,
+                    child: Text('Delete'),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   ),
                 ],
               ),
