@@ -13,10 +13,10 @@ const {
     GetAllStudents,
     AddParent,
     updateParent,
-    deleteParent} = require('../controllers/adminController.js');
+    deleteParent,addEvent} = require('../controllers/adminController.js');
 
 
-
+router.post('/addEvent',addEvent);
 router.post('/CreateClass',CreateClass);
 router.post('/addadmin',addAdmin);
 
