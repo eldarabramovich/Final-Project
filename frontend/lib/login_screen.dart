@@ -77,9 +77,11 @@ class _LoginScreenState extends State<LoginScreen> {
           print("Parsed Teacher: $teacher"); // Add this line for debugging
 
           if (teacher.classesSubject.isNotEmpty &&
-              teacher.classHomeroom.isNotEmpty) {
+              (teacher.classHomeroom.isNotEmpty &&
+                  teacher.classHomeroom.first.isNotEmpty)) {
             showErrorSnackBar(context, 'Teacher cant be homeroom and subjects');
-          } else if (teacher.classHomeroom.isNotEmpty) {
+          } else if (teacher.classHomeroom.isNotEmpty &&
+              teacher.classHomeroom.first.isNotEmpty) {
             if (teacher.classHomeroom.length == 1) {
               Navigator.push(
                 context,
@@ -140,7 +142,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 builder: (context) => ClassSelectionPage(
                   teacherData: teacher,
                   userId: userId,
-                  isHomeroomTeacher: teacher.classHomeroom.isNotEmpty,
+                  isHomeroomTeacher: teacher.classHomeroom.isNotEmpty &&
+                      teacher.classHomeroom.first.isNotEmpty,
                 ),
               ),
             );
