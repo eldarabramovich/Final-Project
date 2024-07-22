@@ -1066,9 +1066,42 @@ const getAssignmentsBySubject = async (req, res) => {
 };
 
 
+const addEvent = async (req, res) => {
+  const { title, info } = req.body;
 
+  if (!title || !info) {
+    return res.status(400).send("Missing required fields");
+  }
 
+  const newEvent = {
+    title,
+    info,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
 
+  try {
+    const db = admin.firestore();
+    const eventRef = db.collection('events').doc();
+    await eventRef.set(newEvent);
+
+    res.status(200).send('Event added successfully');
+  } catch (error) {
+    console.error('Error adding event:', error);
+    res.status(500).send('Error adding event');
+  }
+};
+
+const getAllEvents = async (req, res) => {
+  try {
+    const db = admin.firestore();
+    const eventsSnapshot = await db.collection('events').get();
+    const events = eventsSnapshot.docs.map(doc => doc.data());
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('Error getting events:', error);
+    res.status(500).send('Error getting events');
+  }
+};
 
 module.exports = {
   updateTeacher,
@@ -1086,7 +1119,7 @@ module.exports = {
   GetAllStudents,
   AddParent,
   updateParent,
-  deleteParent}
+  deleteParent,addEvent,getAllEvents}
 
 
 

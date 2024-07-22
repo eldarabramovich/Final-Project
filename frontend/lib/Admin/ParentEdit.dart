@@ -31,7 +31,8 @@ class _EditParentPageState extends State<EditParentPage> {
   Future<void> fetchParentData() async {
     try {
       final response = await http.get(
-        Uri.parse('http://${Config.baseUrl}/parent/getParentByFullname/${widget.fullname}'),
+        Uri.parse(
+            'http://${Config.baseUrl}/parent/getParentByFullname/${widget.fullname}'),
       );
 
       if (response.statusCode == 200) {
@@ -69,7 +70,8 @@ class _EditParentPageState extends State<EditParentPage> {
                   ))
               .toList();
           _selectedChildren = {
-            for (var student in _students) student.id: _selectedChildren[student.id] ?? false,
+            for (var student in _students)
+              student.id: _selectedChildren[student.id] ?? false,
           };
         });
       } else {
@@ -103,9 +105,15 @@ class _EditParentPageState extends State<EditParentPage> {
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({
           'fullname': widget.fullname,
-          'newUsername': _usernameController.text.isNotEmpty ? _usernameController.text : null,
-          'newPassword': _passwordController.text.isNotEmpty ? _passwordController.text : null,
-          'newFullname': _fullnameController.text.isNotEmpty ? _fullnameController.text : null,
+          'newUsername': _usernameController.text.isNotEmpty
+              ? _usernameController.text
+              : null,
+          'newPassword': _passwordController.text.isNotEmpty
+              ? _passwordController.text
+              : null,
+          'newFullname': _fullnameController.text.isNotEmpty
+              ? _fullnameController.text
+              : null,
           'children': selectedChildren,
         }),
       );
@@ -205,7 +213,8 @@ class _EditParentPageState extends State<EditParentPage> {
                               value: _selectedChildren[student.id],
                               onChanged: (bool? value) {
                                 setState(() {
-                                  _selectedChildren[student.id] = value ?? false;
+                                  _selectedChildren[student.id] =
+                                      value ?? false;
                                 });
                               },
                             );
@@ -219,7 +228,8 @@ class _EditParentPageState extends State<EditParentPage> {
                   ElevatedButton(
                     onPressed: deleteParent,
                     child: Text('Delete'),
-                    style: ElevatedButton.styleFrom(primary: Colors.red),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   ),
                 ],
               ),

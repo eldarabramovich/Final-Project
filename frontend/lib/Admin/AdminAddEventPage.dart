@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:frontend/config.dart';
 
 class AdminAddEventPage extends StatefulWidget {
   @override
@@ -12,30 +12,36 @@ class _AdminAddEventPageState extends State<AdminAddEventPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _infoController = TextEditingController();
-  List<File> _selectedImages = [];
 
-  Future<void> _pickImages() async {
-    final pickedFiles = await ImagePicker().pickMultiImage();
-    if (pickedFiles != null) {
-      setState(() {
-        _selectedImages = pickedFiles.map((file) => File(file.path)).toList();
-      });
-    }
-  }
-
-  void _postEvent() {
+  Future<void> _postEvent() async {
     if (_formKey.currentState!.validate()) {
-      // Implement the logic to post the event to the backend
-      // For now, just clear the form and show a snackbar
-      _formKey.currentState!.reset();
-      _titleController.clear();
-      _infoController.clear();
-      setState(() {
-        _selectedImages = [];
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Event posted successfully')),
-      );
+      try {
+        final response = await http.post(
+          Uri.parse('http://${Config.baseUrl}/admin/addEvent'),
+          headers: {'Content-Type': 'application/json; charset=UTF-8'},
+          body: jsonEncode({
+            'title': _titleController.text,
+            'info': _infoController.text,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          _formKey.currentState!.reset();
+          _titleController.clear();
+          _infoController.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Event posted successfully')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to post event: ${response.body}')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error posting event: $e')),
+        );
+      }
     }
   }
 
@@ -107,58 +113,6 @@ class _AdminAddEventPageState extends State<AdminAddEventPage> {
                   },
                   maxLines: 5,
                 ),
-                SizedBox(height: 20),
-                Text(
-                  'תמונות נבחרות:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: _pickImages,
-                      icon: Icon(Icons.photo),
-                      label: Text('בחר תמונות'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 214, 220, 227),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                _selectedImages.isEmpty
-                    ? Text('לא נבחרו תמונות')
-                    : Wrap(
-                        spacing: 8.0,
-                        runSpacing: 8.0,
-                        children: _selectedImages
-                            .map((image) => Stack(
-                                  children: [
-                                    Image.file(
-                                      image,
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    Positioned(
-                                      right: 0,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedImages.remove(image);
-                                          });
-                                        },
-                                        child: Icon(
-                                          Icons.remove_circle,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ))
-                            .toList(),
-                      ),
                 SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
