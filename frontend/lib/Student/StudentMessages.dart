@@ -69,7 +69,14 @@ class _StudentClassMessagesScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Messages for Class'),
+        title: const Text(
+          'הודעות מהמורה',
+          textAlign: TextAlign.right,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

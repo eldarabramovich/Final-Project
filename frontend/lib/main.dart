@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Admin/AdminHomeScreen.dart';
 import 'package:frontend/login_screen.dart';
+import 'package:table_calendar/table_calendar.dart'; // Import the table_calendar package
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -4,11 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/Admin/AdminAddEventPage.dart';
+import 'package:frontend/Admin/TeacherEdit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:frontend/Admin/AdminAddClassroom.dart';
 import 'package:frontend/Admin/AdminAddParent.dart';
 import 'package:frontend/Admin/AdminAddStudent.dart';
 import 'package:frontend/Admin/AdminAddTeacher.dart';
+import 'package:frontend/Admin/StudentEdit.dart';
+import 'package:frontend/Admin/EventsPage.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   static String routeName = 'AdminHomeScreen';
@@ -96,11 +99,11 @@ class AdminHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AdminAddTeacher()),
+                                  builder: (context) => AdminAddEventPage()),
                             );
                           },
-                          icon: 'asset/icons/teacher.svg',
-                          title: "מורה חדש",
+                          icon: 'asset/icons/addpost.svg',
+                          title: "אירוע חדש",
                         ),
                         HomeCard(
                           onPress: () {
@@ -134,11 +137,11 @@ class AdminHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AdminAddParent()),
+                                  builder: (context) => EditStudentPage()),
                             );
                           },
-                          icon: 'asset/icons/parent.svg',
-                          title: "הורה חדש",
+                          icon: 'asset/icons/student.svg',
+                          title: "עריכה תלמיד ",
                         ),
                       ],
                     ),
@@ -150,11 +153,65 @@ class AdminHomeScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AdminAddEventPage()),
+                                  builder: (context) => AdminAddTeacher()),
                             );
                           },
-                          icon: 'asset/icons/addpost.svg',
-                          title: "אירוע חדש",
+                          icon: 'asset/icons/teacher.svg',
+                          title: "מורה חדש",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditTeacherPage()),
+                            );
+                          },
+                          icon: 'asset/icons/teacher.svg',
+                          title: "עריכה מורה ",
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AdminAddParent()),
+                            );
+                          },
+                          icon: 'asset/icons/parent.svg',
+                          title: "הורה חדש",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditTeacherPage()),
+                            );
+                          },
+                          icon: 'asset/icons/parent.svg',
+                          title: "עריכה הורה ",
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EventsPage()),
+                            );
+                          },
+                          icon: 'asset/icons/event.svg',
+                          title: "רישמת האירועים",
                         ),
                       ],
                     ),

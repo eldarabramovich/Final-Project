@@ -248,16 +248,8 @@ class _AdminAddParentState extends State<AdminAddParent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'הוספת הורה',
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'Hebrew', // Example for Hebrew font
-            fontSize: 18.0, // Adjust as needed
-          ),
-        ),
-        backgroundColor: Colors.blue.shade800, // Example color
-        centerTitle: true, // Center title if needed
+        title: const Text('הוספת הורה', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -267,20 +259,56 @@ class _AdminAddParentState extends State<AdminAddParent> {
             TextFormField(
               controller: _usernameController,
               textAlign: TextAlign.right,
-              decoration: const InputDecoration(labelText: 'שם משתמש'),
+              decoration: InputDecoration(
+                labelText: 'שם משתמש',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                fillColor: Colors.grey.shade100,
+                filled: true,
+              ),
             ),
             const SizedBox(height: 20),
             TextFormField(
               controller: _passwordController,
               textAlign: TextAlign.right,
               obscureText: true,
-              decoration: const InputDecoration(labelText: 'סיסמה'),
+              decoration: InputDecoration(
+                labelText: 'סיסמה',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                fillColor: Colors.grey.shade100,
+                filled: true,
+              ),
             ),
             const SizedBox(height: 20),
             TextFormField(
               controller: _fullnameController,
               textAlign: TextAlign.right,
-              decoration: const InputDecoration(labelText: 'שם מלא'),
+              decoration: InputDecoration(
+                labelText: 'שם מלא',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                fillColor: Colors.grey.shade100,
+                filled: true,
+              ),
             ),
             const SizedBox(height: 20),
             const Text('בחר תלמידים:'),

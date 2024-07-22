@@ -97,41 +97,66 @@ class HomeroomTeacherDashboard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            HomeCard(
-                              onPress: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => TeacherSendMessage(
-                                            userId: userId,
-                                            selectedClass: selectedClass,
-                                          )),
-                                );
-                              },
-                              icon: 'asset/icons/chat.svg',
-                              title: "הודעות",
-                            ),
-                            HomeCard(
-                              onPress: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          TeacherStudentsGrades(
-                                            selectedClass: selectedClass,
-                                          )),
-                                );
-                              },
-                              icon: 'asset/icons/timetable.svg',
-                              title: "ציוני תלמידים",
-                            ),
-                          ],
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherSendMessage(
+                                        userId: userId,
+                                        selectedClass: selectedClass,
+                                      )),
+                            );
+                          },
+                          icon: 'asset/icons/chat.svg',
+                          title: "הודעות",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherStudentsGrades(
+                                        selectedClass: selectedClass,
+                                      )),
+                            );
+                          },
+                          icon: 'asset/icons/check.svg',
+                          title: "ציוני תלמידים",
                         ),
                       ],
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherCalendar(
+                                        userId: userId,
+                                      )),
+                            );
+                          },
+                          icon: 'asset/icons/timetable.svg',
+                          title: "לוח שנה",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherStudentsGrades(
+                                        selectedClass: selectedClass,
+                                      )),
+                            );
+                          },
+                          icon: 'asset/icons/assignment.svg',
+                          title: "מטלות",
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),

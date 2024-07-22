@@ -55,8 +55,12 @@ class _TeacherSendMessageState extends State<TeacherSendMessage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('שלח הודעה לכיתה'),
-        backgroundColor: Colors.blue,
+        title: Text('שלח הודעה לכיתה',
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: Colors.white,
+            )),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: Form(
         key: _formKey,

@@ -163,33 +163,56 @@ class _AdminAddClassroomState extends State<AdminAddClassroom> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 17.0),
-            TextField(
+            TextFormField(
               controller: _classLetterController,
               textAlign: TextAlign.right,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'שם הכיתה',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                fillColor: Colors.grey.shade100,
+                filled: true,
                 alignLabelWithHint: true,
               ),
             ),
             const SizedBox(height: 16.0),
             const Text('נושאים:'),
-            TextField(
+            TextFormField(
               controller: _subjectController,
               textAlign: TextAlign.right,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'נושא',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                fillColor: Colors.grey.shade100,
+                filled: true,
                 alignLabelWithHint: true,
               ),
-              onSubmitted: (value) {
+            ),
+            const SizedBox(height: 8.0),
+            ElevatedButton(
+              onPressed: () {
                 setState(() {
-                  if (value.isNotEmpty) {
-                    _subjects.add(value);
+                  if (_subjectController.text.isNotEmpty) {
+                    _subjects.add(_subjectController.text);
                     _subjectController.clear();
                   }
                 });
               },
+              child: const Text('הוסף נושא'),
             ),
-            const SizedBox(height: 8.0),
             Expanded(
               child: ListView.builder(
                 itemCount: _subjects.length,
