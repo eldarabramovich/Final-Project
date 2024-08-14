@@ -14,18 +14,22 @@ const {
     getTeacherData ,
     SendMessageToClass,
     GetStudentBySubClass,
-    AddAttendance,
-    downloadSubmission
-    
+    addAttendance,
+    downloadSubmission,
+    getAttendanceRecords,
+    editAttendance,
+    getAttendanceById
 } = require('../controllers/teacherController.js');
 
 router.post('/AddAssignment',upload,AddAssignment);
-router.post('/addatte',AddAttendance);
+router.post('/addAttendance',addAttendance);
 router.post('/addmess',SendMessageToClass);
 router.post('/CreateSubClass',CreateSubClass);
 router.post('/AddStudentToSubClass',AddStudentToSubClass);
 router.post('/downloadSubmission', downloadSubmission);
-
+router.post('/getAttendanceById', getAttendanceById);
+router.post('/getAttendanceRecords',getAttendanceRecords);
+router.post('/editAttendance',editAttendance);
 router.put('/editteachers/:teacherId', editTeacher);
 router.delete('/deleteachers/:teacherId', deleteTeacher);
 router.get('/downloadFile/:fileId',downloadFile );

@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../PagesTools/TeacherGrade.dart';
 import 'package:frontend/models/teachermodel.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherFileUpload.dart';
-import 'package:frontend/Teacher/PagesTools/TecherAttendance%20.dart';
+import 'package:frontend/Teacher/PagesTools/AttendanceManagementPage.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
 // import 'package:frontend/Teacher/TeacherCalendar.dart';
@@ -167,7 +167,7 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherAttendancePage(
+                                  builder: (context) => AttendanceManagementPage(
                                         userId: userId,
                                         selectedClass: selectedClass,
                                         subject: selectedSubject,

@@ -258,31 +258,6 @@ const AddStudentToSubClass = async (req, res) => {
   }
 };
 
-const AddAttendance = async (req, res) => {
-  const { classname, subjectname, students } = req.body;
-
-  if (!classname || !subjectname || !students || students.length === 0 ) {
-    return res.status(400).send("Missing data!");
-  }
-
-  try {
-    const db = admin.firestore();
-    const attendanceRef = db.collection('attendance').doc();
-
-    await attendanceRef.set({
-      classname,
-      subjectname,
-      students,
-      presdate:"20.4.2024",
-    });
-    console.error(' adding attendance sucseful:');
-    res.status(200).send('Attendance added successfully');
-  } catch (error) {
-    console.error('Error adding attendance:', error);
-    res.status(500).send('Error adding attendance');
-  }
-};
-
 const SendMessageToClass = async (req, res) => {
   const { classname, description } = req.body;
 
@@ -521,6 +496,7 @@ const downloadFile = async (req, res) => {
     res.status(500).send('Error downloading file');
   }
 };
+
 const downloadSubmission = async (req, res) => {
   const { submissionId, fileUrl } = req.body;
   console.log(`Received request to download submission: ${submissionId} with file URL: ${fileUrl}`);
@@ -560,6 +536,103 @@ const downloadSubmission = async (req, res) => {
   }
 };
 
+const getAttendanceById = async (req, res) => {
+  const { id } = req.body; // Extract the attendance ID from the request body
+
+  if (!id) {
+    return res.status(400).send('Missing attendance ID');
+  }
+
+  try {
+    const db = admin.firestore();
+    const attendanceRef = db.collection('attendance').doc(id);
+    const doc = await attendanceRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).send('Attendance record not found');
+    }
+
+    const attendanceData = doc.data();
+    res.status(200).json({ id: doc.id, ...attendanceData });
+  } catch (error) {
+    console.error('Error fetching attendance record:', error);
+    res.status(500).send('Error fetching attendance record');
+  }
+};
+
+const addAttendance = async (req, res) => {
+  const { classname, subjectname, students, presdate } = req.body;
+
+  if (!classname || !subjectname || !students || students.length === 0 || !presdate) {
+    return res.status(400).send("Missing data!");
+  }
+
+  try {
+    const db = admin.firestore();
+    const attendanceRef = db.collection('attendance').doc();
+
+    await attendanceRef.set({
+      classname,
+      subjectname,
+      students,
+      presdate,
+    });
+
+    res.status(200).send('Attendance added successfully');
+  } catch (error) {
+    console.error('Error adding attendance:', error);
+    res.status(500).send('Error adding attendance');
+  }
+};
+
+const getAttendanceRecords = async (req, res) => {
+  const { classname, subject } = req.body; // Extract classname and subject from request body
+
+  if (!classname || !subject) {
+    return res.status(400).send('Missing classname or subject');
+  }
+
+  try {
+    const db = admin.firestore();
+    const attendanceQuery = db.collection('attendance')
+                              .where('classname', '==', classname)
+                              .where('subjectname', '==', subject);
+
+    const attendanceSnapshot = await attendanceQuery.get();
+    if (attendanceSnapshot.empty) {
+      return res.status(404).send('No attendance records found');
+    }
+
+    let records = [];
+    attendanceSnapshot.forEach(doc => {
+      records.push({ id: doc.id, ...doc.data() });
+    });
+
+    res.status(200).json(records);
+  } catch (error) {
+    console.error('Error fetching attendance records:', error);
+    res.status(500).send('Error fetching attendance records');
+  }
+};
+const editAttendance = async (req, res) => {
+  const { id, students } = req.body; // Extract id from req.body
+
+  if (!id || !students || students.length === 0) {
+    return res.status(400).send("Missing data!");
+  }
+
+  try {
+    const db = admin.firestore();
+    const attendanceRef = db.collection('attendance').doc(id);
+
+    await attendanceRef.update({ students });
+
+    res.status(200).send('Attendance updated successfully');
+  } catch (error) {
+    console.error('Error updating attendance:', error);
+    res.status(500).send('Error updating attendance');
+  }
+};
 module.exports = {
   downloadFile,
   getSubmissions,
@@ -569,9 +642,14 @@ module.exports = {
   getTeacherData,
   SendMessageToClass,
   GetStudentBySubClass,
-  AddAttendance,
+  addAttendance,
   editTeacher,
   deleteTeacher,
   getClassStudents,
-  uploadFile,upload,downloadSubmission
+  uploadFile,
+  upload,
+  editAttendance,
+  downloadSubmission,
+  getAttendanceRecords,
+  getAttendanceById
 }

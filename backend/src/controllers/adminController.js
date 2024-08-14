@@ -266,7 +266,6 @@ const CreateAndAddStudent = async (req, res) => {
         const subClassesRef = db.collection('subClasses');
         const subClassSnapshot = await subClassesRef
           .where('classNumber', '==', subClassName)
-          .where('parentClass', '==', classId)
           .get();
   
         if (subClassSnapshot.empty) {
