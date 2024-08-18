@@ -91,7 +91,6 @@ const AddAssignment = async (req, res) => {
     res.status(500).send('Error adding assignment');
   }
 };
-
 const uploadFile = (req, res) => {
   
   console.log('Received file upload request');
@@ -157,7 +156,6 @@ const uploadFile = (req, res) => {
     }
   });
 };
-
 const CreateSubClass = async (req, res) => {
 
   const { homeroomTeacher, parentClassLetter, classNumber, students, subjects } = req.body;
@@ -204,7 +202,6 @@ const CreateSubClass = async (req, res) => {
       res.status(500).send("Error adding subclass");
   }
 };
-
 const AddStudentToSubClass = async (req, res) => {
   const { classId, students } = req.body;
 
@@ -257,7 +254,6 @@ const AddStudentToSubClass = async (req, res) => {
       res.status(500).send("Error adding students to subclass");
   }
 };
-
 const SendMessageToClass = async (req, res) => {
   const { classname, description } = req.body;
 
@@ -294,7 +290,6 @@ const SendMessageToClass = async (req, res) => {
     res.status(500).send('Error adding message');
   }
 };
-
 const GetStudentBySubClass = async (req, res) => {
   const classname = req.params.classname;
   const db = admin.firestore();
@@ -324,7 +319,6 @@ const GetStudentBySubClass = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching students' });
   }
 };
-
 const getTeacherData = async (req, res) => {
   const userId = req.params.userId;
   console.log(`Fetching data for teacher ID: ${userId}`);
@@ -345,7 +339,6 @@ const getTeacherData = async (req, res) => {
       res.status(500).send('Internal Server Error');
   }
 };
-
 const editTeacher = async (req, res) => {
   const { teacherId } = req.params;
   const { username, password, fullname, email, classesHomeroom, classesSubject } = req.body;
@@ -373,7 +366,6 @@ const editTeacher = async (req, res) => {
       res.status(500).send("Error editing teacher");
   }
 };
-
 const deleteTeacher = async (req, res) => {
   const { teacherId } = req.params;
 
@@ -392,7 +384,6 @@ const deleteTeacher = async (req, res) => {
       res.status(500).send("Error deleting teacher");
   }
 };
-
 const getClassStudents = async (req, res) => {
   const { classId } = req.params;
 
@@ -424,7 +415,6 @@ const getClassStudents = async (req, res) => {
       res.status(500).send("Error getting class students");
   }
 };
-
 const getSubmissions = async (req, res) => {
   const { assignmentID } = req.params;
 
@@ -451,7 +441,6 @@ const getSubmissions = async (req, res) => {
     res.status(500).send('Error fetching submissions');
   }
 };
-
 const downloadFile = async (req, res) => {
   const { fileId } = req.params;
   console.log(`Received request to download file: ${fileId}`);
@@ -496,7 +485,6 @@ const downloadFile = async (req, res) => {
     res.status(500).send('Error downloading file');
   }
 };
-
 const downloadSubmission = async (req, res) => {
   const { submissionId, fileUrl } = req.body;
   console.log(`Received request to download submission: ${submissionId} with file URL: ${fileUrl}`);
@@ -535,7 +523,6 @@ const downloadSubmission = async (req, res) => {
     res.status(500).send('Error downloading submission');
   }
 };
-
 const getAttendanceById = async (req, res) => {
   const { id } = req.body; // Extract the attendance ID from the request body
 
@@ -561,30 +548,64 @@ const getAttendanceById = async (req, res) => {
 };
 
 const addAttendance = async (req, res) => {
-  const { classname, subjectname, students, presdate } = req.body;
+  console.log("Request Body:", req.body);
 
-  if (!classname || !subjectname || !students || students.length === 0 || !presdate) {
-    return res.status(400).send("Missing data!");
+  const classname = req.body.classname;
+  const subjectname = req.body.subjectname;
+  const students = req.body.students;
+  const predate = req.body.predate;
+
+  if (!classname || !subjectname || !students || students.length === 0 || !predate) {
+      console.log("Missing data detected in request body");
+      return res.status(400).send("Missing data!");
   }
 
   try {
-    const db = admin.firestore();
-    const attendanceRef = db.collection('attendance').doc();
+      const db = admin.firestore();
+      const attendanceQuery = db.collection('attendance')
+          .where('classname', '==', classname)
+          .where('subjectname', '==', subjectname)
+          .where('predate', '==', predate);
 
-    await attendanceRef.set({
-      classname,
-      subjectname,
-      students,
-      presdate,
-    });
+      const existingAttendance = await attendanceQuery.get();
 
-    res.status(200).send('Attendance added successfully');
+      if (!existingAttendance.empty) {
+          return res.status(400).send("Attendance for this class and subject on this date already exists.");
+      }
+
+      const attendanceRef = db.collection('attendance').doc();
+
+      await attendanceRef.set({
+          classname,
+          subjectname,
+          students,
+          predate,
+      });
+
+      for (const student of students) {
+          const studentRef = db.collection('students').doc(student.id);
+          const studentDoc = await studentRef.get();
+
+          if (studentDoc.exists) {
+              const studentData = studentDoc.data();
+              const attendanceArray = studentData.attendance || [];
+
+              attendanceArray.push({
+                  subjectname,
+                  predate: predate,
+                  status: student.status,
+              });
+
+              await studentRef.update({ attendance: attendanceArray });
+          }
+      }
+
+      res.status(200).send('Attendance added successfully');
   } catch (error) {
-    console.error('Error adding attendance:', error);
-    res.status(500).send('Error adding attendance');
+      console.error('Error adding attendance:', error);
+      res.status(500).send('Error adding attendance');
   }
 };
-
 const getAttendanceRecords = async (req, res) => {
   const { classname, subject } = req.body; // Extract classname and subject from request body
 
@@ -633,7 +654,34 @@ const editAttendance = async (req, res) => {
     res.status(500).send('Error updating attendance');
   }
 };
+
+const getStudentAttendance = async (req, res) => {
+  const { studentId } = req.params;
+
+  try {
+    const studentRef = db.collection('students').doc(studentId);
+    const studentDoc = await studentRef.get();
+
+    if (!studentDoc.exists) {
+      return res.status(404).send('Student not found');
+    }
+
+    const attendance = studentDoc.data().attendance || [];
+    res.status(200).json(attendance);
+  } catch (error) {
+    console.error('Error fetching student attendance:', error);
+    res.status(500).send('Error fetching student attendance');
+  }
+};
+
+
+
+
+
+
+
 module.exports = {
+  getStudentAttendance,
   downloadFile,
   getSubmissions,
   CreateSubClass,

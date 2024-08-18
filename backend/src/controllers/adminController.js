@@ -52,19 +52,42 @@ const CreateTeacher = async (req, res) => {
 
         // If the teacher is a homeroom teacher
         if (classHomeroom) {
-            const classRef = db.collection('classes').where('classLetter', '==', classHomeroom.charAt(0));
-            const classSnapshot = await classRef.get();
+          const classRef = db.collection('classes').where('classLetter', '==', classHomeroom.charAt(0));
+          const classSnapshot = await classRef.get();
 
-            if (classSnapshot.empty) {
-                return res.status(404).send(`Class ${classHomeroom} not found`);
-            }
+          if (classSnapshot.empty) {
+              return res.status(404).send(`Class ${classHomeroom} not found`);
+          }
 
-            classSnapshot.forEach(async (doc) => {
-                await doc.ref.update({
-                    HomeRoomTeachers: admin.firestore.FieldValue.arrayUnion({ teacherid: teacherRef.id, name: fullname, subClass: classHomeroom })
-                });
-            });
-        }
+          let subClassRef = null;
+
+          classSnapshot.forEach(async (doc) => {
+              await doc.ref.update({
+                  HomeRoomTeachers: admin.firestore.FieldValue.arrayUnion({ teacherid: teacherRef.id, name: fullname, subClass: classHomeroom })
+              });
+
+              // Search for the subclass where the teacher will be assigned as a homeroom teacher
+              const subClassQuery = db.collection('subClasses').where('classNumber', '==', classHomeroom);
+              const subClassSnapshot = await subClassQuery.get();
+
+              if (!subClassSnapshot.empty) {
+                  subClassRef = subClassSnapshot.docs[0].ref;
+                  await subClassRef.update({
+                      homeroomTeacherId: teacherRef.id
+                  });
+              } else {
+                  // If the subclass does not exist, create it and set homeroomTeacherId
+                  subClassRef = db.collection('subClasses').doc();
+                  await subClassRef.set({
+                      classNumber: classHomeroom,
+                      parentClass: classHomeroom.charAt(0),
+                      homeroomTeacherId: teacherRef.id,
+                      students: [],
+                      subjects: []
+                  });
+              }
+          });
+      }
 
         // If the teacher is a professional teacher
         if (classesSubject && !classHomeroom) {

@@ -18,7 +18,8 @@ const {
     downloadSubmission,
     getAttendanceRecords,
     editAttendance,
-    getAttendanceById
+    getAttendanceById,
+    getStudentAttendance
 } = require('../controllers/teacherController.js');
 
 router.post('/AddAssignment',upload,AddAssignment);
@@ -33,7 +34,7 @@ router.post('/editAttendance',editAttendance);
 router.put('/editteachers/:teacherId', editTeacher);
 router.delete('/deleteachers/:teacherId', deleteTeacher);
 router.get('/downloadFile/:fileId',downloadFile );
-
+router.get('/getStudentAttendance/:studentId', getStudentAttendance);
 router.get('/:classId', getClassStudents);
 router.get('/teacher/:userId', getTeacherData);
 router.get('/getstudents/:classname', GetStudentBySubClass);

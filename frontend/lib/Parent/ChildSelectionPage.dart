@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Parent/ParentHomeScreen.dart';
+import 'package:frontend/models/parentmodel.dart';
 
 class ChildSelectionPage extends StatelessWidget {
-  final String userId;
-  final List<Map<String, dynamic>> children;
+  final Parent parent;
 
-  const ChildSelectionPage({Key? key, required this.userId, required this.children}) : super(key: key);
+  const ChildSelectionPage({Key? key, required this.parent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,18 +14,18 @@ class ChildSelectionPage extends StatelessWidget {
         title: const Text('Select Child'),
       ),
       body: ListView.builder(
-        itemCount: children.length,
+        itemCount: parent.children.length,
         itemBuilder: (context, index) {
-          final child = children[index];
+          final child = parent.children[index];
           return ListTile(
-            title: Text(child['fullname']),
+            title: Text(child.fullname),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ParentHomeScreen(
-                    userId: userId,
-                    childData: child,
+                  builder: (context) => ParentDashboard(
+                    parent: parent,
+                    selectedChild: child,
                   ),
                 ),
               );
