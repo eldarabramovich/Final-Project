@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/teachermodel.dart';
-import 'package:frontend/Teacher/Deshboards/HomeroomTeacherDashboard.dart';
-import 'package:frontend/Teacher/Deshboards/SubjectTeacherDashboard.dart';
+import 'package:frontend/Teacher/HoomeRoomTeacher/HomeroomTeacherDashboard.dart';
+import 'package:frontend/Teacher/SubjectTeacher/SubjectTeacherDashboard.dart';
 
 class ClassSelectionPage extends StatelessWidget {
   final Teacher teacherData;

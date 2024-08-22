@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:frontend/config.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/models/studenmodel.dart'; // Assuming you have a student model
-import 'package:frontend/Teacher/Deshboards/TeacherStudentDashboard.dart'; // New page to display student details
+import 'package:frontend/Teacher/HoomeRoomTeacher/TeacherStudentDashboard.dart'; // New page to display student details
 
 class TeacherStudentsGrades extends StatefulWidget {
   final String selectedClass;

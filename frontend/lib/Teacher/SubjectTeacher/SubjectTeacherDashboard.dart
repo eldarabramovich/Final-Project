@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../PagesTools/TeacherGrade.dart';
+import 'TeacherGrade.dart';
 import 'package:frontend/models/teachermodel.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherCalendar.dart';
-import 'package:frontend/Teacher/PagesTools/TecherAttendance%20.dart';
-import 'package:frontend/Teacher/PagesTools/TeacherAddNewAssi.dart';
+import 'package:frontend/Teacher/SubjectTeacher/TecherAttendance%20.dart';
+import 'package:frontend/Teacher/SubjectTeacher/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
 // import 'package:frontend/Teacher/TeacherCalendar.dart';
 
