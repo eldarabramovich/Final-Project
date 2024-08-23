@@ -16,7 +16,42 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final List<Map<String, String>> _selectedClassesSubjects = [];
+
+  String? _selectedClass;
+  String? _selectedSubject;
   String? _selectedClassHomeroom;
+
+  final List<String> _validClasses = [
+    'A1',
+    'A2',
+    'A3',
+    'A4',
+    'A5',
+    'B1',
+    'B2',
+    'B3',
+    'B4',
+    'B5',
+    'C1',
+    'C2',
+    'C3',
+    'C4',
+    'C5',
+    'D1',
+    'D2',
+    'D3',
+    'D4',
+    'D5'
+  ];
+  final List<String> _validSubjects = [
+    'Math',
+    'Science',
+    'History',
+    'English',
+    'Arabic'
+  ];
+
+  String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +109,10 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
             DropdownButton<String>(
               value: _selectedClassHomeroom,
               hint: const Text('Select Homeroom Class'),
-              items: _selectedClassesSubjects.map((classSubject) {
+              items: _validClasses.map((String className) {
                 return DropdownMenuItem<String>(
-                  value: classSubject['classname'],
-                  child: Text(classSubject['classname']!),
+                  value: className,
+                  child: Text(className),
                 );
               }).toList(),
               onChanged: (String? newValue) {
@@ -91,6 +126,14 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
               },
             ),
             const SizedBox(height: 16.0),
+            if (errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  errorMessage!,
+                  style: TextStyle(color: Colors.red, fontSize: 14),
+                ),
+              ),
             ElevatedButton(
               onPressed: _saveTeacher,
               child: const Text('Save Teacher'),
@@ -102,9 +145,6 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
   }
 
   void _showClassSubjectDialog() {
-    TextEditingController classController = TextEditingController();
-    TextEditingController subjectController = TextEditingController();
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -113,28 +153,56 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: classController,
-                decoration: const InputDecoration(labelText: 'Class Name'),
+              DropdownButton<String>(
+                value: _selectedClass,
+                hint: const Text('Select Class'),
+                items: _validClasses.map((String className) {
+                  return DropdownMenuItem<String>(
+                    value: className,
+                    child: Text(className),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedClass = newValue;
+                  });
+                },
               ),
-              TextField(
-                controller: subjectController,
-                decoration: const InputDecoration(labelText: 'Subject'),
+              DropdownButton<String>(
+                value: _selectedSubject,
+                hint: const Text('Select Subject'),
+                items: _validSubjects.map((String subjectName) {
+                  return DropdownMenuItem<String>(
+                    value: subjectName,
+                    child: Text(subjectName),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedSubject = newValue;
+                  });
+                },
               ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () {
-                setState(() {
-                  _selectedClassesSubjects.add({
-                    'classname': classController.text,
-                    'subjectname': subjectController.text,
+                if (_selectedClass != null && _selectedSubject != null) {
+                  setState(() {
+                    _selectedClassesSubjects.add({
+                      'classname': _selectedClass!,
+                      'subjectname': _selectedSubject!,
+                    });
+                    _selectedClassHomeroom =
+                        null; // Clear homeroom if subject selected
                   });
-                  // If a class subject is added, clear the selected homeroom class
-                  _selectedClassHomeroom = null;
-                });
-                Navigator.pop(context);
+                  Navigator.pop(context);
+                } else {
+                  setState(() {
+                    errorMessage = 'Please select both class and subject.';
+                  });
+                }
               },
               child: const Text('Add'),
             ),
@@ -145,44 +213,99 @@ class _AdminAddTeacher extends State<AdminAddTeacher> {
   }
 
   void _saveTeacher() async {
-    String username = _usernameController.text;
-    String password = _passwordController.text;
-    String fullName = _fullNameController.text;
-    String email = _emailController.text;
+    // Reset the error message
+    setState(() {
+      errorMessage = null;
+    });
 
-    var url = Uri.parse(
-        'http://${Config.baseUrl}/admin/CreateTeacher'); // Replace with your actual endpoint
+    String username = _usernameController.text.trim();
+    String password = _passwordController.text.trim();
+    String fullName = _fullNameController.text.trim();
+    String email = _emailController.text.trim();
 
-    var requestBody = {
-      'username': username,
-      'password': password,
-      'fullname': fullName,
-      'email': email,
-      'classesSubject':
-          _selectedClassHomeroom == null ? _selectedClassesSubjects : null,
-      'classHomeroom':
-          _selectedClassHomeroom == null ? '' : _selectedClassHomeroom,
-    };
+    if (_validateInputs(username, password, fullName, email)) {
+      var url = Uri.parse(
+          'http://${Config.baseUrl}/admin/CreateTeacher'); // Replace with your actual endpoint
 
-    print(
-        'Request body: $requestBody'); // Logging the request body for debugging
+      var requestBody = {
+        'username': username,
+        'password': password,
+        'fullname': fullName,
+        'email': email,
+        'classesSubject': (_selectedClassHomeroom?.isEmpty ?? true)
+            ? _selectedClassesSubjects
+            : null,
+        'classHomeroom': _selectedClassHomeroom ?? '',
+      };
 
-    var response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(requestBody),
-    );
+      print(
+          'Request body: $requestBody'); // Logging the request body for debugging
 
-    if (response.statusCode == 200) {
-      // Teacher added successfully
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Teacher added successfully')));
-      Navigator.pop(context); // Navigate back to the previous screen
-    } else {
-      // Error adding teacher
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error adding teacher: ${response.body}')));
+      var response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        // Teacher added successfully
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Teacher added successfully')));
+        Navigator.pop(context); // Navigate back to the previous screen
+      } else {
+        // Error adding teacher
+        setState(() {
+          errorMessage = 'Error adding teacher: ${response.body}';
+        });
+      }
     }
+  }
+
+  bool _validateInputs(
+      String username, String password, String fullName, String email) {
+    if (username.isEmpty ||
+        password.isEmpty ||
+        fullName.isEmpty ||
+        email.isEmpty) {
+      setState(() {
+        errorMessage = 'Please fill out all required fields.';
+      });
+      return false;
+    }
+
+    if (!_isValidEmail(email)) {
+      setState(() {
+        errorMessage = 'Please enter a valid email address.';
+      });
+      return false;
+    }
+
+    // Ensure at least one class-subject pair or homeroom class is selected
+    if (_selectedClassesSubjects.isEmpty &&
+        (_selectedClassHomeroom?.isEmpty ?? true)) {
+      setState(() {
+        errorMessage =
+            'Please select at least one class and subject, or a homeroom class.';
+      });
+      return false;
+    }
+
+    if ((_selectedClassHomeroom?.isNotEmpty ?? false) &&
+        _selectedClassesSubjects.isNotEmpty) {
+      setState(() {
+        errorMessage =
+            'Teacher cannot be both a homeroom teacher and a subject teacher.';
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  bool _isValidEmail(String email) {
+    // Basic email validation
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return emailRegex.hasMatch(email);
   }
 
   @override

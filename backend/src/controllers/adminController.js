@@ -26,32 +26,55 @@ const addAdmin = async (req, res) => {
 }; 
 
 const CreateTeacher = async (req, res) => {
-    const { username, password, fullname, email, classesSubject, classHomeroom } = req.body;
+  const { username, password, fullname, email, classesSubject, classHomeroom } = req.body;
 
-    if (!username || !email || !password || !fullname) {
-        return res.status(500).send("Missing data!");
+  if (!username || !email || !password || !fullname) {
+      return res.status(500).send("Missing data!");
+  }
+
+  if (classHomeroom && classesSubject) {
+      return res.status(400).send("Teacher can't be homeroom and subjects");
+  }
+
+  try {
+      const db = admin.firestore();
+
+      // Check if a teacher with the same full name already exists
+      const existingTeacherQuery = db.collection('teachers').where('fullname', '==', fullname);
+      const existingTeacherSnapshot = await existingTeacherQuery.get();
+      if (!existingTeacherSnapshot.empty) {
+          return res.status(400).send("A teacher with this full name already exists.");
+      }
+
+      // Check if the subject is already being taught in the same class by another teacher
+      if (classesSubject) {
+        for (const cls of classesSubject) {
+            const existingSubjectQuery = db.collection('subjects')
+                .where('subclassname', '==', cls.classname)
+                .where('subjectname', '==', cls.subjectname);
+            const existingSubjectSnapshot = await existingSubjectQuery.get();
+            if (!existingSubjectSnapshot.empty) {
+                return res.status(400).send(`The subject "${cls.subjectname}" is already being taught in class "${cls.classname}".`);
+            }
+        }
     }
 
-    if (classHomeroom && classesSubject) {
-        return res.status(400).send("Teacher can't be homeroom and subjects");
-    }
+      // Proceed with teacher creation if no conflicts were found
+      const newTeacherUser = {
+          username,
+          password,
+          fullname,
+          email,
+          role: "teacher",
+          classHomeroom: classHomeroom || '',
+          classesSubject: [] // Initialize as an empty array
+      };
 
-    const newTeacherUser = {
-        username,
-        password,
-        fullname,
-        email,
-        role: "teacher",
-        classHomeroom: classHomeroom || '',
-        classesSubject: [] // Initialize as an empty array
-    };
+      const teacherRef = db.collection('teachers').doc();
+      await teacherRef.set(newTeacherUser);
 
-    try {
-        const teacherRef = db.collection('teachers').doc();
-        await teacherRef.set(newTeacherUser);
-
-        // If the teacher is a homeroom teacher
-        if (classHomeroom) {
+      // If the teacher is a homeroom teacher
+      if (classHomeroom) {
           const classRef = db.collection('classes').where('classLetter', '==', classHomeroom.charAt(0));
           const classSnapshot = await classRef.get();
 
@@ -89,91 +112,91 @@ const CreateTeacher = async (req, res) => {
           });
       }
 
-        // If the teacher is a professional teacher
-        if (classesSubject && !classHomeroom) {
-            const updatedClassesSubject = [];
+      // If the teacher is a professional teacher
+      if (classesSubject && !classHomeroom) {
+          const updatedClassesSubject = [];
 
-            for (const cls of classesSubject) {
-                if (!cls.classname || !cls.subjectname) {
-                    return res.status(400).send("Missing classname or subject in classes array");
-                }
+          for (const cls of classesSubject) {
+              if (!cls.classname || !cls.subjectname) {
+                  return res.status(400).send("Missing classname or subject in classes array");
+              }
 
-                const subjectRef = db.collection('subjects').doc();
-                await subjectRef.set({
-                    subjectname: cls.subjectname,
-                    teacherId: teacherRef.id,
-                    subClassName: cls.classname
-                });
+              const subjectRef = db.collection('subjects').doc();
+              await subjectRef.set({
+                  subjectname: cls.subjectname,
+                  teacherId: teacherRef.id,
+                  subClassName: cls.classname
+              });
 
-                updatedClassesSubject.push({
-                    classname: cls.classname,
-                    subjectname: cls.subjectname,
-                    subjectId: subjectRef.id
-                });
+              updatedClassesSubject.push({
+                  classname: cls.classname,
+                  subjectname: cls.subjectname,
+                  subjectId: subjectRef.id
+              });
 
-                // Check if the subclass exists
-                const subClassQuery = db.collection('subClasses').where('classNumber', '==', cls.classname);
-                const subClassSnapshot = await subClassQuery.get();
+              // Check if the subclass exists
+              const subClassQuery = db.collection('subClasses').where('classNumber', '==', cls.classname);
+              const subClassSnapshot = await subClassQuery.get();
 
-                let subClassDocRef;
-                if (subClassSnapshot.empty) {
-                    // Create the subclass if it doesn't exist
-                    subClassDocRef = db.collection('subClasses').doc();
-                    await subClassDocRef.set({
-                        classNumber: cls.classname,
-                        parentClass: cls.classname.charAt(0),
-                        homeroomTeacherId: '',
-                        students: [],
-                        subjects: []
-                    });
-                } else {
-                    subClassDocRef = subClassSnapshot.docs[0].ref;
-                }
+              let subClassDocRef;
+              if (subClassSnapshot.empty) {
+                  // Create the subclass if it doesn't exist
+                  subClassDocRef = db.collection('subClasses').doc();
+                  await subClassDocRef.set({
+                      classNumber: cls.classname,
+                      parentClass: cls.classname.charAt(0),
+                      homeroomTeacherId: '',
+                      students: [],
+                      subjects: []
+                  });
+              } else {
+                  subClassDocRef = subClassSnapshot.docs[0].ref;
+              }
 
-                // Update the subclass document with the new subject
-                await subClassDocRef.update({
-                    subjects: admin.firestore.FieldValue.arrayUnion({
-                        subjectname: cls.subjectname,
-                        subjectId: subjectRef.id,
-                        teacherId: teacherRef.id
-                    })
-                });
+              // Update the subclass document with the new subject
+              await subClassDocRef.update({
+                  subjects: admin.firestore.FieldValue.arrayUnion({
+                      subjectname: cls.subjectname,
+                      subjectId: subjectRef.id,
+                      teacherId: teacherRef.id
+                  })
+              });
 
-                // Update the class document to include the professional teacher
-                const classQuery = db.collection('classes').where('classLetter', '==', cls.classname.charAt(0));
-                const classSnapshot = await classQuery.get();
+              // Update the class document to include the professional teacher
+              const classQuery = db.collection('classes').where('classLetter', '==', cls.classname.charAt(0));
+              const classSnapshot = await classQuery.get();
 
-                if (classSnapshot.empty) {
-                    return res.status(404).send(`Class ${cls.classname} not found`);
-                } 
+              if (classSnapshot.empty) {
+                  return res.status(404).send(`Class ${cls.classname} not found`);
+              }
 
-                classSnapshot.forEach(async (doc) => {
-                    await doc.ref.update({
-                        professionalTeachers: admin.firestore.FieldValue.arrayUnion({
-                            id: teacherRef.id,
-                            name: fullname,
-                            subject: cls.subjectname,
-                            subClass: cls.classname
-                        }),
-                        subClasses: admin.firestore.FieldValue.arrayUnion(subClassDocRef.id)
-                    });
-                });
-            }
+              classSnapshot.forEach(async (doc) => {
+                  await doc.ref.update({
+                      professionalTeachers: admin.firestore.FieldValue.arrayUnion({
+                          id: teacherRef.id,
+                          name: fullname,
+                          subject: cls.subjectname,
+                          subClass: cls.classname
+                      }),
+                      subClasses: admin.firestore.FieldValue.arrayUnion(subClassDocRef.id)
+                  });
+              });
+          }
 
-            // Update the teacher document with the updated classesSubject array
-            await teacherRef.update({
-                classesSubject: updatedClassesSubject
-            });
-        }
+          // Update the teacher document with the updated classesSubject array
+          await teacherRef.update({
+              classesSubject: updatedClassesSubject
+          });
+      }
 
+      res.status(200).send('Teacher added successfully');
 
-        res.status(200).send('Teacher added successfully');
-
-    } catch (error) {
-        console.error("Error adding teacher: ", error);
-        res.status(500).send("Error adding teacher");
-    }
+  } catch (error) {
+      console.error("Error adding teacher: ", error);
+      res.status(500).send("Error adding teacher");
+  }
 };
+
 //create and add student to a classes 
 const CreateStudent = async (req, res) => {
 

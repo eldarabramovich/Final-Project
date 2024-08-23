@@ -546,7 +546,6 @@ const getAttendanceById = async (req, res) => {
     res.status(500).send('Error fetching attendance record');
   }
 };
-
 const addAttendance = async (req, res) => {
   console.log("Request Body:", req.body);
 
@@ -654,7 +653,6 @@ const editAttendance = async (req, res) => {
     res.status(500).send('Error updating attendance');
   }
 };
-
 const getStudentAttendance = async (req, res) => {
   const { studentId } = req.params;
 
