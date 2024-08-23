@@ -40,8 +40,7 @@ const getParentData = async (req, res) => {
       console.error('Error fetching parent data:', error);
       res.status(500).send('Internal Server Error');
     }
-  };
-  
+};
   const getFinalGrades = async (req, res) => {
     const { studentId, fullname } = req.body; // שים לב לשימוש ב-body במקום query
     console.log(`Received request to get final grades for student ID: ${studentId} and full name: ${fullname}`);
@@ -79,9 +78,6 @@ const getParentData = async (req, res) => {
         res.status(500).send('Error fetching final grades');
     }
 };
-
-
-
 const getAssignmentGrades = async (req, res) => {
   const { studentId, fullName } = req.body; // שימוש ב-body במקום query
   console.log(`Received request to get assignment grades for student ID: ${studentId} and full name: ${fullName}`);
@@ -123,10 +119,33 @@ const getAssignmentGrades = async (req, res) => {
       res.status(500).send('Error fetching assignment grades');
   }
 };
+const GetStudentAttendance = async (req, res) => {
+  const { studentId } = req.params;
 
+  if (!studentId) {
+      return res.status(400).send("Student ID is required.");
+  }
+
+  try {
+      const db = admin.firestore();
+      const studentRef = db.collection('students').doc(studentId);
+      const studentDoc = await studentRef.get();
+
+      if (!studentDoc.exists) {
+          return res.status(404).send("Student not found.");
+      }
+
+      const attendance = studentDoc.data().attendance || [];
+      res.status(200).json(attendance);
+  } catch (error) {
+      console.error("Error fetching attendance: ", error);
+      res.status(500).send("Error fetching attendance.");
+  }
+};
 
 
   module.exports = {
+    GetStudentAttendance,
     getParentData, getFinalGrades,
     getAssignmentGrades,
   };

@@ -3,8 +3,9 @@ import 'package:frontend/models/parentmodel.dart'; // Assuming you have a parent
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/Parent/ParentChildGrade.dart'; // Replace with actual import paths
 import 'package:frontend/Parent/ParentSendMessagePage.dart'; // Replace with actual import paths
-// import 'package:frontend/Parent/ParentEventsPage.dart'; // Replace with actual import paths
+import 'package:frontend/Admin/EventsPage.dart'; // Replace with actual import paths
 import 'package:frontend/Parent/ParentCalendarPage.dart'; // Replace with actual import paths
+import 'package:frontend/Parent/ParentAttendance.dart'; // Import the ParentAttendance page
 import 'package:google_fonts/google_fonts.dart';
 
 class ParentDashboard extends StatefulWidget {
@@ -15,7 +16,6 @@ class ParentDashboard extends StatefulWidget {
 
   @override
   _ParentDashboardState createState() => _ParentDashboardState();
-  
 }
 
 class _ParentDashboardState extends State<ParentDashboard> {
@@ -131,20 +131,40 @@ class _ParentDashboardState extends State<ParentDashboard> {
                         ),
                       ],
                     ),
-                    ParentHomeCard(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ParentSendMessagePage(
-                              userId: widget.parent.id,
-                              selectedChild: widget.selectedChild,
-                            ),
-                          ),
-                        );
-                      },
-                      icon: 'asset/icons/result.svg',
-                      title: "הודעות",
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ParentHomeCard(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ParentSendMessagePage(
+                                  userId: widget.parent.id,
+                                  selectedChild: widget.selectedChild,
+                                ),
+                              ),
+                            );
+                          },
+                          icon: 'asset/icons/result.svg',
+                          title: "הודעות",
+                        ),
+                        ParentHomeCard(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => StudentAttendancePage(
+                                  selectedChild: widget.selectedChild,
+                                ),
+                              ),
+                            );
+                          },
+                          icon:
+                              'asset/icons/attendance.svg', // Update with actual icon path
+                          title: "נוחכות",
+                        ),
+                      ],
                     ),
                   ],
                 ),
