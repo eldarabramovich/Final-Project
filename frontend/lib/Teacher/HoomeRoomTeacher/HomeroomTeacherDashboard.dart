@@ -8,7 +8,8 @@ import 'package:frontend/models/teachermodel.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherCalendar.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
 import 'package:frontend/Teacher/HoomeRoomTeacher/TeacherStudentsGrades.dart';
-// import 'package:frontend/Teacher/TeacherCalendar.dart';
+import 'package:frontend/Teacher/HoomeRoomTeacher/AttendanceStudentsManage.dart';
+import 'package:frontend/Admin/EventsPage.dart';
 
 class HomeroomTeacherDashboard extends StatelessWidget {
   final String userId;
@@ -40,9 +41,7 @@ class HomeroomTeacherDashboard extends StatelessWidget {
       ),
       body: Column(
         children: [
-          //divide the screen into two parts
-          //The part 1, basic information about the student:
-
+          // The part 1, basic information about the teacher:
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height / 10.0,
@@ -97,38 +96,80 @@ class HomeroomTeacherDashboard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            HomeCard(
-                              onPress: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => TeacherSendMessage(
-                                            userId: userId,
-                                            selectedClass: selectedClass,
-                                          )),
-                                );
-                              },
-                              icon: 'asset/icons/chat.svg',
-                              title: "הודעות",
-                            ),
-                            HomeCard(
-                              onPress: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          TeacherStudentsGrades(
-                                            selectedClass: selectedClass,
-                                          )),
-                                );
-                              },
-                              icon: 'asset/icons/timetable.svg',
-                              title: "ציוני תלמידים",
-                            ),
-                          ],
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherSendMessage(
+                                        userId: userId,
+                                        selectedClass: selectedClass,
+                                      )),
+                            );
+                          },
+                          icon: 'asset/icons/chat.svg',
+                          title: "הודעות",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherStudentsGrades(
+                                        selectedClass: selectedClass,
+                                      )),
+                            );
+                          },
+                          icon: 'asset/icons/timetable.svg',
+                          title: "ציוני תלמידים",
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AttendanceStudentsManage(
+                                          userId: userId,
+                                          selectedClass: selectedClass)),
+                            );
+                          },
+                          icon: 'asset/icons/chat.svg',
+                          title: "נוחכות",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherCalendar(
+                                        userId: userId,
+                                      )),
+                            );
+                          },
+                          icon: 'asset/icons/calendar.svg',
+                          title: "לוח שנה",
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EventsPage()),
+                            );
+                          },
+                          icon: 'asset/icons/events.svg',
+                          title: "אירועים",
                         ),
                       ],
                     ),
