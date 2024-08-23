@@ -32,7 +32,6 @@ class _ParentDashboardState extends State<ParentDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ברוך הבא '),
         actions: [
           IconButton(
             onPressed: () => userLogOut(context),
@@ -57,17 +56,9 @@ class _ParentDashboardState extends State<ParentDashboard> {
                     Row(
                       children: [
                         Text(
-                          " Welcome Parent ",
+                          " Welcome ${widget.parent.fullname}",
                           style: GoogleFonts.notoSerifHebrew(
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
-                        ),
-                        Text(
-                          "שלום",
-                          style: GoogleFonts.notoSerifHebrew(
-                            fontWeight: FontWeight.normal,
                             color: Colors.white,
                             fontSize: 20,
                           ),
@@ -154,15 +145,13 @@ class _ParentDashboardState extends State<ParentDashboard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => StudentAttendancePage(
-                                  selectedChild: widget.selectedChild,
-                                ),
+                                builder: (context) => EventsPage(),
                               ),
                             );
                           },
                           icon:
                               'asset/icons/attendance.svg', // Update with actual icon path
-                          title: "נוחכות",
+                          title: "אירועים",
                         ),
                       ],
                     ),
@@ -170,6 +159,20 @@ class _ParentDashboardState extends State<ParentDashboard> {
                 ),
               ),
             ),
+          ),
+          ParentHomeCard(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StudentAttendancePage(
+                    selectedChild: widget.selectedChild,
+                  ),
+                ),
+              );
+            },
+            icon: 'asset/icons/attendance.svg', // Update with actual icon path
+            title: "נוחכות",
           ),
         ],
       ),

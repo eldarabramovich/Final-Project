@@ -96,7 +96,7 @@ class _StudentAttendancePageState extends State<StudentAttendancePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Student Attendance'),
+        title: Text('${widget.selectedChild.fullname} Attendance'),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
