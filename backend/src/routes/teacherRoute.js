@@ -21,9 +21,11 @@ const {
     getAttendanceById,
     getStudentAttendance,
     updateFinalGrade,
-    updateSubmissionGrade
-} = require('../controllers/teacherController.js');
+    updateSubmissionGrade,
+    getMessagesForClass
 
+} = require('../controllers/teacherController.js');
+router.post('/getMessagesForClass', getMessagesForClass);
 router.post('/updateSubmissionGrade',updateSubmissionGrade);
 router.post('/updateFinalGrade',updateFinalGrade);
 router.post('/AddAssignment',upload,AddAssignment);

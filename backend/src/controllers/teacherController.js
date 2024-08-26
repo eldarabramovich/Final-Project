@@ -789,10 +789,42 @@ const updateSubmissionGrade = async (req, res) => {
     console.error('Error updating grade:', error);
     res.status(500).send('Error updating grade');
   }
+};const getMessagesForClass = async (req, res) => {
+  const { className } = req.body;
+
+  if (!className) {
+    return res.status(400).send('Class name is required.');
+  }
+
+  try {
+    const messagesQuery = db.collection('TeacherMessages').where('studentClass', '==', className);
+    const messagesSnapshot = await messagesQuery.get();
+
+    if (messagesSnapshot.empty) {
+      console.log(`No messages found for class: ${className}`);
+      return res.status(404).send('No messages found.');
+    }
+
+    const messages = [];
+    messagesSnapshot.forEach(doc => {
+      const data = doc.data();
+      messages.push({
+        parentName: data.parentName,
+        message: data.message,
+        studentClass: data.studentClass,
+        // Convert Firestore Timestamp to ISO string or Unix timestamp
+        timestamp: data.timestamp.toDate().toISOString()
+      });
+    });
+
+    console.log('Messages retrieved:', messages);
+    return res.status(200).json(messages);
+
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    return res.status(500).send('Error fetching messages');
+  }
 };
-
-
-
 
 module.exports = {
   getStudentAttendance,
@@ -815,5 +847,6 @@ module.exports = {
   getAttendanceRecords,
   getAttendanceById,
   updateFinalGrade,
-  updateSubmissionGrade
+  updateSubmissionGrade,
+  getMessagesForClass
 }

@@ -142,11 +142,113 @@ const GetStudentAttendance = async (req, res) => {
       res.status(500).send("Error fetching attendance.");
   }
 };
+const getStudentByFullName = async (req, res) => {
+  const { fullname } = req.body; // Use req.body instead of req.query
+
+  console.log('Received fullname:', fullname); // Debug log
+
+  if (!fullname) {
+    console.error('Full name is missing in the request body.');
+    return res.status(400).send('Full name is required.');
+  }
+
+  try {
+    const studentQuery = db.collection('students').where('fullname', '==', fullname);
+    const studentSnapshot = await studentQuery.get();
+
+    if (studentSnapshot.empty) {
+      console.log(`No student found with fullname: ${fullname}`);
+      return res.status(404).send('Student not found.');
+    }
+
+    let studentData = {};
+    studentSnapshot.forEach(doc => {
+      studentData = doc.data();
+    });
+
+    console.log('Student data:', studentData);
+    return res.status(200).json(studentData);
+
+  } catch (error) {
+    console.error('Error fetching student data:', error);
+    return res.status(500).send('Error fetching student data.');
+  }
+};
+const getHomeroomTeacherByClassName = async (req, res) => {
+  const { className } = req.body; // Use req.body for POST requests
+
+  console.log('Received className:', className); // Debug log
+
+  if (!className) {
+    console.error('Class name is missing in the request body.');
+    return res.status(400).send('Class name is required.');
+  }
+
+  try {
+    const subClassQuery = db.collection('subClasses').where('classNumber', '==', className);
+    const subClassSnapshot = await subClassQuery.get();
+
+    console.log('SubClass snapshot size:', subClassSnapshot.size); // Debug log
+
+    if (subClassSnapshot.empty) {
+      console.log(`No subclass found with classNumber: ${className}`);
+      return res.status(404).send('Subclass not found.');
+    }
+
+    let homeroomTeacherId = null;
+    subClassSnapshot.forEach(doc => {
+      const subClassData = doc.data();
+      homeroomTeacherId = subClassData.homeroomTeacherId;
+    });
+
+    if (!homeroomTeacherId) {
+      console.log(`No homeroom teacher assigned to classNumber: ${className}`);
+      return res.status(404).send('Homeroom teacher not found.');
+    }
+
+    console.log('Homeroom teacher ID:', homeroomTeacherId);
+    return res.status(200).json({ homeroomTeacherId });
+
+  } catch (error) {
+    console.error('Error fetching homeroom teacher ID:', error);
+    return res.status(500).send('Error fetching homeroom teacher ID.');
+  }
+};
+const sendMessageToTeacher = async (req, res) => {
+  const { parentName, message, studentClass } = req.body;
+
+  if (!parentName || !message || !studentClass) {
+    return res.status(400).send('Missing data');
+  }
+
+  try {
+    const db = admin.firestore();
+    const messageRef = db.collection('TeacherMessages').doc();
+
+    await messageRef.set({
+      parentName,
+      message,
+      studentClass,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    return res.status(200).send('Message sent successfully');
+  } catch (error) {
+    console.error('Error sending message:', error);
+    return res.status(500).send('Error sending message');
+  }
+};
+
+
+
+
 
 
   module.exports = {
     GetStudentAttendance,
     getParentData, getFinalGrades,
     getAssignmentGrades,
+    sendMessageToTeacher,
+    getStudentByFullName,
+    getHomeroomTeacherByClassName
   };
-//get parent data by id 

@@ -9,6 +9,8 @@ import 'package:frontend/Teacher/PagesTools/TeacherCalendar.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
 import 'package:frontend/Teacher/HoomeRoomTeacher/TeacherStudentsGrades.dart';
 import 'package:frontend/Teacher/HoomeRoomTeacher/AttendanceStudentsManage.dart';
+import 'package:frontend/Teacher/HoomeRoomTeacher/TeacherParentMessagesPage.dart';
+
 import 'package:frontend/Admin/EventsPage.dart';
 
 class HomeroomTeacherDashboard extends StatelessWidget {
@@ -170,6 +172,18 @@ class HomeroomTeacherDashboard extends StatelessWidget {
                           },
                           icon: 'asset/icons/events.svg',
                           title: "אירועים",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherMessagesPage(
+                                      teacherClass: selectedClass)),
+                            );
+                          },
+                          icon: 'asset/icons/events.svg',
+                          title: "הודעות הורים",
                         ),
                       ],
                     ),

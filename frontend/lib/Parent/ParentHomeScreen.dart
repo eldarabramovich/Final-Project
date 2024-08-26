@@ -5,7 +5,8 @@ import 'package:frontend/Parent/ParentChildGrade.dart'; // Replace with actual i
 import 'package:frontend/Parent/ParentSendMessagePage.dart'; // Replace with actual import paths
 import 'package:frontend/Admin/EventsPage.dart'; // Replace with actual import paths
 import 'package:frontend/Parent/ParentCalendarPage.dart'; // Replace with actual import paths
-import 'package:frontend/Parent/ParentAttendance.dart'; // Import the ParentAttendance page
+import 'package:frontend/Parent/ParentAttendance.dart';
+import 'package:frontend/Parent/ParentCommunicationPage.dart'; // Import the ParentAttendance page
 import 'package:google_fonts/google_fonts.dart';
 
 class ParentDashboard extends StatefulWidget {
@@ -24,9 +25,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
     super.initState();
   }
 
-  void userLogOut(BuildContext context) {
-    // Implement logout logic here
-  }
+  void userLogOut(BuildContext context) {}
 
   @override
   Widget build(BuildContext context) {
@@ -152,6 +151,22 @@ class _ParentDashboardState extends State<ParentDashboard> {
                           icon:
                               'asset/icons/attendance.svg', // Update with actual icon path
                           title: "אירועים",
+                        ),
+                        ParentHomeCard(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ParentCommunicationPage(
+                                  parent: widget.parent,
+                                  selectedChild: widget.selectedChild,
+                                ),
+                              ),
+                            );
+                          },
+                          icon:
+                              'asset/icons/attendance.svg', // Update with actual icon path
+                          title: "צ'אט מורים",
                         ),
                       ],
                     ),
