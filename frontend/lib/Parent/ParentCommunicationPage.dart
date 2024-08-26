@@ -31,15 +31,11 @@ class _ParentCommunicationPageState extends State<ParentCommunicationPage> {
 
   Future<void> _fetchClassNameAndTeacherId(String childFullName) async {
     try {
-      // Encode the child's full name to handle spaces and special characters
       final response = await http.post(
         Uri.parse('http://${Config.baseUrl}/parent/getStudentByFullName'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'fullname': childFullName}),
       );
-
-      print('Response status code: ${response.statusCode}');
-      print('Response body: ${response.body}'); // Debug log
 
       if (response.statusCode == 200) {
         final studentData = json.decode(response.body);
@@ -49,11 +45,9 @@ class _ParentCommunicationPageState extends State<ParentCommunicationPage> {
           _selectedClassName = className;
         });
       } else {
-        print('Failed to load student data: ${response.body}'); // Debug log
         Fluttertoast.showToast(msg: "Failed to load student data.");
       }
     } catch (e) {
-      print('Error fetching student data: $e'); // Debug log
       Fluttertoast.showToast(msg: "Error fetching student data: $e");
     }
   }
@@ -91,7 +85,25 @@ class _ParentCommunicationPageState extends State<ParentCommunicationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Communicate with Teacher'),
+        title: Text(
+          'הודעה למחנך הכיתה',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Merienda',
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blue.shade800,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade700, Colors.blue.shade900],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -99,21 +111,44 @@ class _ParentCommunicationPageState extends State<ParentCommunicationPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (_teacherId != null)
-              Text('Communicating with Teacher ID: $_teacherId',
-                  style: TextStyle(fontSize: 18)),
+              Text(
+                'Teacher ID: $_teacherId',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.right,
+              ),
             if (widget.selectedChild.fullname != null &&
                 _selectedClassName != null)
-              Text(
-                  'Child: ${widget.selectedChild.fullname}, Class: $_selectedClassName',
-                  style: TextStyle(fontSize: 16)),
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Text(
+                  'תלמיד: ${widget.selectedChild.fullname}\n כיתה: $_selectedClassName',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.right,
+                ),
+              ),
+            SizedBox(height: 20),
             TextField(
               controller: _messageController,
-              decoration: InputDecoration(labelText: 'Enter your message'),
+              maxLines: 5,
+              textAlign: TextAlign.right,
+              decoration: InputDecoration(
+                labelText: 'הזן את ההודעה שלך',
+                border: OutlineInputBorder(),
+                alignLabelWithHint: true,
+              ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _sendMessage,
-              child: Text('Send Message'),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
+                onPressed: _sendMessage,
+                icon: Icon(Icons.send),
+                label: Text('שלח'),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  backgroundColor: Colors.blue,
+                ),
+              ),
             ),
           ],
         ),

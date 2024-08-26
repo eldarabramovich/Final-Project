@@ -68,7 +68,7 @@ class ChildSelectionPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircleAvatar(
-                    backgroundImage: AssetImage('assets/icons/user.png'),
+                    backgroundImage: AssetImage('asset/icons/user.png'),
                     radius: 30.0,
                   ),
                   SizedBox(height: 10.0),

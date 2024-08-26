@@ -94,8 +94,18 @@ class _ParentChildGradeState extends State<ParentChildGrade> {
     }
   }
 
+  double calculateAverageGrade() {
+    if (finalGrades.isEmpty) return 0;
+    double sum = finalGrades.fold(0, (previousValue, grade) {
+      double finalGrade = double.tryParse(grade['finalGrade'].toString()) ?? 0;
+      return previousValue + finalGrade;
+    });
+    return sum / finalGrades.length;
+  }
+
   @override
   Widget build(BuildContext context) {
+    double avgGrade = calculateAverageGrade();
     return Scaffold(
       appBar: AppBar(
         title: Text('ברוך הבא ${widget.parent.fullname}'),
@@ -105,27 +115,65 @@ class _ParentChildGradeState extends State<ParentChildGrade> {
           ? Center(child: CircularProgressIndicator())
           : Column(
               children: [
+                // Circle displaying average grade
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.blue.shade800,
+                    child: Text(
+                      avgGrade.toStringAsFixed(1),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      ...finalGrades.map((grade) {
-                        return ExpansionTile(
+                  child: ListView.builder(
+                    itemCount: finalGrades.length,
+                    itemBuilder: (context, index) {
+                      var grade = finalGrades[index];
+                      bool hasFinalGrade = grade['finalGrade'] != null;
+                      return Card(
+                        margin:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        child: ListTile(
+                          leading: Icon(
+                            hasFinalGrade ? Icons.check_circle : Icons.error,
+                            color: hasFinalGrade ? Colors.green : Colors.red,
+                          ),
                           title: Text(grade['subjectName']),
                           subtitle: Text('ציון סופי: ${grade['finalGrade']}'),
-                          children: [
-                            ...assignmentGrades
-                                .where((ag) =>
-                                    ag['subjectName'] == grade['subjectName'])
-                                .map((ag) {
-                              return ListTile(
-                                title: Text(ag['assignmentName']),
-                                subtitle: Text('ציון: ${ag['grade']}'),
-                              );
-                            }).toList(),
-                          ],
-                        );
-                      }).toList(),
-                    ],
+                          trailing: Icon(Icons.expand_more),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text(grade['subjectName']),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: assignmentGrades
+                                        .where((ag) =>
+                                            ag['subjectName'] ==
+                                            grade['subjectName'])
+                                        .map((ag) => ListTile(
+                                              title: Text(ag['assignmentName']),
+                                              subtitle:
+                                                  Text('ציון: ${ag['grade']}'),
+                                            ))
+                                        .toList(),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
