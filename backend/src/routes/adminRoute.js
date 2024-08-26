@@ -22,8 +22,8 @@ router.post('/CreateClass',CreateClass);
 router.post('/addadmin',addAdmin);
 
 router.post('/AddParent',AddParent);
-router.post('/deleteParent', updateParent);
-router.post('/updateParent', deleteParent);
+router.post('/deleteParent', deleteParent);
+router.post('/updateParent', updateParent);
     
     
 router.post('/CreateTeacher',CreateTeacher);    
