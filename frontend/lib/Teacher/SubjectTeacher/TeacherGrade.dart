@@ -30,41 +30,58 @@ class _TeacherClassDetailPageState extends State<TeacherClassDetailPage> {
   }
 
   Future<void> fetchStudents() async {
-    final response = await http.get(
-      Uri.parse(
-          'http://${Config.baseUrl}/teacher/getStudentsBySubject?subClassName=${widget.selectedClass}&subjectname=${widget.selectedSubject}'),
-    );
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'http://${Config.baseUrl}/teacher/getstudents/${widget.selectedClass}'),
+      );
 
-    if (response.statusCode == 200) {
-      List<dynamic> studentsJson = json.decode(response.body);
-      setState(() {
-        students =
-            studentsJson.map((json) => json as Map<String, dynamic>).toList();
-      });
-    } else {
-      Fluttertoast.showToast(msg: "Failed to load students");
+      if (response.statusCode == 200) {
+        List<dynamic> studentsJson = json.decode(response.body);
+        setState(() {
+          students =
+              studentsJson.map((json) => json as Map<String, dynamic>).toList();
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed to load students: ${response.statusCode}");
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: "An error occurred: $e");
     }
   }
 
   Future<void> saveGrade(int index) async {
     final student = students[index];
-    final response = await http.post(
-      Uri.parse('http://${Config.baseUrl}/teacher/updateFinalGrade'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'subClassName': widget.selectedClass,
-        'subjectName': widget.selectedSubject,
-        'fullName': student['fullname'],
-        'finalGrade': student['finalGrade']
-      }),
-    );
+    final grade = student['finalGrade'];
 
-    if (response.statusCode != 200) {
+    if (grade == null || grade.isEmpty) {
       Fluttertoast.showToast(
-          msg: "Failed to save grade for ${student['fullname']}");
-    } else {
-      Fluttertoast.showToast(
-          msg: "Grade saved successfully for ${student['fullname']}");
+          msg: "Please enter a grade for ${student['fullname']}");
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://${Config.baseUrl}/teacher/updateFinalGrade'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'subClassName': widget.selectedClass,
+          'subjectName': widget.selectedSubject,
+          'fullName': student['fullname'],
+          'finalGrade': grade,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        Fluttertoast.showToast(
+            msg: "Failed to save grade for ${student['fullname']}");
+      } else {
+        Fluttertoast.showToast(
+            msg: "Grade saved successfully for ${student['fullname']}");
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: "An error occurred: $e");
     }
   }
 
@@ -88,50 +105,52 @@ class _TeacherClassDetailPageState extends State<TeacherClassDetailPage> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: students.length,
-        itemBuilder: (context, index) {
-          final student = students[index];
-          final grade = student['finalGrade'] ?? '';
+      body: students.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: students.length,
+              itemBuilder: (context, index) {
+                final student = students[index];
+                final grade = student['finalGrade'] ?? '';
 
-          return Card(
-            margin: EdgeInsets.all(10),
-            child: ListTile(
-              title: Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  student['fullname'],
-                  textAlign: TextAlign.right,
-                ),
-              ),
-              trailing: SizedBox(
-                width: 200,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          labelText: grade.isEmpty ? 'ציון' : grade,
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
+                return Card(
+                  margin: EdgeInsets.all(10),
+                  child: ListTile(
+                    title: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        student['fullname'],
                         textAlign: TextAlign.right,
-                        onChanged: (value) {
-                          students[index]['finalGrade'] = value;
-                        },
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.save),
-                      onPressed: () => saveGrade(index),
+                    trailing: SizedBox(
+                      width: 200,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                labelText: grade.isEmpty ? 'ציון' : grade,
+                                border: OutlineInputBorder(),
+                              ),
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.right,
+                              onChanged: (value) {
+                                students[index]['finalGrade'] = value;
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.save),
+                            onPressed: () => saveGrade(index),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

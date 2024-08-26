@@ -671,7 +671,68 @@ const getStudentAttendance = async (req, res) => {
     res.status(500).send('Error fetching student attendance');
   }
 };
+const updateFinalGrade = async (req, res) => {
+  const { subClassName, subjectName, fullName, finalGrade } = req.body;
 
+  console.log('Received request to update grade:');
+  console.log('subClassName:', subClassName);
+  console.log('subjectName:', subjectName);
+  console.log('fullName:', fullName);
+  console.log('finalGrade:', finalGrade);
+
+  if (!subClassName || !subjectName || !fullName || !finalGrade) {
+    console.error('Missing data in request body');
+    return res.status(400).send('Missing data!');
+  }
+
+  try {
+    const db = admin.firestore();
+
+    // Query to find the document in "subjects" collection matching the subClassName and subjectName
+    const subjectQuery = db.collection('subjects')
+      .where('subClassName', '==', subClassName)
+      .where('subjectname', '==', subjectName);
+
+    const subjectSnapshot = await subjectQuery.get();
+
+    console.log('subjectSnapshot size:', subjectSnapshot.size);
+
+    if (subjectSnapshot.empty) {
+      console.error(`No subjects found for subclass "${subClassName}" and subject "${subjectName}".`);
+      return res.status(404).send('Subject not found');
+    }
+
+    // Loop through the documents in the snapshot and update the grade
+    let studentFound = false;
+
+    subjectSnapshot.forEach(async (doc) => {
+      const subjectData = doc.data();
+      const updatedStudents = subjectData.students.map(student => {
+        if (student.fullname === fullName) {
+          student.finalGrade = finalGrade;
+          studentFound = true;
+        }
+        return student;
+      });
+
+      if (studentFound) {
+        console.log(`Updating grade for student: ${fullName} to ${finalGrade}`);
+        await doc.ref.update({ students: updatedStudents });
+        console.log(`Grade updated successfully for student: ${fullName}`);
+        return res.status(200).send('Grade updated successfully');
+      }
+    });
+
+    if (!studentFound) {
+      console.error(`Student "${fullName}" not found in subclass "${subClassName}" for subject "${subjectName}".`);
+      return res.status(404).send('Student not found');
+    }
+
+  } catch (error) {
+    console.error('Error updating grade:', error);
+    res.status(500).send('Error updating grade');
+  }
+};
 
 
 
@@ -697,5 +758,5 @@ module.exports = {
   editAttendance,
   downloadSubmission,
   getAttendanceRecords,
-  getAttendanceById
+  getAttendanceById,updateFinalGrade
 }
