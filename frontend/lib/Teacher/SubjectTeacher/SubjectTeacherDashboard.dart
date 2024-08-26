@@ -9,6 +9,7 @@ import 'TeacherGrade.dart';
 import 'package:frontend/models/teachermodel.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherCalendar.dart';
 import 'package:frontend/Teacher/SubjectTeacher/AddAttendancePage.dart';
+import 'package:frontend/Teacher/SubjectTeacher/AttendanceManagementPage.dart';
 import 'package:frontend/Teacher/SubjectTeacher/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
 // import 'package:frontend/Teacher/TeacherCalendar.dart';
@@ -172,10 +173,11 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AddAttendancePage(
-                                        selectedClass: selectedClass,
-                                        subject: selectedSubject,
-                                      )),
+                                  builder: (context) =>
+                                      AttendanceManagementPage(
+                                          userId: userId,
+                                          selectedClass: selectedClass,
+                                          subject: selectedSubject)),
                             );
                           },
                           icon: 'asset/icons/chat.svg',

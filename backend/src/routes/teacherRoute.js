@@ -20,9 +20,11 @@ const {
     editAttendance,
     getAttendanceById,
     getStudentAttendance,
-    updateFinalGrade
+    updateFinalGrade,
+    updateSubmissionGrade
 } = require('../controllers/teacherController.js');
 
+router.post('/updateSubmissionGrade',updateSubmissionGrade);
 router.post('/updateFinalGrade',updateFinalGrade);
 router.post('/AddAssignment',upload,AddAssignment);
 router.post('/addAttendance',addAttendance);

@@ -552,9 +552,9 @@ const addAttendance = async (req, res) => {
   const classname = req.body.classname;
   const subjectname = req.body.subjectname;
   const students = req.body.students;
-  const predate = req.body.predate;
+  const presdate = req.body.presdate; // Corrected here
 
-  if (!classname || !subjectname || !students || students.length === 0 || !predate) {
+  if (!classname || !subjectname || !students || students.length === 0 || !presdate) {
       console.log("Missing data detected in request body");
       return res.status(400).send("Missing data!");
   }
@@ -564,7 +564,7 @@ const addAttendance = async (req, res) => {
       const attendanceQuery = db.collection('attendance')
           .where('classname', '==', classname)
           .where('subjectname', '==', subjectname)
-          .where('predate', '==', predate);
+          .where('predate', '==', presdate); // Corrected here
 
       const existingAttendance = await attendanceQuery.get();
 
@@ -578,7 +578,7 @@ const addAttendance = async (req, res) => {
           classname,
           subjectname,
           students,
-          predate,
+          predate: presdate, // Corrected here
       });
 
       for (const student of students) {
@@ -591,7 +591,7 @@ const addAttendance = async (req, res) => {
 
               attendanceArray.push({
                   subjectname,
-                  predate: predate,
+                  predate: presdate, // Corrected here
                   status: student.status,
               });
 
@@ -734,7 +734,62 @@ const updateFinalGrade = async (req, res) => {
   }
 };
 
+const updateSubmissionGrade = async (req, res) => {
+  const { submissionId, fullName, grade } = req.body;
 
+  console.log('Received request to update submission grade:');
+  console.log('submissionId:', submissionId);
+  console.log('fullName:', fullName);
+  console.log('grade:', grade);
+
+  if (!submissionId || !fullName || !grade) {
+    console.error('Missing data in request body');
+    return res.status(400).send('Missing data!');
+  }
+
+  try {
+    const db = admin.firestore();
+
+    // Reference to the specific submission document
+    const submissionRef = db.collection('submissions').doc(submissionId);
+    const submissionDoc = await submissionRef.get();
+
+    if (!submissionDoc.exists) {
+      console.error(`Submission with ID "${submissionId}" not found.`);
+      return res.status(404).send('Submission not found');
+    }
+
+    const submissionData = submissionDoc.data();
+    const studentSubmissions = submissionData.studentsubmission || [];
+
+    // Find the student's submission
+    let studentFound = false;
+    const updatedSubmissions = studentSubmissions.map((submission) => {
+      if (submission.fullName === fullName) {
+        submission.grade = grade; // Update the grade
+        studentFound = true;
+      }
+      return submission;
+    });
+
+    if (!studentFound) {
+      console.error(`Student "${fullName}" not found in submission "${submissionId}".`);
+      return res.status(404).send('Student not found');
+    }
+
+    // Update the submission document with the new grades
+    await submissionRef.update({
+      studentsubmission: updatedSubmissions
+    });
+
+    console.log(`Grade updated successfully for student: ${fullName}`);
+    res.status(200).send('Grade updated successfully');
+
+  } catch (error) {
+    console.error('Error updating grade:', error);
+    res.status(500).send('Error updating grade');
+  }
+};
 
 
 
@@ -758,5 +813,7 @@ module.exports = {
   editAttendance,
   downloadSubmission,
   getAttendanceRecords,
-  getAttendanceById,updateFinalGrade
+  getAttendanceById,
+  updateFinalGrade,
+  updateSubmissionGrade
 }
