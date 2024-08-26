@@ -96,12 +96,12 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('הוספת מטלה'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue.shade800, // Use the color from your app
+        title: const Text('הוספת משימה'),
         actions: [
           TextButton(
             onPressed: _navigateToSubmissions,
-            child: Text(
+            child: const Text(
               'ניהול הגשות',
               style: TextStyle(color: Colors.white),
             ),
@@ -115,73 +115,76 @@ class _TeacherAddNewAssiState extends State<TeacherAddNewAssi> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: TextFormField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'תיאור המטלה',
-                    alignLabelWithHint: true,
-                    border: InputBorder.none,
+              const SizedBox(height: 16.0),
+              TextFormField(
+                controller: _descriptionController,
+                decoration: InputDecoration(
+                  labelText: 'תיאור',
+                  border: OutlineInputBorder(),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  labelStyle: TextStyle(
+                      color:
+                          Colors.blue.shade800), // Use the color from your app
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors
+                            .blue.shade800), // Use the color from your app
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'יש להזין תיאור למטלה';
-                    }
-                    return null;
-                  },
-                  textAlign: TextAlign.right,
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'אנא הזן תיאור';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16.0),
+              TextFormField(
+                controller: _lastDateController,
+                decoration: InputDecoration(
+                  labelText: 'תאריך אחרון',
+                  border: OutlineInputBorder(),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  labelStyle: TextStyle(
+                      color:
+                          Colors.blue.shade800), // Use the color from your app
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors
+                            .blue.shade800), // Use the color from your app
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'אנא הזן תאריך אחרון';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24.0),
+              ElevatedButton.icon(
+                onPressed: _pickFile,
+                icon: const Icon(Icons.attach_file),
+                label: const Text('בחר קובץ'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Colors.blue.shade800, // Background color for button
+                  foregroundColor: Colors.white,
+                  minimumSize: Size(double.infinity, 50),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
                 ),
               ),
-              SizedBox(height: 16),
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: TextFormField(
-                  controller: _lastDateController,
-                  decoration: InputDecoration(
-                    labelText: 'תאריך אחרון להגשה',
-                    alignLabelWithHint: true,
-                    border: InputBorder.none,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'יש להזין תאריך אחרון להגשה';
-                    }
-                    return null;
-                  },
-                  textAlign: TextAlign.right,
-                ),
-              ),
-              SizedBox(height: 20),
-              Center(
-                child: ElevatedButton.icon(
-                  onPressed: _pickFile,
-                  icon: Icon(Icons.attach_file),
-                  label: Text('בחר קובץ'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlueAccent, // baby blue color
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                  ),
-                ),
-              ),
-              Spacer(),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: ElevatedButton(
-                  onPressed: _submitAssignment,
-                  child: Text('שלח מטלה'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlueAccent, // baby blue color
-                    padding: EdgeInsets.symmetric(horizontal: 48),
-                  ),
+              const SizedBox(height: 16.0),
+              ElevatedButton.icon(
+                onPressed: _submitAssignment,
+                icon: const Icon(Icons.send),
+                label: const Text('הגש משימה'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Colors.blue.shade800, // Background color for button
+                  foregroundColor: Colors.white,
+                  minimumSize: Size(double.infinity, 50),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
                 ),
               ),
             ],

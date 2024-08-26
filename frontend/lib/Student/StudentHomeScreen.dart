@@ -4,7 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'StudentAssignment .dart';
+import 'package:intl/intl.dart';
+import 'StudentAssignment.dart';
 import 'StudentCalendar.dart';
 import 'StudentDocuments.dart';
 import 'StudentGrade.dart';
@@ -56,6 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
+    String formattedTime = TimeOfDay.now().format(context);
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -78,6 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
             return Column(
               children: [
                 // Part 1: Basic information about the student
+
+                /*
+                
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height / 10.0,
@@ -117,6 +124,50 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+                
+                */
+
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 5.0,
+                  padding: const EdgeInsets.all(20),
+                  color: Colors.blue.shade800,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset(
+                            'asset/icons/usericon.png',
+                            height: 40,
+                            width: 40,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              student.fullname,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '$formattedDate | $formattedTime',
+                        style: GoogleFonts.notoSerifHebrew(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                 // Part 2: Other sections
                 Expanded(
@@ -147,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   );
                                 },
-                                icon: 'asset/icons/assignment.svg',
+                                icon: 'asset/icons/homework.png',
                                 title: "מטלות",
                               ),
                               HomeCard(
@@ -159,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             studentName: student.fullname)),
                                   );
                                 },
-                                icon: 'asset/icons/resume.svg',
+                                icon: 'asset/icons/grade.png',
                                 title: "ציונים",
                               ),
                             ],
@@ -188,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   }
                                 },
-                                icon: 'asset/icons/chat.svg',
+                                icon: 'asset/icons/messages.png',
                                 title: "הודעות",
                               ),
                               HomeCard(
@@ -200,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             StudentCalendar()),
                                   );
                                 },
-                                icon: 'asset/icons/timetable.svg',
+                                icon: 'asset/icons/calendar.png',
                                 title: "לוח שנה",
                               ),
                             ],
@@ -217,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             StudentPresence()),
                                   );
                                 },
-                                icon: 'asset/icons/check.svg',
+                                icon: 'asset/icons/checklist.png',
                                 title: "נוכחות",
                               ),
                               HomeCard(
@@ -229,18 +280,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             StudentDocuments()),
                                   );
                                 },
-                                icon: 'asset/icons/document.svg',
+                                icon: 'asset/icons/file.png',
                                 title: "מסמכים",
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              HomeCard(
-                                onPress: () {},
-                                icon: 'asset/icons/profile.svg',
-                                title: "Profile",
                               ),
                             ],
                           ),
@@ -266,13 +307,11 @@ class HomeCard extends StatelessWidget {
     required this.onPress,
     required this.icon,
     required this.title,
-    this.color = Colors.black,
     this.elevation = 4.0,
   });
   final VoidCallback? onPress;
-  final String icon;
+  final String icon; // Path to the PNG icon
   final String title;
-  final Color color;
   final double elevation;
 
   @override
@@ -299,11 +338,10 @@ class HomeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              icon,
+            Image.asset(
+              icon, // Path to the PNG icon
               height: 55.0,
               width: 55.0,
-              color: color,
             ),
             Text(
               title,

@@ -343,7 +343,7 @@ class AssignmentCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              'Due: ${assignment.lastDate}',
+              'תאריך הגשה: ${assignment.lastDate}',
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 14.0,
@@ -351,11 +351,12 @@ class AssignmentCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             AssignmentButton(
-              title: 'Download',
+              title: 'הורד',
               onPress: onDownload,
             ),
+            const SizedBox(height: 10),
             AssignmentButton(
-              title: 'Submit',
+              title: 'הגש',
               onPress: onSubmit,
             ),
           ],

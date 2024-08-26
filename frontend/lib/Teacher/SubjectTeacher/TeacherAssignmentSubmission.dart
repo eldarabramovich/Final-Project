@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:dio/dio.dart';
 import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
@@ -54,7 +56,7 @@ class _TeacherAssignmentSubmissionState
             assignmentsJson.map((json) => Assignment.fromJson(json)).toList();
       });
     } else {
-      Fluttertoast.showToast(msg: "Failed to load assignments");
+      Fluttertoast.showToast(msg: "נכשל לטעון את המשימות");
     }
   }
 
@@ -78,18 +80,16 @@ class _TeacherAssignmentSubmissionState
 
       print('Submissions: ${submissions[assignmentId]}');
     } else {
-      Fluttertoast.showToast(msg: "Failed to load submissions");
+      Fluttertoast.showToast(msg: "נכשל לטעון את ההגשות");
     }
   }
 
   Future<void> downloadSubmission(String submissionId, String fileUrl) async {
     try {
-      // Request storage permission
       var status = await Permission.storage.request();
       if (!status.isGranted) {
-        print('Storage permission denied');
-        Fluttertoast.showToast(
-            msg: "Storage permission is required to download files");
+        print('אישור אחסון נדחה');
+        Fluttertoast.showToast(msg: "יש צורך באישור אחסון כדי להוריד קבצים");
         return;
       }
 
@@ -101,16 +101,15 @@ class _TeacherAssignmentSubmissionState
 
       if (response.statusCode == 200) {
         final filePath = await _writeToFile(response.bodyBytes, fileUrl);
-        Fluttertoast.showToast(
-            msg: "File downloaded successfully to $filePath");
+        Fluttertoast.showToast(msg: "הקובץ הורד בהצלחה ל-$filePath");
       } else {
-        print('Error downloading file: ${response.statusCode}');
+        print('שגיאה בהורדת הקובץ: ${response.statusCode}');
         Fluttertoast.showToast(
-            msg: "Error downloading file: ${response.statusCode}");
+            msg: "שגיאה בהורדת הקובץ: ${response.statusCode}");
       }
     } catch (e) {
-      print('Error during download: $e');
-      Fluttertoast.showToast(msg: "Error downloading file: $e");
+      print('שגיאה בזמן ההורדה: $e');
+      Fluttertoast.showToast(msg: "שגיאה בהורדת הקובץ: $e");
     }
   }
 
@@ -118,7 +117,6 @@ class _TeacherAssignmentSubmissionState
     Directory? directory;
     if (Platform.isAndroid) {
       directory = Directory('/storage/emulated/0/Download');
-      // Fallback to app's directory if /storage/emulated/0/Download is not available
       if (!await directory.exists()) {
         directory = await getExternalStorageDirectory();
       }
@@ -127,7 +125,7 @@ class _TeacherAssignmentSubmissionState
     }
 
     if (directory == null) {
-      throw Exception('Unable to access storage directory');
+      throw Exception('אין גישה לתיקיית האחסון');
     }
 
     final filePath = path.join(directory.path, path.basename(fileUrl));
@@ -146,10 +144,10 @@ class _TeacherAssignmentSubmissionState
     );
 
     if (response.statusCode == 200) {
-      Fluttertoast.showToast(msg: "Grade updated successfully");
+      Fluttertoast.showToast(msg: "הציון עודכן בהצלחה");
     } else {
       Fluttertoast.showToast(
-          msg: "Failed to update grade: ${response.statusCode}");
+          msg: "נכשל לעדכן את הציון: ${response.statusCode}");
     }
   }
 
@@ -157,76 +155,99 @@ class _TeacherAssignmentSubmissionState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ניהול הגשות'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue.shade800,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SizedBox(width: 8),
+            Text(
+              'ניהול הגשות',
+              style: GoogleFonts.notoSerifHebrew(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
-      body: ListView.builder(
-        itemCount: assignments.length,
-        itemBuilder: (context, index) {
-          return ExpansionTile(
-            title: Text(assignments[index].description),
-            children: [
-              if (submissions[assignments[index].id] == null)
-                ElevatedButton(
-                  onPressed: () => fetchSubmissions(assignments[index].id),
-                  child: Text('טען הגשות'),
-                )
-              else
-                Column(
-                  children:
-                      submissions[assignments[index].id]!.map((submission) {
-                    return ListTile(
-                      title: Text(submission.fullName),
-                      subtitle: Text(
-                          'ציון: ${submission.grade.isEmpty ? 'לא מדורג' : submission.grade}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.download),
-                            onPressed: () => downloadSubmission(
-                                assignments[index].id, submission.fileUrl),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.grade),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  String grade = '';
-                                  return AlertDialog(
-                                    title: Text('הזן ציון'),
-                                    content: TextField(
-                                      onChanged: (value) => grade = value,
-                                      keyboardType: TextInputType.number,
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text('ביטול'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          updateGrade(assignments[index].id,
-                                              submission.fullName, grade);
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('שלח'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
+      body: Directionality(
+        textDirection: TextDirection.rtl,
+        child: ListView.builder(
+          itemCount: assignments.length,
+          itemBuilder: (context, index) {
+            return ExpansionTile(
+              title: Text(
+                assignments[index].description,
+                style: GoogleFonts.notoSerifHebrew(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-            ],
-          );
-        },
+              ),
+              children: [
+                if (submissions[assignments[index].id] == null)
+                  ElevatedButton(
+                    onPressed: () => fetchSubmissions(assignments[index].id),
+                    child: Text('טעינת הגשות'),
+                  )
+                else
+                  Column(
+                    children:
+                        submissions[assignments[index].id]!.map((submission) {
+                      return ListTile(
+                        title: Text(submission.fullName),
+                        subtitle: Text(
+                            'ציון: ${submission.grade.isEmpty ? 'ללא ציון' : submission.grade}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.download),
+                              onPressed: () => downloadSubmission(
+                                  assignments[index].id, submission.fileUrl),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.pin),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    String grade = '';
+                                    return AlertDialog(
+                                      title: Text('הזן ציון'),
+                                      content: TextField(
+                                        onChanged: (value) => grade = value,
+                                        keyboardType: TextInputType.number,
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text('ביטול'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            updateGrade(assignments[index].id,
+                                                submission.fullName, grade);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('שלח'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

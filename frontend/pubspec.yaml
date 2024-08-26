@@ -56,7 +56,33 @@ flutter:
     - asset/icons/ask.svg
     - asset/icons/gallery.svg
     - asset/icons/event.svg
+    - asset/icons/attendance.svg
+    - asset/icons/calendar.svg
+    - asset/icons/events.svg
+    - asset/icons/usericon.png
+    - asset/icons/writeMessage.png
+    - asset/icons/calendar.png
+    - asset/icons/event.png
+    - asset/icons/checklist.png
+    - asset/icons/grade.png
+    - asset/icons/messages.png
+    - asset/icons/homework.png
+    - asset/icons/file.png
+    - asset/icons/addhomework.png
+    - asset/icons/classroom.png
+    - asset/icons/editdata.png
+    - asset/icons/newdatabase.png
+    - asset/icons/parents.png
+    - asset/icons/students.png
+    - asset/icons/teacher.png
+    - asset/icons/newpost.png
+    - asset/icons/user.png
+   
 
+    
+
+
+    
     
 
     

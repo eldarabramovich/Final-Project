@@ -19,7 +19,7 @@ class ParentCalendarPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calendar'),
+        title: Text('לוח שנה'),
         backgroundColor: Colors.blue.shade800,
       ),
       body: Padding(
@@ -28,10 +28,6 @@ class ParentCalendarPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 20),
-            Text(
-              'Calendar',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
             SizedBox(height: 20),
             Expanded(
               child: _buildCalendar(context),

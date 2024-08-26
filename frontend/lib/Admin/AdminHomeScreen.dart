@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/Admin/AdminAddDataPage.dart';
 import 'package:frontend/Admin/AdminAddEventPage.dart';
 import 'package:frontend/Admin/TeacherEdit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +13,8 @@ import 'package:frontend/Admin/AdminAddStudent.dart';
 import 'package:frontend/Admin/AdminAddTeacher.dart';
 import 'package:frontend/Admin/StudentEdit.dart';
 import 'package:frontend/Admin/EventsPage.dart';
+import 'package:intl/intl.dart';
+import 'package:frontend/Admin/AdminEditDataPage.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   static String routeName = 'AdminHomeScreen';
@@ -25,6 +28,9 @@ class AdminHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
+    String formattedTime = TimeOfDay.now().format(context);
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -42,36 +48,40 @@ class AdminHomeScreen extends StatelessWidget {
 
           Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 10.0,
-            padding: EdgeInsets.all(20),
+            height: MediaQuery.of(context).size.height / 5.0,
+            padding: const EdgeInsets.all(20),
             color: Colors.blue.shade800,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          " Welcome Admin ",
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                        ),
-                        Text(
-                          "שלום",
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white,
-                                  ),
-                        ),
-                      ],
+                    Image.asset(
+                      'asset/icons/usericon.png',
+                      height: 40,
+                      width: 40,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "Welcome Admin",
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white,
+                                ),
+                      ),
                     ),
                   ],
-                )
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '$formattedDate | $formattedTime',
+                  style: GoogleFonts.notoSerifHebrew(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
               ],
             ),
           ),
@@ -102,106 +112,9 @@ class AdminHomeScreen extends StatelessWidget {
                                   builder: (context) => AdminAddEventPage()),
                             );
                           },
-                          icon: 'asset/icons/addpost.svg',
+                          icon: 'asset/icons/newpost.png',
                           title: "אירוע חדש",
                         ),
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AdminAddClassroom()),
-                            );
-                          },
-                          icon: 'asset/icons/classroom.svg',
-                          title: "כיתה חדשה",
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddStudentPage()),
-                            );
-                          },
-                          icon: 'asset/icons/student.svg',
-                          title: "תלמיד חדש",
-                        ),
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditStudentPage()),
-                            );
-                          },
-                          icon: 'asset/icons/student.svg',
-                          title: "עריכה תלמיד ",
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AdminAddTeacher()),
-                            );
-                          },
-                          icon: 'asset/icons/teacher.svg',
-                          title: "מורה חדש",
-                        ),
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditTeacherPage()),
-                            );
-                          },
-                          icon: 'asset/icons/teacher.svg',
-                          title: "עריכה מורה ",
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AdminAddParent()),
-                            );
-                          },
-                          icon: 'asset/icons/parent.svg',
-                          title: "הורה חדש",
-                        ),
-                        HomeCard(
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditTeacherPage()),
-                            );
-                          },
-                          icon: 'asset/icons/parent.svg',
-                          title: "עריכה הורה ",
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
                         HomeCard(
                           onPress: () {
                             Navigator.push(
@@ -210,8 +123,35 @@ class AdminHomeScreen extends StatelessWidget {
                                   builder: (context) => EventsPage()),
                             );
                           },
-                          icon: 'asset/icons/event.svg',
+                          icon: 'asset/icons/event.png',
                           title: "רישמת האירועים",
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AdminAddDataPage()),
+                            );
+                          },
+                          icon: 'asset/icons/newdatabase.png',
+                          title: "הוספת נתונים",
+                        ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AdminEditDataPage()),
+                            );
+                          },
+                          icon: 'asset/icons/editdata.png',
+                          title: "עריכת נתונים",
                         ),
                       ],
                     ),
@@ -237,6 +177,7 @@ class HomeCard extends StatelessWidget {
     this.color = Colors.black,
     this.elevation = 4.0,
   });
+
   final VoidCallback onPress;
   final String icon;
   final String title;
@@ -248,7 +189,7 @@ class HomeCard extends StatelessWidget {
     return InkWell(
       onTap: onPress,
       child: Container(
-        margin: EdgeInsets.only(top: 40.0),
+        margin: const EdgeInsets.only(top: 40.0),
         width: MediaQuery.of(context).size.width / 2.5,
         height: MediaQuery.of(context).size.height / 6,
         decoration: BoxDecoration(
@@ -259,7 +200,7 @@ class HomeCard extends StatelessWidget {
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 2,
               blurRadius: 4,
-              offset: Offset(0, 2), // Adjust the offset as needed
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -267,12 +208,11 @@ class HomeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SvgPicture.asset(
+            Image.asset(
               icon,
               height: 55.0,
               width: 55.0,
-              color: color,
-              //color: Color.fromARGB(255, 35, 155, 214),
+              // Don't set color here as it might cause the image to appear shaded.
             ),
             Text(
               title,
@@ -282,7 +222,7 @@ class HomeCard extends StatelessWidget {
                 fontSize: 18,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0 / 3,
             ),
           ],

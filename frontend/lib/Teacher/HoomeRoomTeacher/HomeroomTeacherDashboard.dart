@@ -4,26 +4,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../PagesTools/TeacherGrade.dart';
 import 'package:frontend/models/teachermodel.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherCalendar.dart';
-import 'package:frontend/Teacher/PagesTools/TecherAttendance%20.dart';
-import 'package:frontend/Teacher/PagesTools/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
-// import 'package:frontend/Teacher/TeacherCalendar.dart';
+import 'package:frontend/Teacher/HoomeRoomTeacher/TeacherStudentsGrades.dart';
+import 'package:frontend/Teacher/HoomeRoomTeacher/AttendanceStudentsManage.dart';
+import 'package:frontend/Admin/EventsPage.dart';
+import 'package:intl/intl.dart';
+import 'package:frontend/Teacher/HoomeRoomTeacher/TeacherParentMessagesPage.dart';
 
-class SubjectTeacherDashboard extends StatelessWidget {
+class HomeroomTeacherDashboard extends StatelessWidget {
   final String userId;
   final Teacher teacherData;
   final String selectedClass;
-  final String selectedSubject;
 
-  SubjectTeacherDashboard({
+  HomeroomTeacherDashboard({
     required this.userId,
     required this.teacherData,
     required this.selectedClass,
-    required this.selectedSubject,
   });
 
   // ignore: non_constant_identifier_names
@@ -33,6 +31,10 @@ class SubjectTeacherDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
+    String formattedTime = TimeOfDay.now().format(context);
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -45,45 +47,57 @@ class SubjectTeacherDashboard extends StatelessWidget {
       ),
       body: Column(
         children: [
-          //divide the screen into two parts
-          //The part 1, basic information about the student:
-
+          // Part 1: Basic information about the teacher
           Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 10.0,
-            padding: EdgeInsets.all(20),
+            height: MediaQuery.of(context).size.height / 5.0,
+            padding: const EdgeInsets.all(20),
             color: Colors.blue.shade800,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          " Welcome Teacher ",
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                        ),
-                        Text(
-                          "שלום",
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white,
-                                  ),
-                        ),
-                      ],
+                    Image.asset(
+                      'asset/icons/usericon.png',
+                      height: 40,
+                      width: 40,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "Welcome Teacher",
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white,
+                                ),
+                      ),
                     ),
                   ],
-                )
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '$formattedDate | $formattedTime  ',
+                  style: GoogleFonts.notoSerifHebrew(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Display the selected class below the timing
+                Text(
+                  'Selected Class: $selectedClass',
+                  style: GoogleFonts.notoSerifHebrew(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ),
-
+          // Part 2: The rest of the dashboard
           Expanded(
             child: Container(
               color: Colors.blue.shade800,
@@ -107,28 +121,27 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherAddNewAssi(
-                                      userId: userId,
-                                      selectedClass: selectedClass,
-                                      selectedSubject: selectedSubject)),
+                                  builder: (context) => TeacherSendMessage(
+                                        userId: userId,
+                                        selectedClass: selectedClass,
+                                      )),
                             );
                           },
-                          icon: 'asset/icons/assignment.svg',
-                          title: "מטלות",
+                          icon: 'asset/icons/writeMessage.png',
+                          title: "הודעות",
                         ),
                         HomeCard(
                           onPress: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherClassDetailPage(
-                                      userId: userId,
-                                      selectedClass: selectedClass,
-                                      selectedSubject: selectedSubject)),
+                                  builder: (context) => TeacherStudentsGrades(
+                                        selectedClass: selectedClass,
+                                      )),
                             );
                           },
-                          icon: 'asset/icons/resume.svg',
-                          title: "ציונים",
+                          icon: 'asset/icons/grade.png',
+                          title: "ציוני תלמידים",
                         ),
                       ],
                     ),
@@ -140,14 +153,14 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherSendMessage(
-                                        userId: userId,
-                                        selectedClass: selectedClass,
-                                      )),
+                                  builder: (context) =>
+                                      AttendanceStudentsManage(
+                                          userId: userId,
+                                          selectedClass: selectedClass)),
                             );
                           },
-                          icon: 'asset/icons/chat.svg',
-                          title: "הודעות",
+                          icon: 'asset/icons/checklist.png',
+                          title: "נוחכות",
                         ),
                         HomeCard(
                           onPress: () {
@@ -159,7 +172,7 @@ class SubjectTeacherDashboard extends StatelessWidget {
                                       )),
                             );
                           },
-                          icon: 'asset/icons/timetable.svg',
+                          icon: 'asset/icons/calendar.png',
                           title: "לוח שנה",
                         ),
                       ],
@@ -172,20 +185,23 @@ class SubjectTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherAttendancePage(
-                                        userId: userId,
-                                        selectedClass: selectedClass,
-                                        subject: selectedSubject,
-                                      )),
+                                  builder: (context) => EventsPage()),
                             );
                           },
-                          icon: 'asset/icons/result.svg',
-                          title: "נוחכות",
+                          icon: 'asset/icons/event.png',
+                          title: "אירועים",
                         ),
                         HomeCard(
-                          onPress: () {},
-                          icon: 'asset/icons/profile.svg',
-                          title: "Profile",
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherMessagesPage(
+                                      teacherClass: selectedClass)),
+                            );
+                          },
+                          icon: 'asset/icons/parents.png',
+                          title: "הודעות הורים",
                         ),
                       ],
                     ),
@@ -206,13 +222,11 @@ class HomeCard extends StatelessWidget {
     required this.onPress,
     required this.icon,
     required this.title,
-    this.color = Colors.black,
     this.elevation = 4.0,
   });
-  final VoidCallback onPress;
-  final String icon;
+  final VoidCallback? onPress;
+  final String icon; // Path to the PNG icon
   final String title;
-  final Color color;
   final double elevation;
 
   @override
@@ -239,12 +253,10 @@ class HomeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              icon,
+            Image.asset(
+              icon, // Path to the PNG icon
               height: 55.0,
               width: 55.0,
-              color: color,
-              //color: Color.fromARGB(255, 35, 155, 214),
             ),
             Text(
               title,

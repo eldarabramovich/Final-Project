@@ -14,31 +14,33 @@ const {
     getTeacherData ,
     SendMessageToClass,
     GetStudentBySubClass,
-    AddAttendance,
+    addAttendance,
     downloadSubmission,
-    updateSubmissionGrade,
+    getAttendanceRecords,
+    editAttendance,
+    getAttendanceById,
+    getStudentAttendance,
     updateFinalGrade,
-    addEvent,getEvents,
-    getStudentsBySubject,
-    getStudentsByClass
-} = require('../controllers/teacherController.js');
+    updateSubmissionGrade,
+    getMessagesForClass
 
+} = require('../controllers/teacherController.js');
+router.post('/getMessagesForClass', getMessagesForClass);
+router.post('/updateSubmissionGrade',updateSubmissionGrade);
+router.post('/updateFinalGrade',updateFinalGrade);
 router.post('/AddAssignment',upload,AddAssignment);
-router.post('/addatte',AddAttendance);
+router.post('/addAttendance',addAttendance);
 router.post('/addmess',SendMessageToClass);
 router.post('/CreateSubClass',CreateSubClass);
 router.post('/AddStudentToSubClass',AddStudentToSubClass);
 router.post('/downloadSubmission', downloadSubmission);
-router.post('/updateSubmissionGrade', updateSubmissionGrade);
-router.post('/updateFinalGrade', updateFinalGrade);
-router.post('/addEvent', addEvent);
-router.post('/getStudentsByClass', getStudentsByClass);
-
-router.get('/getStudentsBySubject',getStudentsBySubject);
+router.post('/getAttendanceById', getAttendanceById);
+router.post('/getAttendanceRecords',getAttendanceRecords);
+router.post('/editAttendance',editAttendance);
 router.put('/editteachers/:teacherId', editTeacher);
 router.delete('/deleteachers/:teacherId', deleteTeacher);
 router.get('/downloadFile/:fileId',downloadFile );
-router.get('/getEvents',getEvents );
+router.get('/getStudentAttendance/:studentId', getStudentAttendance);
 router.get('/:classId', getClassStudents);
 router.get('/teacher/:userId', getTeacherData);
 router.get('/getstudents/:classname', GetStudentBySubClass);

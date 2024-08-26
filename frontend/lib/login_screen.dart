@@ -7,9 +7,9 @@ import 'package:frontend/Parent/ParentHomeScreen.dart';
 import 'package:frontend/Parent/ChildSelectionPage.dart';
 import 'package:frontend/Admin/AdminHomeScreen.dart';
 import 'package:frontend/Student/StudentHomeScreen.dart';
-import 'package:frontend/Teacher/Deshboards/SubjectTeacherDashboard.dart';
-import 'package:frontend/Teacher/Deshboards/ClassSelectionPage.dart';
-import 'package:frontend/Teacher/Deshboards/HomeroomTeacherDashboard.dart';
+import 'package:frontend/Teacher/SubjectTeacher/SubjectTeacherDashboard.dart';
+import 'package:frontend/Teacher/PagesTools/ClassSelectionPage.dart';
+import 'package:frontend/Teacher/HoomeRoomTeacher/HomeroomTeacherDashboard.dart';
 import 'package:frontend/models/teachermodel.dart';
 import 'package:frontend/models/parentmodel.dart';
 import 'config.dart';
@@ -24,6 +24,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool _obscureText = true;
 
   void showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -77,9 +78,11 @@ class _LoginScreenState extends State<LoginScreen> {
           print("Parsed Teacher: $teacher"); // Add this line for debugging
 
           if (teacher.classesSubject.isNotEmpty &&
-              teacher.classHomeroom.isNotEmpty) {
+              (teacher.classHomeroom.isNotEmpty &&
+                  teacher.classHomeroom.first.isNotEmpty)) {
             showErrorSnackBar(context, 'Teacher cant be homeroom and subjects');
-          } else if (teacher.classHomeroom.isNotEmpty) {
+          } else if (teacher.classHomeroom.isNotEmpty &&
+              teacher.classHomeroom.first.isNotEmpty) {
             if (teacher.classHomeroom.length == 1) {
               Navigator.push(
                 context,
@@ -140,7 +143,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 builder: (context) => ClassSelectionPage(
                   teacherData: teacher,
                   userId: userId,
-                  isHomeroomTeacher: teacher.classHomeroom.isNotEmpty,
+                  isHomeroomTeacher: teacher.classHomeroom.isNotEmpty &&
+                      teacher.classHomeroom.first.isNotEmpty,
                 ),
               ),
             );
@@ -259,7 +263,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: TextField(
                     controller: emailController,
+                    textAlign: TextAlign.right, // Align hint text to the right
                     decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.person), // Profile icon
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
                         borderRadius: BorderRadius.circular(12),
@@ -268,19 +274,31 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderSide: BorderSide(color: Colors.blueGrey),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      hintText: "מייל",
+                      hintText: "שם משתמש",
                       fillColor: Colors.grey.shade100,
                       filled: true,
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: TextField(
-                    obscureText: true,
                     controller: passwordController,
+                    obscureText: _obscureText,
+                    textAlign: TextAlign.right, // Align hint text to the right
                     decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.lock), // Lock icon
+                      suffixIcon: IconButton(
+                        icon: Icon(_obscureText
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ), // Toggle visibility icon
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
                         borderRadius: BorderRadius.circular(12),
@@ -295,13 +313,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: GestureDetector(
                     onTap: logUserIn,
                     child: Container(
-                      padding: EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 53, 162, 212),
                         borderRadius: BorderRadius.circular(12),
@@ -309,16 +327,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Center(
                         child: Text(
                           "כניסה",
-                          style: GoogleFonts.notoSerifHebrew(
+                          style: GoogleFonts.assistant(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                            fontSize: 20,
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
+                const SizedBox(height: 25),
+                Text(
+                  "!מצטרפים להצלחה חינוכית בקליק אחד",
+                  style: GoogleFonts.assistant(
+                    color: Colors.grey[800],
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 10),
               ],
             ),
           ),

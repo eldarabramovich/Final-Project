@@ -83,13 +83,78 @@ class _StudentClassMessagesScreenState
           : _messages.isEmpty
               ? const Center(child: Text('No messages found'))
               : ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(_messages[index]),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: _buildMessageBubble(_messages[index]),
                     );
                   },
                 ),
     );
   }
+
+  Widget _buildMessageBubble(String message) {
+    return Align(
+      alignment: Alignment.centerLeft, // Adjust for alignment
+      child: Container(
+        padding: const EdgeInsets.all(12.0),
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        decoration: BoxDecoration(
+          color: Colors.blue.shade200,
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4.0,
+              offset: Offset(0, 2), // Shadow position
+            ),
+          ],
+        ),
+        child: CustomPaint(
+          painter: BubbleTailPainter(),
+          child: Text(
+            message,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 16.0,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BubbleTailPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.blue.shade200
+      ..style = PaintingStyle.fill;
+
+    // Draw the main bubble
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width, 0)
+      ..lineTo(size.width, size.height - 10)
+      ..lineTo(10, size.height - 10)
+      ..lineTo(0, size.height - 20)
+      ..close();
+
+    // Draw the tail
+    final tailPath = Path()
+      ..moveTo(size.width / 2 - 10, size.height)
+      ..lineTo(size.width / 2 + 10, size.height)
+      ..lineTo(size.width / 2, size.height + 10)
+      ..close();
+
+    canvas.drawPath(path, paint);
+    canvas.drawPath(tailPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

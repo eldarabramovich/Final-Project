@@ -4,21 +4,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+
+import 'TeacherGrade.dart';
 import 'package:frontend/models/teachermodel.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherCalendar.dart';
+import 'package:frontend/Teacher/SubjectTeacher/AddAttendancePage.dart';
+import 'package:frontend/Teacher/SubjectTeacher/TeacherAddNewAssi.dart';
 import 'package:frontend/Teacher/PagesTools/TeacherMessages.dart';
-import 'package:frontend/Teacher/Deshboards/TeacherStudentsGrades.dart';
 // import 'package:frontend/Teacher/TeacherCalendar.dart';
 
-class HomeroomTeacherDashboard extends StatelessWidget {
+class SubjectTeacherDashboard extends StatelessWidget {
   final String userId;
   final Teacher teacherData;
   final String selectedClass;
+  final String selectedSubject;
 
-  HomeroomTeacherDashboard({
+  SubjectTeacherDashboard({
     required this.userId,
     required this.teacherData,
     required this.selectedClass,
+    required this.selectedSubject,
   });
 
   // ignore: non_constant_identifier_names
@@ -28,6 +34,9 @@ class HomeroomTeacherDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
+    String formattedTime = TimeOfDay.now().format(context);
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -42,7 +51,7 @@ class HomeroomTeacherDashboard extends StatelessWidget {
         children: [
           //divide the screen into two parts
           //The part 1, basic information about the student:
-
+          /*
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height / 10.0,
@@ -79,6 +88,59 @@ class HomeroomTeacherDashboard extends StatelessWidget {
             ),
           ),
 
+          
+          */
+
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 5.0,
+            padding: const EdgeInsets.all(20),
+            color: Colors.blue.shade800,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Image.asset(
+                      'asset/icons/usericon.png',
+                      height: 40,
+                      width: 40,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        " Welcome Teacher ",
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  ' $formattedDate | $formattedTime',
+                  style: GoogleFonts.notoSerifHebrew(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  ' $selectedClass |  $selectedSubject  ',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(255, 255, 255, 1),
+                  ),
+                ),
+                const SizedBox(height: 8)
+              ],
+            ),
+          ),
+
           Expanded(
             child: Container(
               color: Colors.blue.shade800,
@@ -102,27 +164,28 @@ class HomeroomTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherSendMessage(
-                                        userId: userId,
-                                        selectedClass: selectedClass,
-                                      )),
+                                  builder: (context) => TeacherAddNewAssi(
+                                      userId: userId,
+                                      selectedClass: selectedClass,
+                                      selectedSubject: selectedSubject)),
                             );
                           },
-                          icon: 'asset/icons/chat.svg',
-                          title: "הודעות",
+                          icon: 'asset/icons/addhomework.png',
+                          title: "מטלה חדשה",
                         ),
                         HomeCard(
                           onPress: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherStudentsGrades(
-                                        selectedClass: selectedClass,
-                                      )),
+                                  builder: (context) => TeacherClassDetailPage(
+                                      userId: userId,
+                                      selectedClass: selectedClass,
+                                      selectedSubject: selectedSubject)),
                             );
                           },
-                          icon: 'asset/icons/check.svg',
-                          title: "ציוני תלמידים",
+                          icon: 'asset/icons/grade.png',
+                          title: "ציונים",
                         ),
                       ],
                     ),
@@ -134,29 +197,49 @@ class HomeroomTeacherDashboard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherCalendar(
+                                  builder: (context) => TeacherSendMessage(
                                         userId: userId,
+                                        selectedClass: selectedClass,
                                       )),
                             );
                           },
-                          icon: 'asset/icons/timetable.svg',
-                          title: "לוח שנה",
+                          icon: 'asset/icons/writeMessage.png',
+                          title: "הודעה חדשה",
                         ),
                         HomeCard(
                           onPress: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherStudentsGrades(
-                                        selectedClass: selectedClass,
+                                  builder: (context) => TeacherCalendar(
+                                        userId: userId,
                                       )),
                             );
                           },
-                          icon: 'asset/icons/assignment.svg',
-                          title: "מטלות",
+                          icon: 'asset/icons/calendar.png',
+                          title: "לוח שנה",
                         ),
                       ],
-                    )
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        HomeCard(
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddAttendancePage(
+                                        selectedClass: selectedClass,
+                                        subject: selectedSubject,
+                                      )),
+                            );
+                          },
+                          icon: 'asset/icons/checklist.png',
+                          title: "נוחכות",
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -174,13 +257,11 @@ class HomeCard extends StatelessWidget {
     required this.onPress,
     required this.icon,
     required this.title,
-    this.color = Colors.black,
     this.elevation = 4.0,
   });
-  final VoidCallback onPress;
-  final String icon;
+  final VoidCallback? onPress;
+  final String icon; // Path to the PNG icon
   final String title;
-  final Color color;
   final double elevation;
 
   @override
@@ -207,12 +288,10 @@ class HomeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              icon,
+            Image.asset(
+              icon, // Path to the PNG icon
               height: 55.0,
               width: 55.0,
-              color: color,
-              //color: Color.fromARGB(255, 35, 155, 214),
             ),
             Text(
               title,
